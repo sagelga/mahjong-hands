@@ -1,73 +1,101 @@
-# React + TypeScript + Vite
+# Mahjong Hands Validator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web application for validating and analyzing mahjong hands. This tool helps players check if their mahjong combinations follow the proper rules and are winning hands.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Interactive tile selection
+- Real-time validation of mahjong hands
+- Support for different mahjong rule sets
+- Visual representation of tile groups (pons, kans, chiis)
+- Responsive design for desktop and mobile use
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React with TypeScript
+- Vite as the build tool
+- Cloudflare Workers for deployment
+- Tailwind CSS for styling
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js (v18 or higher)
+- npm or yarn
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone the repository:
+
+    ```bash
+    git clone <repository-url>
+    ```
+
+2. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Start the development server:
+
+    ```bash
+    npm run dev
+    ```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+### Development Scripts
+
+- `npm run dev` - Starts the development server with hot reloading
+- `npm run build` - Creates a production build
+- `npm run preview` - Locally previews the production build
+- `npm run deploy` - Deploys the application to Cloudflare Workers (requires Wrangler CLI)
+
+## Project Structure
+
+```
+src/
+├── components/     # React components
+│   ├── MahjongHand.tsx
+│   └── TileKeyboard.tsx
+├── lib/           # Utility functions and constants
+│   ├── tiles.ts
+│   └── validator.ts
+└── assets/        # Static assets (images, icons)
+    └── tiles/     # Mahjong tile SVGs
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Deployment
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+This project is configured for deployment on Cloudflare Workers using Wrangler. To deploy:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. Ensure you have Wrangler installed:
+
+    ```bash
+    npm install -g wrangler
+    ```
+
+2. Log in to your Cloudflare account:
+
+    ```bash
+    wrangler login
+    ```
+
+3. Deploy the application:
+    ```bash
+    wrangler deploy
+    ```
+
+## Configuration
+
+The application uses `wrangler.json` for Cloudflare Workers configuration and follows standard Vite configuration patterns.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+
+This project is licensed under the MIT License.

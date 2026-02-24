@@ -5,9 +5,11 @@ interface Props {
   onTileClick: (tile: TileDef) => void;
   activeFilter: Suit | 'All';
   onFilterChange: (filter: Suit | 'All') => void;
+  currentTiles: TileDef[];
+  onClearHand: () => void;
 }
 
-export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange }: Props) {
+export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange, currentTiles, onClearHand }: Props) {
   const filteredTiles = activeFilter === 'All'
     ? MAHJONG_TILES
     : MAHJONG_TILES.filter(t => t.suit === activeFilter);
@@ -46,6 +48,23 @@ export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange
             {filter.split(' ')[0]}
           </button>
         ))}
+        <button
+          onClick={onClearHand}
+          style={{
+            padding: '0.4rem 0.6rem',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-color)',
+            backgroundColor: 'var(--accent-danger)',
+            color: '#fff',
+            cursor: 'pointer',
+            fontWeight: 600,
+            fontSize: '0.7rem',
+            transition: 'all var(--transition-fast)',
+            marginLeft: '0.25rem'
+          }}
+        >
+          Clear Hands
+        </button>
       </div>
 
       {/* Keyboard Grid */}
@@ -57,54 +76,61 @@ export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange
         maxHeight: '45vh',
         overflowY: 'auto'
       }}>
-        {filteredTiles.map(tile => (
-          <button
-            key={tile.id}
-            onClick={() => onTileClick(tile)}
-            title={tile.name}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0.35rem',
-              backgroundColor: 'var(--bg-tertiary)',
-              border: '1px solid var(--border-color)',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer',
-              color: 'var(--text-primary)',
-              transition: 'all var(--transition-fast)',
-              aspectRatio: '3/4',
-              overflow: 'hidden'
-            }}
-          >
-            <img
-              src={tile.image}
-              alt={tile.name}
+        {filteredTiles.map(tile => {
+          const currentCount = currentTiles.filter(t => t.id === tile.id).length;
+          const isAtLimit = currentCount >= 4;
+
+          return (
+            <button
+              key={tile.id}
+              onClick={() => !isAtLimit && onTileClick(tile)} // Disable click if at limit
+              title={`${tile.name}${isAtLimit ? ' (Limit reached: 4)' : ''}`}
               style={{
-                width: '100%',
-                height: 'auto',
-                objectFit: 'contain',
-                flex: 1
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.35rem',
+                backgroundColor: isAtLimit ? 'var(--bg-tertiary)' : 'var(--bg-tertiary)',
+                border: `1px solid ${isAtLimit ? 'var(--accent-danger)' : 'var(--border-color)'}`,
+                borderRadius: 'var(--radius-md)',
+                cursor: isAtLimit ? 'not-allowed' : 'pointer',
+                color: isAtLimit ? 'var(--text-disabled)' : 'var(--text-primary)',
+                transition: 'all var(--transition-fast)',
+                aspectRatio: '3/4',
+                overflow: 'hidden',
+                opacity: isAtLimit ? 0.6 : 1
               }}
-            />
-            <span style={{
-              fontSize: '0.6rem',
-              color: 'var(--text-secondary)',
-              marginTop: '0.2rem',
-              textAlign: 'center',
-              width: '100%',
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              lineHeight: '1.1',
-              wordBreak: 'break-word'
-            }}>
-              {tile.name}
-            </span>
-          </button>
-        ))}
+            >
+              <img
+                src={tile.image}
+                alt={tile.name}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  objectFit: 'contain',
+                  flex: 1,
+                  filter: isAtLimit ? 'grayscale(100%) brightness(0.8)' : 'none'
+                }}
+              />
+              <span style={{
+                fontSize: '0.7rem',
+                color: isAtLimit ? 'var(--text-disabled)' : 'var(--text-primary)',
+                marginTop: '0.2rem',
+                textAlign: 'center',
+                width: '100%',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                lineHeight: '1.2',
+                wordBreak: 'break-word'
+              }}>
+                {tile.name}{isAtLimit && ' (4)'}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

@@ -24,9 +24,10 @@ interface SortableItemProps {
   index: number;
   onRemove: (index: number) => void;
   isValid: boolean;
+  isInvalidTile?: boolean;
 }
 
-function SortableTile({ id, tile, index, onRemove, isValid }: SortableItemProps) {
+function SortableTile({ id, tile, index, onRemove, isValid, isInvalidTile }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -58,8 +59,8 @@ function SortableTile({ id, tile, index, onRemove, isValid }: SortableItemProps)
         style={{
           width: 'clamp(48px, 11vw, 64px)',
           height: 'clamp(64px, 14vw, 84px)',
-          backgroundColor: tile.suit === 'Flowers' ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-secondary)',
-          border: `2px solid ${tile.suit === 'Flowers' ? 'rgba(16, 185, 129, 0.4)' : (isValid ? 'var(--accent-primary)' : 'var(--border-color)')}`,
+          backgroundColor: tile.suit === 'Flowers' ? 'rgba(16, 185, 129, 0.1)' : (isInvalidTile ? 'rgba(239, 68, 68, 0.2)' : 'var(--bg-secondary)'),
+          border: `2px solid ${tile.suit === 'Flowers' ? 'rgba(16, 185, 129, 0.4)' : (isInvalidTile ? 'var(--accent-danger)' : (isValid ? 'var(--accent-primary)' : 'var(--border-color)'))}`,
           borderRadius: 'var(--radius-md)',
           display: 'flex',
           alignItems: 'center',
@@ -124,9 +125,10 @@ interface Props {
   onRemoveTile: (index: number) => void;
   onReorderTiles: (oldIndex: number, newIndex: number) => void;
   isValid: boolean;
+  invalidTiles?: string[];
 }
 
-export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isValid }: Props) {
+export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isValid, invalidTiles = [] }: Props) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -206,16 +208,20 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
             items={tiles.map((t, idx) => `tile-${idx}-${t.id}`)}
             strategy={horizontalListSortingStrategy}
           >
-            {tiles.map((tile, index) => (
-              <SortableTile
-                key={`tile-${index}-${tile.id}`}
-                id={`tile-${index}-${tile.id}`}
-                tile={tile}
-                index={index}
-                onRemove={onRemoveTile}
-                isValid={isValid}
-              />
-            ))}
+            {tiles.map((tile, index) => {
+              const isInvalidTile = invalidTiles.includes(tile.id);
+              return (
+                <SortableTile
+                  key={`tile-${index}-${tile.id}`}
+                  id={`tile-${index}-${tile.id}`}
+                  tile={tile}
+                  index={index}
+                  onRemove={onRemoveTile}
+                  isValid={isValid}
+                  isInvalidTile={isInvalidTile}
+                />
+              );
+            })}
           </SortableContext>
         </DndContext>
 

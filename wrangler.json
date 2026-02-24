@@ -2,11 +2,5 @@
     "$schema": "node_modules/wrangler/config-schema.json",
     "name": "mahjong-hands",
     "pages_build_output_dir": "./dist",
-    "compatibility_date": "2025-01-01",
-    "route": "mahjong.sagelga.com"```json
-,
-    "placement": {
-        "mode": "smart"
-    }
-```
+    "compatibility_date": "2026-01-01"
 }
