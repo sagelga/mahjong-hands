@@ -37,7 +37,7 @@ function SortableTile({ id, tile, index, onRemove, isValid, isInvalidTile }: Sor
     isDragging,
   } = useSortable({ id });
 
-  const style = {
+  const dragStyle = {
     transform: CSS.Translate.toString(transform),
     transition,
     zIndex: isDragging ? 200 : 1,
@@ -49,69 +49,28 @@ function SortableTile({ id, tile, index, onRemove, isValid, isInvalidTile }: Sor
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={dragStyle}
       className={`tile-wrapper ${isDragging ? 'dragging' : ''}`}
       {...attributes}
       {...listeners}
     >
       <div
-        className="tile-inner"
-        style={{
-          width: 'clamp(48px, 11vw, 64px)',
-          height: 'clamp(64px, 14vw, 84px)',
-          backgroundColor: tile.suit === 'Flowers' ? 'rgba(16, 185, 129, 0.1)' : (isInvalidTile ? 'rgba(239, 68, 68, 0.2)' : 'var(--bg-secondary)'),
-          border: `2px solid ${tile.suit === 'Flowers' ? 'rgba(16, 185, 129, 0.4)' : (isInvalidTile ? 'var(--accent-danger)' : (isValid ? 'var(--accent-primary)' : 'var(--border-color)'))}`,
-          borderRadius: 'var(--radius-md)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          padding: '2px',
-          boxShadow: isDragging ? 'var(--shadow-lg)' : 'var(--shadow-sm)',
-          transition: 'border-color 0.2s',
-        }}
+        className={`tile-inner ${tile.suit === 'Flowers' ? 'flowers' : ''} ${isInvalidTile ? 'invalid' : ''} ${isValid ? 'valid' : 'default'}`}
       >
         <img
           src={tile.image}
           alt={tile.name}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            pointerEvents: 'none'
-          }}
+          className="tile-image"
         />
         {tile.suit === 'Flowers' && (
-          <span style={{
-            position: 'absolute',
-            top: 1,
-            right: 2,
-            fontSize: '10px'
-          }}>🌸</span>
+          <span className="tile-flower-indicator">🌸</span>
         )}
         <button
           onClick={(e) => {
             e.stopPropagation();
             onRemove(index);
           }}
-          style={{
-            position: 'absolute',
-            top: -6,
-            right: -6,
-            width: 18,
-            height: 18,
-            borderRadius: '50%',
-            backgroundColor: 'var(--accent-danger)',
-            color: 'white',
-            border: 'none',
-            fontSize: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-            zIndex: 10
-          }}
+          className="tile-remove-button"
         >
           ×
         </button>
@@ -126,9 +85,10 @@ interface Props {
   onReorderTiles: (oldIndex: number, newIndex: number) => void;
   isValid: boolean;
   invalidTiles?: string[];
+  onClearHand: () => void;
 }
 
-export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isValid, invalidTiles = [] }: Props) {
+export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isValid, invalidTiles = [], onClearHand }: Props) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -161,42 +121,28 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
   const mainHandCount = tiles.length - flowerTilesCount;
 
   return (
-    <div style={{ width: '100%' }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '0.5rem',
-        padding: '0 0.5rem'
-      }}>
-        <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Your Hand</h2>
-        <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.8rem' }}>
+    <div className="keyboard-container">
+      <div className="hand-header">
+        <h2 className="hand-title">Your Hand</h2>
+        <div className="hand-info">
           {flowerTilesCount > 0 && (
-            <span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>🌸 {flowerTilesCount}</span>
+            <span className="hand-flower-info">🌸 {flowerTilesCount}</span>
           )}
-          <span style={{
-            color: isValid ? 'var(--accent-primary)' : 'var(--text-secondary)',
-            fontWeight: 700
-          }}>
+          <span className={`hand-main-info ${isValid ? 'valid' : ''}`}>
             Main: {mainHandCount}/14
           </span>
+          <button
+            onClick={onClearHand}
+            className="clear-button"
+            title="Clear hand"
+          >
+            🗑️
+          </button>
         </div>
       </div>
 
       <div
-        className="glass-panel hand-container"
-        style={{
-          padding: '0.75rem',
-          width: '100%',
-          minHeight: '100px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 'clamp(6px, 1.5vw, 10px)',
-          justifyContent: 'center',
-          alignItems: 'center',
-          transition: 'border-color var(--transition-normal)',
-          border: isValid ? '2px solid var(--accent-primary)' : '1px solid var(--border-color)',
-        }}
+        className={`glass-panel hand-container ${isValid ? 'valid' : ''}`}
       >
         <DndContext
           sensors={sensors}
@@ -229,19 +175,7 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
         {mainHandCount < 14 && Array.from({ length: 14 - mainHandCount }).map((_, i) => (
           <div
             key={`blank-${i}`}
-            style={{
-              width: 'clamp(48px, 11vw, 64px)',
-              height: 'clamp(64px, 14vw, 84px)',
-              backgroundColor: 'rgba(51, 65, 85, 0.05)',
-              border: '2px dashed var(--border-color)',
-              borderRadius: 'var(--radius-md)',
-              opacity: 0.3,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.25rem',
-              color: 'var(--border-color)'
-            }}
+            className="blank-tile-slot"
           >
             +
           </div>

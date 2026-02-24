@@ -15,10 +15,13 @@ export interface ValidationResult {
  * Flowers are ignored in validation.
  */
 export function validateHand(tiles: TileDef[]): ValidationResult {
+    // Clear memoization cache before each validation to prevent incorrect results from previous computations
+    memoizationCache.clear();
+
     const hand = tiles.filter((t) => t.suit !== 'Flowers');
 
     if (hand.length === 0) {
-        return { isValid: false, reason: 'Select tiles to start validation' };
+        return { isValid: false, reason: 'Click the tiles to add it to your hand' };
     }
 
     // Count occurrences
@@ -66,14 +69,22 @@ export function validateHand(tiles: TileDef[]): ValidationResult {
 
     // Hints/Suggestions logic
     const pairsCount = Object.values(idCounts).filter((c) => c >= 2).length;
-    const pungsCount = Object.values(idCounts).filter((c) => c >= 3).length;
 
-    // Find sequences (Chows)
+    // Count pungs (3+ of same tile) and kongs (4 of same tile) separately
+    const pungsCount = Object.values(idCounts).filter((c) => c === 3).length;
+    const kongsCount = Object.values(idCounts).filter((c) => c === 4).length;
+    // A kong counts as a valid set, so total sets include both pungs and kongs
+    const totalSetsFromGroups = pungsCount + kongsCount;
+
+    // Find sequences (Chows) - need to make sure we don't double count
     const sequences = findSequences(hand);
 
-    if (pungsCount > 0 || sequences.length > 0) {
-        const totalSets = pungsCount + sequences.length;
-        if (totalSets >= 1 && totalSets < 4) {
+    // Calculate effective sets considering that kongs can be used as sets
+    // We need to be careful not to double-count if the same tiles are used for both groups and sequences
+    const totalSets = totalSetsFromGroups + sequences.length;
+
+    if (totalSets > 0) {
+        if (totalSets < 4) {
             return {
                 isValid: false,
                 reason: `Looking good! Add ${4 - totalSets} more sets and a pair.`,
@@ -109,6 +120,7 @@ function checkStandardWin(tiles: TileDef[]): boolean {
 
     const ids = Object.keys(counts);
 
+    // Try each possible pair as the head (eyes) of the hand
     for (const id of ids) {
         if (counts[id] >= 2) {
             const remaining = { ...counts };
@@ -116,42 +128,108 @@ function checkStandardWin(tiles: TileDef[]): boolean {
             if (canDecompose(remaining)) return true;
         }
     }
+
     return false;
 }
 
+// Memoization cache to avoid recalculating the same states
+const memoizationCache = new Map<string, boolean>();
+
 function canDecompose(counts: Record<string, number>): boolean {
-    const ids = Object.keys(counts)
-        .filter((id) => counts[id] > 0)
-        .sort();
-    if (ids.length === 0) return true;
+    // Create a canonical string representation of the state for memoization
+    const stateKey = Object.entries(counts)
+        .filter(([, count]) => count > 0)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([id, count]) => `${id}:${count}`)
+        .join('|');
 
-    const firstId = ids[0];
-
-    // Try Pung
-    if (counts[firstId] >= 3) {
-        const nextCounts = { ...counts };
-        nextCounts[firstId] -= 3;
-        if (canDecompose(nextCounts)) return true;
+    // Check if we've already computed this state
+    if (memoizationCache.has(stateKey)) {
+        return memoizationCache.get(stateKey)!;
     }
 
-    // Try Chow (only for numbered suits)
+    // If no tiles left, we've successfully decomposed everything
+    const remainingIds = Object.keys(counts).filter(id => counts[id] > 0);
+    if (remainingIds.length === 0) {
+        memoizationCache.set(stateKey, true);
+        return true;
+    }
+
+    // Process tiles in sorted order for consistency
+    const sortedIds = remainingIds.sort();
+    const firstId = sortedIds[0];
+    const firstCount = counts[firstId];
+
+    // Option 1: Try to form a Pung (three of the same tile)
+    if (firstCount >= 3) {
+        const newCounts = { ...counts };
+        newCounts[firstId] = firstCount - 3;
+        if (canDecompose(newCounts)) {
+            memoizationCache.set(stateKey, true);
+            return true;
+        }
+    }
+
+    // Option 2: Try to form a Chow (three consecutive tiles of the same suit)
     const tileIdMatch = firstId.match(/^([mps])(\d)$/);
     if (tileIdMatch) {
-        const [_, suit, valStr] = tileIdMatch;
+        const [, suit, valStr] = tileIdMatch;
         const val = parseInt(valStr);
+
+        // Try to form sequence starting with this tile (e.g., 1-2-3)
         if (val <= 7) {
             const id2 = `${suit}${val + 1}`;
             const id3 = `${suit}${val + 2}`;
+
             if (counts[id2] > 0 && counts[id3] > 0) {
-                const nextCounts = { ...counts };
-                nextCounts[firstId]--;
-                nextCounts[id2]--;
-                nextCounts[id3]--;
-                if (canDecompose(nextCounts)) return true;
+                const newCounts = { ...counts };
+                newCounts[firstId] = firstCount - 1;
+                newCounts[id2]--;
+                newCounts[id3]--;
+                if (canDecompose(newCounts)) {
+                    memoizationCache.set(stateKey, true);
+                    return true;
+                }
+            }
+        }
+
+        // Try to form sequence centered on this tile (e.g., 2-3-4 where firstId is 3)
+        if (val >= 2 && val <= 8) {
+            const idBefore = `${suit}${val - 1}`;
+            const idAfter = `${suit}${val + 1}`;
+
+            if (counts[idBefore] > 0 && counts[idAfter] > 0) {
+                const newCounts = { ...counts };
+                newCounts[idBefore]--;
+                newCounts[firstId] = firstCount - 1;
+                newCounts[idAfter]--;
+                if (canDecompose(newCounts)) {
+                    memoizationCache.set(stateKey, true);
+                    return true;
+                }
+            }
+        }
+
+        // Try to form sequence ending with this tile (e.g., 3-4-5 where firstId is 5)
+        if (val >= 3) {
+            const id2 = `${suit}${val - 1}`;
+            const id3 = `${suit}${val - 2}`;
+
+            if (counts[id2] > 0 && counts[id3] > 0) {
+                const newCounts = { ...counts };
+                newCounts[id3]--;
+                newCounts[id2]--;
+                newCounts[firstId] = firstCount - 1;
+                if (canDecompose(newCounts)) {
+                    memoizationCache.set(stateKey, true);
+                    return true;
+                }
             }
         }
     }
 
+    // If none of the options worked, this decomposition path is not viable
+    memoizationCache.set(stateKey, false);
     return false;
 }
 
