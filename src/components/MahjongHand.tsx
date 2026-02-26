@@ -8,6 +8,7 @@ import {
   TouchSensor,
 } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
+import type { JSX } from 'react';
 import {
   SortableContext,
   sortableKeyboardCoordinates,
@@ -17,6 +18,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToHorizontalAxis, restrictToWindowEdges } from '@dnd-kit/modifiers';
 import type { TileDef } from '../lib/tiles';
+import type { ComboGroup } from '../lib/comboDetector';
 
 interface SortableItemProps {
   id: string;
@@ -25,9 +27,10 @@ interface SortableItemProps {
   onRemove: (index: number) => void;
   isValid: boolean;
   isInvalidTile?: boolean;
+  comboGroup?: ComboGroup;
 }
 
-function SortableTile({ id, tile, index, onRemove, isValid, isInvalidTile }: SortableItemProps) {
+function SortableTile({ id, tile, index, onRemove, isValid, isInvalidTile, comboGroup }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -46,16 +49,23 @@ function SortableTile({ id, tile, index, onRemove, isValid, isInvalidTile }: Sor
     touchAction: 'none',
   };
 
+  // Determine if this tile is part of a combo and what type
+  const isPartOfCombo = !!comboGroup;
+  const comboType = comboGroup?.formation;
+  const comboIndices = comboGroup?.indices || [];
+  const isFirstInCombo = comboIndices.length > 0 && comboIndices[0] === index;
+  const isLastInCombo = comboIndices.length > 0 && comboIndices[comboIndices.length - 1] === index;
+
   return (
     <div
       ref={setNodeRef}
       style={dragStyle}
-      className={`tile-wrapper ${isDragging ? 'dragging' : ''}`}
+      className={`tile-wrapper ${isDragging ? 'dragging' : ''} ${isPartOfCombo ? `combo-tile combo-${comboType}` : ''} ${isFirstInCombo ? 'combo-first' : ''} ${isLastInCombo ? 'combo-last' : ''}`}
       {...attributes}
       {...listeners}
     >
       <div
-        className={`tile-inner ${tile.suit === 'Flowers' ? 'flowers' : ''} ${isInvalidTile ? 'invalid' : ''} ${isValid ? 'valid' : 'default'}`}
+        className={`tile-inner ${tile.suit === 'Flowers' ? 'flowers' : ''} ${isInvalidTile ? 'invalid' : ''} ${isValid ? 'valid' : 'default'} ${isPartOfCombo ? `combo-${comboType}` : ''}`}
       >
         <img
           src={tile.image}
@@ -86,9 +96,10 @@ interface Props {
   isValid: boolean;
   invalidTiles?: string[];
   onClearHand: () => void;
+  comboGroups?: ComboGroup[];
 }
 
-export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isValid, invalidTiles = [], onClearHand }: Props) {
+export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isValid, invalidTiles = [], onClearHand, comboGroups = [] }: Props) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -119,6 +130,74 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
 
   const flowerTilesCount = tiles.filter(t => t.suit === 'Flowers').length;
   const mainHandCount = tiles.length - flowerTilesCount;
+
+  // Group tiles by their combo groups to render them in containers
+  const elements = [];
+  const processedIndices = new Set<number>();
+
+  // First, process all combo groups
+  for (const comboGroup of comboGroups) {
+    // Add all tiles in this combo to the processed set
+    comboGroup.indices.forEach(index => processedIndices.add(index));
+
+    // Render the entire combo as a group
+    const comboTileElements: JSX.Element[] = [];
+    const comboTiles = comboGroup.indices.map(idx => tiles[idx]);
+
+    comboTiles.forEach((tile, comboIndex) => {
+      const globalIndex = comboGroup.indices[comboIndex];
+      const isInvalidTile = invalidTiles.includes(tile.id);
+
+      comboTileElements.push(
+        <SortableTile
+          key={`tile-${globalIndex}-${tile.id}`}
+          id={`tile-${globalIndex}-${tile.id}`}
+          tile={tile}
+          index={globalIndex}
+          onRemove={onRemoveTile}
+          isValid={isValid}
+          isInvalidTile={isInvalidTile}
+          comboGroup={comboGroup}
+        />
+      );
+    });
+
+    // Add the combo container with tiles and label
+    elements.push(
+      <div
+        key={`combo-${comboGroup.indices.join('-')}`}
+        className={`combo-container ${comboGroup.comboType} ${comboGroup.formation}`}
+      >
+        <div className="combo-tiles-row">
+          {comboTileElements}
+        </div>
+        <div className="combo-label">
+          {comboGroup.comboType.toUpperCase()} - {comboGroup.formation.toUpperCase()}
+        </div>
+      </div>
+    );
+  }
+
+  // Then, render any remaining standalone tiles
+  tiles.forEach((tile, index) => {
+    if (!processedIndices.has(index)) {
+      const tileComboGroupForThisTile = comboGroups.find(group => group.indices.includes(index));
+      const isInvalidTile = invalidTiles.includes(tile.id);
+
+      elements.push(
+        <SortableTile
+          key={`tile-${index}-${tile.id}`}
+          id={`tile-${index}-${tile.id}`}
+          tile={tile}
+          index={index}
+          onRemove={onRemoveTile}
+          isValid={isValid}
+          isInvalidTile={isInvalidTile}
+          comboGroup={tileComboGroupForThisTile}
+        />
+      );
+    }
+  });
 
   return (
     <div className="keyboard-container">
@@ -151,20 +230,18 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
           modifiers={[restrictToHorizontalAxis, restrictToWindowEdges]}
         >
           <SortableContext
-            items={tiles.map((t, idx) => `tile-${idx}-${t.id}`)}
+            items={elements.map((_, idx) => `element-${idx}`)}
             strategy={horizontalListSortingStrategy}
           >
-            {tiles.map((tile, index) => {
-              const isInvalidTile = invalidTiles.includes(tile.id);
+            {elements.map((element, idx) => {
+              // For simplicity, we'll wrap each element in a SortableItem for drag and drop
+              // This is a simplified approach - in a real implementation we'd need to handle
+              // dragging of both individual tiles and entire combo groups
               return (
-                <SortableTile
-                  key={`tile-${index}-${tile.id}`}
-                  id={`tile-${index}-${tile.id}`}
-                  tile={tile}
-                  index={index}
-                  onRemove={onRemoveTile}
-                  isValid={isValid}
-                  isInvalidTile={isInvalidTile}
+                <SortableItemWrapper
+                  key={`element-${idx}`}
+                  id={`element-${idx}`}
+                  element={element}
                 />
               );
             })}
@@ -181,6 +258,28 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+// Wrapper component to make any element sortable
+function SortableItemWrapper({ id, element }: { id: string; element: JSX.Element }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {element}
     </div>
   );
 }

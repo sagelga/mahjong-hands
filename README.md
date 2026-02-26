@@ -99,3 +99,14 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 ## License
 
 This project is licensed under the MIT License.
+
+## Font Optimization
+
+This project now uses self-hosted fonts to improve First Contentful Paint (FCP) performance. Instead of loading fonts from Google Fonts CDN which can cause render-blocking behavior, the Inter font is now self-hosted with the following optimizations:
+
+- Font files are served from the same domain, eliminating cross-origin requests
+- Added preload hints for critical font resources
+- Reduced the number of font weights to only those that are actually used (400, 500, 600, 700)
+- Used `font-display: swap` to ensure text remains visible during font loading
+
+The Inter font files (TTF format) are stored in the `public/fonts/` directory, with font-face declarations in the `src/fonts.css` file.
