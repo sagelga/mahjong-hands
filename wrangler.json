@@ -1,6 +1,9 @@
 {
-    "$schema": "node_modules/wrangler/config-schema.json",
+    "$schema": "https://json.schemastore.org/wrangler",
     "name": "mahjong-hands",
     "pages_build_output_dir": "./dist",
-    "compatibility_date": "2026-01-01"
+    "compatibility_date": "2026-02-26",
+    "placement": {
+        "mode": "smart"
+    }
 }
