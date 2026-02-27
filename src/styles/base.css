@@ -1,0 +1,61 @@
+@import './variables.css';
+
+/* Base Resets */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* Win State Logic */
+body.is-winning {
+  --bg-primary: var(--bg-win);
+  --bg-secondary: #065f46;
+  --bg-tertiary: #047857;
+  --text-primary: #ffffff;
+  --text-secondary: #ecfdf5;
+  --border-color: #059669;
+}
+
+[data-theme='light'] body.is-winning {
+  --bg-primary: #d1fae5;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #ecfdf5;
+  --text-primary: #064e3b;
+  --text-secondary: #065f46;
+  --border-color: #34d399;
+}
+
+/* Helper Utilities */
+.mobile-only { display: block; }
+.desktop-only { display: none; }
+
+@media (min-width: 768px) {
+  .mobile-only { display: none; }
+  .desktop-only { display: block; }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 10px; border: 3px solid var(--bg-primary); }
+::-webkit-scrollbar-thumb:hover { background: var(--border-color); }

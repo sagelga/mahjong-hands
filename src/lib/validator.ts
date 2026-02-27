@@ -67,30 +67,48 @@ export function validateHand(tiles: TileDef[]): ValidationResult {
         };
     }
 
-    // Hints/Suggestions logic
-    const pairsCount = Object.values(idCounts).filter((c) => c >= 2).length;
+    // Higher-order hints logic
+    const remainingCounts = { ...idCounts };
+    let totalSetsFound = 0;
 
-    // Count pungs (3+ of same tile) and kongs (4 of same tile) separately
-    const pungsCount = Object.values(idCounts).filter((c) => c === 3).length;
-    const kongsCount = Object.values(idCounts).filter((c) => c === 4).length;
-    // A kong counts as a valid set, so total sets include both pungs and kongs
-    const totalSetsFromGroups = pungsCount + kongsCount;
+    // 1. Identify triplets and kongs first (as they are less ambiguous than sequences)
+    for (const id in remainingCounts) {
+        if (remainingCounts[id] >= 3) {
+            totalSetsFound++;
+            // For hint calculation, we treat both pung (3) and kong (4) as one set
+            remainingCounts[id] -= (remainingCounts[id] >= 4 ? 4 : 3);
+        }
+    }
 
-    // Find sequences (Chows) - need to make sure we don't double count
-    const sequences = findSequences(hand);
+    // 2. Identify sequences from the remaining tiles
+    const suits: ('c' | 'd' | 'b')[] = ['c', 'd', 'b'];
+    for (const suit of suits) {
+        for (let i = 1; i <= 7; i++) {
+            const id1 = `${suit}${i}`;
+            const id2 = `${suit}${i + 1}`;
+            const id3 = `${suit}${i + 2}`;
+            while (remainingCounts[id1] > 0 && remainingCounts[id2] > 0 && remainingCounts[id3] > 0) {
+                totalSetsFound++;
+                remainingCounts[id1]--;
+                remainingCounts[id2]--;
+                remainingCounts[id3]--;
+            }
+        }
+    }
 
-    // Calculate effective sets considering that kongs can be used as sets
-    // We need to be careful not to double-count if the same tiles are used for both groups and sequences
-    const totalSets = totalSetsFromGroups + sequences.length;
-
-    if (totalSets > 0) {
-        if (totalSets < 4) {
+    if (totalSetsFound > 0) {
+        if (totalSetsFound < 4) {
+            const setsWord = (4 - totalSetsFound) === 1 ? 'set' : 'sets';
             return {
                 isValid: false,
-                reason: `Looking good! Add ${4 - totalSets} more sets and a pair.`,
+                reason: `Looking good! Add ${4 - totalSetsFound} more ${setsWord} and a pair.`,
             };
         }
     }
+
+
+    // For 7 Pairs hint
+    const pairsCount = Object.values(idCounts).filter((c) => c >= 2).length;
 
     if (pairsCount >= 2 && pairsCount < 7) {
         return {
@@ -98,6 +116,7 @@ export function validateHand(tiles: TileDef[]): ValidationResult {
             reason: `Nice pairs! Add ${7 - pairsCount} more pairs for 7 Pairs win.`,
         };
     }
+
 
     if (hand.length < 14) {
         return {
@@ -171,7 +190,7 @@ function canDecompose(counts: Record<string, number>): boolean {
     }
 
     // Option 2: Try to form a Chow (three consecutive tiles of the same suit)
-    const tileIdMatch = firstId.match(/^([mps])(\d)$/);
+    const tileIdMatch = firstId.match(/^([cdb])(\d)$/);
     if (tileIdMatch) {
         const [, suit, valStr] = tileIdMatch;
         const val = parseInt(valStr);
@@ -231,24 +250,4 @@ function canDecompose(counts: Record<string, number>): boolean {
     // If none of the options worked, this decomposition path is not viable
     memoizationCache.set(stateKey, false);
     return false;
-}
-
-function findSequences(tiles: TileDef[]): string[][] {
-    const sequences: string[][] = [];
-    const counts: Record<string, number> = {};
-    for (const t of tiles) counts[t.id] = (counts[t.id] || 0) + 1;
-
-    const suits: ('m' | 'p' | 's')[] = ['m', 'p', 's'];
-    for (const suit of suits) {
-        for (let i = 1; i <= 7; i++) {
-            const id1 = `${suit}${i}`;
-            const id2 = `${suit}${i + 1}`;
-            const id3 = `${suit}${i + 2}`;
-            if (counts[id1] > 0 && counts[id2] > 0 && counts[id3] > 0) {
-                sequences.push([id1, id2, id3]);
-                // Simple greedy find, might not be optimal but enough for hints
-            }
-        }
-    }
-    return sequences;
 }

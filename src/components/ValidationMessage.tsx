@@ -1,4 +1,6 @@
+import './ValidationMessage.css';
 import Typewriter from './Typewriter';
+
 
 interface ValidationMessageProps {
   isValid: boolean;

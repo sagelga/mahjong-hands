@@ -1,112 +1,105 @@
-# Mahjong Hands Validator
+# 🀄 Mahjong Hands Validator
 
-A web application for validating and analyzing mahjong hands. This tool helps players check if their mahjong combinations follow the proper rules and are winning hands.
+[![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![React](https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
 
-## Features
+A premium, high-performance web application designed for validating and analyzing Mahjong hands. Built with a "Midnight Black" aesthetic, this tool provides real-time feedback and intelligent grouping for Mahjong players.
 
-- Interactive tile selection
-- Real-time validation of mahjong hands
-- Support for different mahjong rule sets
-- Visual representation of tile groups (pons, kans, chiis)
-- Responsive design for desktop and mobile use
+![Mahjong Hands Hero](/Users/kumamon/.gemini/antigravity/brain/e9691f59-52ee-4f6e-8df3-ca1762f22743/mahjong_hands_hero_1772127226582.png)
 
-## Tech Stack
+## ✨ Features
 
-- React with TypeScript
-- Vite as the build tool
-- Cloudflare Workers for deployment
-- Tailwind CSS for styling
+- 🏎️ **Real-Time Validation**: Instantly checks if your hand is a valid winning combination.
+- 🧩 **Intelligent Grouping**: Automatically identifies and highlights **Pons**, **Kans**, and **Chiis**.
+- 🛠️ **Interactive Tile Management**: Seamlessly add, remove, and reorder tiles using smooth drag-and-drop powered by `@dnd-kit`.
+- 🔍 **Logic Engine**: Supports standard 4-Set + 1-Pair wins and the elusive 7-Pairs win condition.
+- 🌓 **Midnight Black Theme**: A sleek, premium dark mode design optimized for visibility and aesthetics.
+- 📱 **Fully Responsive**: Optimized for desktop precision and mobile accessibility.
+- 🌸 **Flower Tracking**: Dedicated counter for decorative flower tiles.
+- ⚡ **Performance First**: Self-hosted fonts and optimized SVG assets for lightning-fast load times.
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
-- npm or yarn
+- **Node.js**: v18 or higher
+- **npm**: v9 or higher
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/sagelga/mahjong-hands.git
+   cd mahjong-hands
+   ```
 
-    ```bash
-    git clone <repository-url>
-    ```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-2. Install dependencies:
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-    ```bash
-    npm install
-    ```
+## 🛠️ Tech Stack
 
-3. Start the development server:
+- **Core**: [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool**: [Vite 7](https://vitejs.dev/)
+- **State & Logic**: Custom Hooks + Memoized Validation Logic
+- **Interactions**: [@dnd-kit](https://dnd-kit.com/) for drag-and-drop
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Styling**: Modular Vanilla CSS with design tokens and component-scoped styles
+- **Deployment**: [Cloudflare Workers](https://workers.cloudflare.com/)
 
-    ```bash
-    npm run dev
-    ```
+## 📂 Project Structure
 
-4. Open your browser and navigate to `http://localhost:5173`
-
-### Development Scripts
-
-- `npm run dev` - Starts the development server with hot reloading
-- `npm run build` - Creates a production build
-- `npm run preview` - Locally previews the production build
-- `npm run deploy` - Deploys the application to Cloudflare Workers (requires Wrangler CLI)
-
-## Project Structure
-
-```
+```text
 src/
-├── components/     # React components
+├── components/      # React components with local styles (.tsx + .css)
 │   ├── MahjongHand.tsx
-│   └── TileKeyboard.tsx
-├── lib/           # Utility functions and constants
-│   ├── tiles.ts
-│   └── validator.ts
-└── assets/        # Static assets (images, icons)
-    └── tiles/     # Mahjong tile SVGs
+│   ├── TileKeyboard.tsx
+│   └── ...
+├── styles/          # Design system core
+│   ├── variables.css     # Design tokens (colors, spacing, etc.)
+│   ├── base.css          # Resets and global styles
+│   └── layout.css        # Core layout containers
+├── lib/             # Core business logic
+│   ├── validator.ts      # Winning hand algorithm
+│   ├── comboDetector.ts  # Set/Group detection logic
+│   └── tiles.ts          # Tile definitions & metadata
+├── assets/          # Static resources
+│   └── tiles/           # Optimized Mahjong tile SVGs
+└── index.css        # Global entry point for styles
+
 ```
 
-## Deployment
+## 🧪 Development Workflow
 
-This project is configured for deployment on Cloudflare Workers using Wrangler. To deploy:
+- `npm run dev` - Start development server
+- `npm run build` - Create production-ready bundle
+- `npm run test` - Run Jest test suite
+- `npm run lint` - Run ESLint for code quality
 
-1. Ensure you have Wrangler installed:
+## ⚡ Performance Optimizations
 
-    ```bash
-    npm install -g wrangler
-    ```
+### Font Self-Hosting
+To minimize First Contentful Paint (FCP), the project uses self-hosted **Inter** fonts. This eliminates the render-blocking effects of external CDNs and allows for fine-grained control over font loading strategies.
 
-2. Log in to your Cloudflare account:
+- **Preload**: Critical font weights are preloaded.
+- **Display**: `font-display: swap` ensures immediate text availability.
+- **Path**: Font files are located in `public/fonts/`.
 
-    ```bash
-    wrangler login
-    ```
+## 📜 License
 
-3. Deploy the application:
-    ```bash
-    wrangler deploy
-    ```
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## Configuration
+---
 
-The application uses `wrangler.json` for Cloudflare Workers configuration and follows standard Vite configuration patterns.
+<p align="center">
+  Developed with ❤️ for the Mahjong Community
+</p>
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-This project is licensed under the MIT License.
-
-## Font Optimization
-
-This project now uses self-hosted fonts to improve First Contentful Paint (FCP) performance. Instead of loading fonts from Google Fonts CDN which can cause render-blocking behavior, the Inter font is now self-hosted with the following optimizations:
-
-- Font files are served from the same domain, eliminating cross-origin requests
-- Added preload hints for critical font resources
-- Reduced the number of font weights to only those that are actually used (400, 500, 600, 700)
-- Used `font-display: swap` to ensure text remains visible during font loading
-
-The Inter font files (TTF format) are stored in the `public/fonts/` directory, with font-face declarations in the `src/fonts.css` file.

@@ -1,4 +1,6 @@
 import { MAHJONG_TILES, SUITS } from '../lib/tiles';
+import './TileKeyboard.css';
+
 import type { TileDef, Suit } from '../lib/tiles';
 
 interface Props {
@@ -12,6 +14,11 @@ export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange
   const filteredTiles = activeFilter === 'All'
     ? MAHJONG_TILES
     : MAHJONG_TILES.filter(t => t.suit === activeFilter);
+
+  // Helper function to determine if a tile is a flower
+  const isFlowerTile = (tileId: string): boolean => {
+    return tileId.startsWith('f');
+  };
 
   return (
     <div className="keyboard-container">
@@ -35,13 +42,16 @@ export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange
       <div className="glass-panel keyboard-grid">
         {filteredTiles.map(tile => {
           const currentCount = currentTiles.filter(t => t.id === tile.id).length;
-          const isAtLimit = currentCount >= 4;
+
+          // Flowers have a limit of 1, other tiles have a limit of 4
+          const maxLimit = isFlowerTile(tile.id) ? 1 : 4;
+          const isAtLimit = currentCount >= maxLimit;
 
           return (
             <button
               key={tile.id}
               onClick={() => !isAtLimit && onTileClick(tile)} // Disable click if at limit
-              title={`${tile.name}${isAtLimit ? ' (Limit reached: 4)' : ''}`}
+              title={`${tile.name}${isAtLimit ? ' (Limit reached)' : ''}`}
               className={`keyboard-tile-button ${isAtLimit ? 'at-limit' : ''}`}
             >
               <img
@@ -50,7 +60,7 @@ export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange
                 className={`keyboard-tile-image ${isAtLimit ? 'at-limit' : ''}`}
               />
               <span className={`keyboard-tile-label ${isAtLimit ? 'at-limit' : ''}`}>
-                {tile.name}{isAtLimit && ' (4)'}
+                {tile.name}
               </span>
             </button>
           );

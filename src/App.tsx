@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './index.css';
 import type { TileDef, Suit } from './lib/tiles';
@@ -12,12 +12,25 @@ import Layout from './components/Layout';
 import Header from './components/Header';
 import ValidationMessage from './components/ValidationMessage';
 import Separator from './components/Separator';
+import TileGlossary from './components/TileGlossary';
+import About from './components/About';
+import ScoringGuide from './components/ScoringGuide';
+import StrategyGuide from './components/StrategyGuide';
+import { useComboGroups } from './hooks/useComboGroups';
 
 function AppContent() {
   const [selectedTiles, setSelectedTiles] = useState<TileDef[]>([]);
   const [activeFilter, setActiveFilter] = useState<Suit | 'All'>('All');
   const [comboGroups, setComboGroups] = useState<ComboGroup[]>([]);
+  const [autoGroupEnabled, setAutoGroupEnabled] = useState(true);
   const [showComboSelector, setShowComboSelector] = useState(false);
+
+  const {
+    updateComboGroupsAfterRemoval,
+    updateComboGroupsAfterReorder,
+    calculateComboFormation
+  } = useComboGroups();
+
   const validation = useMemo(() => validateHand(selectedTiles), [selectedTiles, comboGroups]);
 
   // Calculate potential combos using useMemo to avoid unnecessary recalculations
@@ -41,19 +54,39 @@ function AppContent() {
     }
   }, [validation.isValid]);
 
-  const addTile = (tile: TileDef) => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const pageTitleMap: Record<string, string> = {
+      '/': 'Mahjong Hand Builder - Validate Your Winning Hands',
+      '/rules': 'Mahjong Rules - How to Play & Win',
+      '/glossary': 'Mahjong Tile Glossary - Visual Guide to All Tiles',
+      '/scoring': 'Mahjong Scoring Guide - Fan System & Hand Values',
+      '/strategy': 'Mahjong Strategy Guide - Tips, Waits & Mastery',
+      '/about': 'About Mahjong Hand Builder - Our Mission',
+    };
+    document.title = pageTitleMap[location.pathname] || 'Mahjong Hand Builder';
+  }, [location.pathname]);
+
+  const addTile = useCallback((tile: TileDef) => {
     // Count current occurrences of this tile
     const currentCount = selectedTiles.filter(t => t.id === tile.id).length;
 
-    // Check if adding this tile would exceed the limit of 4
-    if (currentCount >= 4) {
-      // Don't add the tile if we already have 4 of this type
+    // Flowers have a limit of 1, other tiles have a limit of 4
+    const maxLimit = tile.id.startsWith('f') ? 1 : 4;
+
+    // Check if adding this tile would exceed the limit
+    if (currentCount >= maxLimit) {
+      // Don't add the tile if we already have the maximum allowed
       return;
     }
 
     // Add the tile to selected tiles
     const newSelectedTiles = [...selectedTiles, tile];
     setSelectedTiles(newSelectedTiles);
+
+    // If auto-grouping is disabled, we don't show the selector automatically
+    if (!autoGroupEnabled) return;
 
     // Check if this addition creates a pair (2 identical tiles)
     // If so, we'll show the combo selector for pair/pung/kong options
@@ -64,45 +97,33 @@ function AppContent() {
       );
     });
 
-    // Check if we have a new potential pair that wasn't there before
-    const hasNewPair = updatedPotentialCombos.some(combo =>
-      combo.comboType === 'pair' &&
-      combo.tiles.length === 2 &&
-      combo.tiles.every(t => t.id === tile.id)
+    // Check if the newly added tile completes or is part of any potential combo
+    const newTileIndex = newSelectedTiles.length - 1;
+    const hasNewlyFormedCombo = updatedPotentialCombos.some(combo =>
+      combo.indices.includes(newTileIndex)
     );
 
-    // If we have a new pair, we should show the combo selector
-    if (hasNewPair) {
+    // If we have a newly formed combo involving the added tile, show the combo selector
+    if (hasNewlyFormedCombo) {
       setShowComboSelector(true);
     }
-  };
+  }, [selectedTiles, comboGroups, autoGroupEnabled]);
 
-  const removeTile = (index: number) => {
+  const removeTile = useCallback((index: number) => {
     // Remove the tile from selected tiles
     const newTiles = [...selectedTiles];
     newTiles.splice(index, 1);
     setSelectedTiles(newTiles);
 
     // Update combo groups to reflect the removal
-    const updatedComboGroups = comboGroups
-      .map(group => ({
-        ...group,
-        indices: group.indices
-          .filter(i => i < index) // Keep indices that are before the removed tile
-          .concat( // Add indices that are after the removed tile (adjust for shift)
-            group.indices
-              .filter(i => i > index)
-              .map(i => i - 1) // Shift indices after the removed tile
-          )
-      }))
-      .filter(group => group.indices.length > 0); // Remove empty groups
-
+    const updatedComboGroups = updateComboGroupsAfterRemoval(comboGroups, index);
     setComboGroups(updatedComboGroups);
-  };
+  }, [comboGroups, selectedTiles, updateComboGroupsAfterRemoval]);
 
-  const reorderTiles = (oldIndex: number, newIndex: number) => {
+  const reorderTiles = useCallback((oldIndex: number, newIndex: number) => {
+    if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return;
+
     setSelectedTiles((prev) => {
-      if (oldIndex < 0 || newIndex < 0) return prev;
       const result = [...prev];
       const [removed] = result.splice(oldIndex, 1);
       result.splice(newIndex, 0, removed);
@@ -111,58 +132,35 @@ function AppContent() {
 
     // Update combo groups to reflect the reordering
     setComboGroups(prevGroups => {
-      return prevGroups.map(group => {
-        // Create a mapping of old indices to new indices
-        let newIndices = [...group.indices];
-
-        // Apply the same reorder transformation to the combo indices
-        // If oldIndex comes before newIndex, shifting elements to the left
-        if (oldIndex < newIndex) {
-          newIndices = newIndices.map(idx => {
-            if (idx === oldIndex) {
-              return newIndex; // Move the item to the new position
-            } else if (idx > oldIndex && idx <= newIndex) {
-              return idx - 1; // Shift items in between one position left
-            }
-            return idx;
-          });
-        } else if (oldIndex > newIndex) {
-          newIndices = newIndices.map(idx => {
-            if (idx === oldIndex) {
-              return newIndex; // Move the item to the new position
-            } else if (idx >= newIndex && idx < oldIndex) {
-              return idx + 1; // Shift items in between one position right
-            }
-            return idx;
-          });
-        }
-        // If oldIndex === newIndex, no change needed
-
-        // Sort the indices to maintain order within the combo
-        newIndices.sort((a, b) => a - b);
-
-        return {
-          ...group,
-          indices: newIndices
-        };
-      });
+      return updateComboGroupsAfterReorder(prevGroups, oldIndex, newIndex);
     });
-  };
+  }, [updateComboGroupsAfterReorder]);
 
-  const clearHand = () => {
-    if (confirm('Are you sure you want to clear your hand?')) {
-      setSelectedTiles([]);
-      setComboGroups([]);
-      // setShowComboSelector will be updated by the effect when potentialCombos changes
-    }
-  };
+  const clearHand = useCallback(() => {
+    setSelectedTiles([]);
+    setComboGroups([]);
+  }, []);
 
-  const handleComboSelect = (comboIndex: number, formation: ComboFormation, targetComboType?: 'pair' | 'pung' | 'kong') => {
+  const handleComboSelect = useCallback((comboIndex: number, formation: ComboFormation, targetComboType?: 'pair' | 'pung' | 'kong' | 'chow' | 'upgrade') => {
     const selectedCombo = potentialCombos[comboIndex];
     if (!selectedCombo) return;
 
-    // Determine the actual combo type to use
-    const actualComboType = targetComboType || selectedCombo.comboType;
+    // Determine the actual combo type to use - only upgrade if targetComboType is provided
+    const actualComboType = targetComboType || (selectedCombo.comboType === 'chow' || selectedCombo.comboType === 'upgrade' ? selectedCombo.comboType : selectedCombo.comboType);
+
+    // Only process if actualComboType is a type that can be upgraded (pair or pung)
+    if (actualComboType !== 'pair' && actualComboType !== 'pung' && actualComboType !== 'kong') {
+      // For chow or other non-upgradable combos, just create the group directly
+      const newComboGroup: ComboGroup = {
+        tiles: selectedCombo.tiles,
+        comboType: selectedCombo.comboType as 'pair' | 'pung' | 'kong' | 'chow' | 'upgrade',
+        formation,
+        indices: selectedCombo.indices
+      };
+
+      setComboGroups(prev => [...prev, newComboGroup]);
+      return;
+    }
 
     // Calculate how many additional tiles we need
     let additionalTilesNeeded = 0;
@@ -183,44 +181,12 @@ function AppContent() {
       setSelectedTiles(prev => [...prev, ...additionalTiles]);
     }
 
-    // Create the combo group with the target combo type
-    // If we're upgrading, we need to create the correct number of tiles for the combo
-    let comboTiles = selectedCombo.tiles;
-    if (actualComboType === 'pung' && selectedCombo.comboType === 'pair') {
-      // If we're upgrading from pair to pung, we need to add one more tile
-      comboTiles = [...selectedCombo.tiles, tileToAdd];
-    } else if (actualComboType === 'kong') {
-      // If we're making a kong, we need 4 tiles of the same type
-      if (selectedCombo.comboType === 'pair') {
-        // Upgrading from pair to kong requires 2 more tiles
-        comboTiles = [...selectedCombo.tiles, tileToAdd, tileToAdd];
-      } else if (selectedCombo.comboType === 'pung') {
-        // Upgrading from pung to kong requires 1 more tile
-        comboTiles = [...selectedCombo.tiles, tileToAdd];
-      }
-    }
-
-    // Calculate the correct indices for the combo based on the current state
-    // After tiles have been added, we need to account for the new positions
-    let comboIndices: number[];
-    if (actualComboType === 'pung' && selectedCombo.comboType === 'pair') {
-      // For upgrading pair to pung, use the original indices and add the new index
-      // The new tile will be added at the end of the current selectedTiles array
-      // So the new index will be the current length of the array minus 1 (since we just added one tile)
-      comboIndices = [...selectedCombo.indices, selectedTiles.length];
-    } else if (actualComboType === 'kong' && selectedCombo.comboType === 'pair') {
-      // For upgrading pair to kong, use the original indices and add 2 new indices
-      // The new tiles will be added at the end of the current selectedTiles array
-      const firstNewIndex = selectedTiles.length;
-      const secondNewIndex = selectedTiles.length + 1;
-      comboIndices = [...selectedCombo.indices, firstNewIndex, secondNewIndex];
-    } else if (actualComboType === 'kong' && selectedCombo.comboType === 'pung') {
-      // For upgrading pung to kong, use the original indices and add 1 new index
-      comboIndices = [...selectedCombo.indices, selectedTiles.length];
-    } else {
-      // For regular selection (no upgrade), use the original indices
-      comboIndices = [...selectedCombo.indices];
-    }
+    // Calculate the combo formation (tiles and indices)
+    const { comboTiles, comboIndices } = calculateComboFormation(
+      selectedCombo,
+      actualComboType,
+      selectedTiles.length
+    );
 
     const newComboGroup: ComboGroup = {
       tiles: comboTiles,
@@ -232,13 +198,11 @@ function AppContent() {
     setComboGroups(prev => [...prev, newComboGroup]);
 
     // The selector will be updated by the effect when potentialCombos changes
-  };
+  }, [potentialCombos, selectedTiles.length, calculateComboFormation]);
 
-  const cancelComboSelection = () => {
+  const cancelComboSelection = useCallback(() => {
     setShowComboSelector(false);
-  };
-
-  const location = useLocation();
+  }, []);
 
   return (
     <>
@@ -247,6 +211,19 @@ function AppContent() {
           <Header />
 
           <section className="section-full-width">
+            <div className="settings-bar">
+              <button
+                className={`toggle-btn ${autoGroupEnabled ? 'active' : ''}`}
+                onClick={() => setAutoGroupEnabled(!autoGroupEnabled)}
+                title={autoGroupEnabled ? "Disable Auto-Grouping" : "Enable Auto-Grouping"}
+              >
+                {autoGroupEnabled ? 'Auto-Grouping: ON' : 'Auto-Grouping: OFF'}
+              </button>
+              <a href="/rules" className="toggle-btn" title="View Mahjong Rules">
+                Learn Rules
+              </a>
+            </div>
+
             <MahjongHand
               tiles={selectedTiles}
               onRemoveTile={removeTile}
@@ -291,6 +268,10 @@ export default function App() {
         <Routes>
           <Route path="/" element={<AppContent />} />
           <Route path="/rules" element={<MahjongRules />} />
+          <Route path="/glossary" element={<TileGlossary />} />
+          <Route path="/scoring" element={<ScoringGuide />} />
+          <Route path="/strategy" element={<StrategyGuide />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </Layout>
     </Router>

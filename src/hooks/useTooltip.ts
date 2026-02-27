@@ -16,7 +16,7 @@ export const useTooltip = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-    
+
     setContent(tooltipContent);
     calculatePosition(e);
     setShow(true);
@@ -32,31 +32,46 @@ export const useTooltip = () => {
   const calculatePosition = (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
-    const tooltipWidth = 300; // Approximate width of tooltip
-    const tooltipHeight = 150; // Approximate height of tooltip
-    const margin = 10;
-    
+    const viewportWidth = window.innerWidth;
+    const tooltipWidth = Math.min(300, viewportWidth * 0.8);
+    const tooltipHeight = 160; // Approximate
+    const margin = 12;
+
     let top, left, placement: 'top' | 'bottom' | 'left' | 'right';
-    
-    // Try to position above the element first
-    if (rect.top > tooltipHeight + margin) {
-      top = rect.top - tooltipHeight - margin;
-      left = rect.left + (rect.width / 2);
-      placement = 'top';
-    } else if (window.innerHeight - rect.bottom > tooltipHeight + margin) {
-      top = rect.bottom + margin;
-      left = rect.left + (rect.width / 2);
-      placement = 'bottom';
-    } else if (rect.left > tooltipWidth + margin) {
-      top = rect.top + (rect.height / 2);
-      left = rect.left - tooltipWidth - margin;
-      placement = 'left';
-    } else {
+
+    // Order of preference for vertical list like the modal: right, left, top, bottom
+    if (viewportWidth - rect.right > tooltipWidth + margin * 2) {
       top = rect.top + (rect.height / 2);
       left = rect.right + margin;
       placement = 'right';
+    } else if (rect.left > tooltipWidth + margin * 2) {
+      top = rect.top + (rect.height / 2);
+      left = rect.left - margin;
+      placement = 'left';
+    } else if (rect.top > tooltipHeight + margin) {
+      top = rect.top - margin;
+      left = rect.left + (rect.width / 2);
+      placement = 'top';
+    } else {
+      top = rect.bottom + margin;
+      left = rect.left + (rect.width / 2);
+      placement = 'bottom';
     }
-    
+
+    // Adjust left/top for specific placements
+    if (placement === 'top' || placement === 'bottom') {
+      // Centered horizontal position
+      const halfWidth = tooltipWidth / 2;
+      if (left < halfWidth + margin) {
+        left = halfWidth + margin;
+      } else if (left > viewportWidth - halfWidth - margin) {
+        left = viewportWidth - halfWidth - margin;
+      }
+    } else if (placement === 'right' || placement === 'left') {
+      // Centered vertical position is already handled by transform: translateY(-50%) in CSS
+      // So 'top' should be the center point
+    }
+
     setPosition({
       top: top,
       left: left,

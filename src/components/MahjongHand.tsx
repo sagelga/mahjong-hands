@@ -8,7 +8,6 @@ import {
   TouchSensor,
 } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
-import type { JSX } from 'react';
 import {
   SortableContext,
   sortableKeyboardCoordinates,
@@ -20,7 +19,11 @@ import { restrictToHorizontalAxis, restrictToWindowEdges } from '@dnd-kit/modifi
 import type { TileDef } from '../lib/tiles';
 import type { ComboGroup } from '../lib/comboDetector';
 
+import './MahjongHand.css';
+import './Tile.css';
+
 interface SortableItemProps {
+
   id: string;
   tile: TileDef;
   index: number;
@@ -117,19 +120,42 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
     })
   );
 
+  // Create a map for faster lookup of tile indices
+  const tileIdToIndexMap = new Map<string | number, number>();
+  tiles.forEach((tile, index) => {
+    tileIdToIndexMap.set(`tile-${index}-${tile.id}`, index);
+  });
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const oldIndex = tiles.findIndex((_, idx) => `tile-${idx}-${tiles[idx].id}` === active.id);
-      const newIndex = tiles.findIndex((_, idx) => `tile-${idx}-${tiles[idx].id}` === over.id);
-      if (oldIndex !== -1 && newIndex !== -1) {
+      const oldIndex = tileIdToIndexMap.get(active.id);
+      const newIndex = tileIdToIndexMap.get(over.id);
+      if (oldIndex !== undefined && newIndex !== undefined) {
         onReorderTiles(oldIndex, newIndex);
       }
     }
   }
 
-  const flowerTilesCount = tiles.filter(t => t.suit === 'Flowers').length;
-  const mainHandCount = tiles.length - flowerTilesCount;
+  // Separate flower tiles from main tiles for layout
+  const flowerTiles = tiles
+    .map((tile, index) => ({ tile, index }))
+    .filter(item => item.tile.suit === 'Flowers');
+
+  const mainTiles = tiles
+    .map((tile, index) => ({ tile, index }))
+    .filter(item => item.tile.suit !== 'Flowers');
+
+  const mainHandCount = mainTiles.length;
+  const flowerTilesCount = flowerTiles.length;
+
+  // Pre-compute combo membership for better performance
+  const comboMembership = new Map<number, ComboGroup>();
+  comboGroups.forEach(comboGroup => {
+    comboGroup.indices.forEach(index => {
+      comboMembership.set(index, comboGroup);
+    });
+  });
 
   // Group tiles by their combo groups to render them in containers
   const elements = [];
@@ -141,14 +167,11 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
     comboGroup.indices.forEach(index => processedIndices.add(index));
 
     // Render the entire combo as a group
-    const comboTileElements: JSX.Element[] = [];
-    const comboTiles = comboGroup.indices.map(idx => tiles[idx]);
-
-    comboTiles.forEach((tile, comboIndex) => {
-      const globalIndex = comboGroup.indices[comboIndex];
+    const comboTileElements = comboGroup.indices.map((globalIndex) => {
+      const tile = tiles[globalIndex];
       const isInvalidTile = invalidTiles.includes(tile.id);
 
-      comboTileElements.push(
+      return (
         <SortableTile
           key={`tile-${globalIndex}-${tile.id}`}
           id={`tile-${globalIndex}-${tile.id}`}
@@ -178,10 +201,10 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
     );
   }
 
-  // Then, render any remaining standalone tiles
-  tiles.forEach((tile, index) => {
+  // Then, render any remaining main tiles that are not in combos
+  mainTiles.forEach(({ tile, index }) => {
     if (!processedIndices.has(index)) {
-      const tileComboGroupForThisTile = comboGroups.find(group => group.indices.includes(index));
+      const tileComboGroupForThisTile = comboMembership.get(index);
       const isInvalidTile = invalidTiles.includes(tile.id);
 
       elements.push(
@@ -204,9 +227,6 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
       <div className="hand-header">
         <h2 className="hand-title">Your Hand</h2>
         <div className="hand-info">
-          {flowerTilesCount > 0 && (
-            <span className="hand-flower-info">🌸 {flowerTilesCount}</span>
-          )}
           <span className={`hand-main-info ${isValid ? 'valid' : ''}`}>
             Main: {mainHandCount}/14
           </span>
@@ -221,65 +241,54 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
       </div>
 
       <div
-        className={`glass-panel hand-container ${isValid ? 'valid' : ''}`}
+        className={`glass-panel hand-container-wrapper ${isValid ? 'valid' : ''}`}
+        data-testid="hand-container"
       >
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          modifiers={[restrictToHorizontalAxis, restrictToWindowEdges]}
-        >
-          <SortableContext
-            items={elements.map((_, idx) => `element-${idx}`)}
-            strategy={horizontalListSortingStrategy}
+        <div className="hand-main-grid">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToHorizontalAxis, restrictToWindowEdges]}
           >
-            {elements.map((element, idx) => {
-              // For simplicity, we'll wrap each element in a SortableItem for drag and drop
-              // This is a simplified approach - in a real implementation we'd need to handle
-              // dragging of both individual tiles and entire combo groups
-              return (
-                <SortableItemWrapper
-                  key={`element-${idx}`}
-                  id={`element-${idx}`}
-                  element={element}
+            <SortableContext
+              items={tiles.map((_, idx) => `tile-${idx}-${tiles[idx].id}`)}
+              strategy={horizontalListSortingStrategy}
+            >
+              {elements}
+            </SortableContext>
+          </DndContext>
+
+          {/* Ghost slots to show 14 intended tiles */}
+          {mainHandCount < 14 && Array.from({ length: 14 - mainHandCount }).map((_, i) => (
+            <div
+              key={`blank-${i}`}
+              className="blank-tile-slot"
+            >
+              +
+            </div>
+          ))}
+        </div>
+
+        {flowerTilesCount > 0 && (
+          <div className="hand-flowers-area">
+            <div className="flower-area-label">Flowers</div>
+            <div className="flower-tiles-row">
+              {flowerTiles.map(({ tile, index }) => (
+                <SortableTile
+                  key={`tile-${index}-${tile.id}`}
+                  id={`tile-${index}-${tile.id}`}
+                  tile={tile}
+                  index={index}
+                  onRemove={onRemoveTile}
+                  isValid={isValid}
+                  isInvalidTile={false}
                 />
-              );
-            })}
-          </SortableContext>
-        </DndContext>
-
-        {/* Ghost slots to show 14 intended tiles */}
-        {mainHandCount < 14 && Array.from({ length: 14 - mainHandCount }).map((_, i) => (
-          <div
-            key={`blank-${i}`}
-            className="blank-tile-slot"
-          >
-            +
+              ))}
+            </div>
           </div>
-        ))}
+        )}
       </div>
-    </div>
-  );
-}
-
-// Wrapper component to make any element sortable
-function SortableItemWrapper({ id, element }: { id: string; element: JSX.Element }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {element}
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import { validateHand } from './validator';
-import type { TileDef, Suit } from './tiles';
+import { validateHand } from '../src/lib/validator';
+import type { TileDef, Suit } from '../src/lib/tiles';
 
 // Create simplified tile data for testing (without import.meta.url dependency)
 const TEST_TILES: TileDef[] = [

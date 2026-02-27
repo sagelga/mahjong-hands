@@ -1,0 +1,15 @@
+@import '../styles/variables.css';
+
+.footer-container {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  margin-top: auto;
+}
+
+.footer-copyright { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+.footer-links { margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--text-secondary); }
+.footer-links a { color: var(--accent-primary); text-decoration: none; font-weight: 600; }
+.footer-links a:hover { text-decoration: underline; }
+.footer-attribution { font-size: 0.75rem; color: var(--text-secondary); }

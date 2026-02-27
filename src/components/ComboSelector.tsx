@@ -1,263 +1,241 @@
+import React, { useMemo, useCallback, memo } from 'react';
+import './ComboSelector.css';
+import './Tooltip.css';
+
 import type { PotentialCombo, ComboFormation } from '../lib/comboDetector';
 import { useTooltip } from '../hooks/useTooltip';
 
+type TargetComboType = 'pair' | 'pung' | 'kong' | 'chow' | 'upgrade';
+
 interface Props {
   potentialCombos: PotentialCombo[];
-  onComboSelect: (comboIndex: number, formation: ComboFormation, targetComboType?: 'pair' | 'pung' | 'kong') => void;
+  onComboSelect: (comboIndex: number, formation: ComboFormation, targetComboType?: TargetComboType) => void;
   onCancel: () => void;
 }
 
+interface NormalizedCombo {
+  id: string;
+  originalIndex: number;
+  type: TargetComboType;
+  label: string;
+  tiles: any[]; // Infers from PotentialCombo
+  targetComboType?: TargetComboType;
+}
+
+// 1. Extract static data outside component lifecycle
+const TOOLTIP_DATA: Record<string, { title: string; description: string; tilesCount: number; scoringInfo: string }> = {
+  pair: {
+    title: 'Pair',
+    description: 'Two identical tiles that form the "eye" (or head), an essential component to complete a standard winning hand.',
+    tilesCount: 2,
+    scoringInfo: 'Essential for all winning hands. Generally scores lower than sequences and triplets.',
+  },
+  chow: {
+    title: 'Chow',
+    description: 'A numerical sequence of three consecutive tiles from the same suit (e.g., 2-3-4 of Bamboo).',
+    tilesCount: 3,
+    scoringInfo: 'Usually scores less than pungs. In most rulesets, a discarded tile can only be claimed for a chow from the player to your immediate left.',
+  },
+  pung: {
+    title: 'Pung',
+    description: 'A triplet of three identical tiles. This can be formed using any suited tiles, winds, or dragons.',
+    tilesCount: 3,
+    scoringInfo: 'Scores higher than chows. Melded pungs score less than concealed pungs.',
+  },
+  kong: {
+    title: 'Kong',
+    description: 'A quadruplet of four identical tiles. While it contains four tiles, it counts as a single triplet for hand completion and grants an extra tile draw.',
+    tilesCount: 4,
+    scoringInfo: 'Highest scoring meld. A kong can be formed by adding a fourth tile to an existing pung.',
+  }
+};
+
+const DEFAULT_TOOLTIP = {
+  title: 'Unknown',
+  description: 'Invalid or unrecognized tile combination.',
+  tilesCount: 0,
+  scoringInfo: ''
+};
+
+// 2. Memoized purely presentational Tooltip content
+const TooltipContent = memo(function TooltipContent({ type }: { type: string }) {
+  const data = TOOLTIP_DATA[type] || DEFAULT_TOOLTIP;
+
+  return (
+    <div className="tooltip-content">
+      <div className="tooltip-definition">{data.title}</div>
+      <div className="tooltip-description">{data.description}</div>
+      <div className="tooltip-tiles">
+        {Array.from({ length: data.tilesCount }).map((_, i) => (
+          <div key={i} className="tooltip-tile" style={{ backgroundColor: '#ccc' }} />
+        ))}
+      </div>
+      <div className="tooltip-scoring">{data.scoringInfo}</div>
+    </div>
+  );
+});
+
+interface ComboItemProps {
+  combo: NormalizedCombo;
+  onSelect: (index: number, formation: ComboFormation, targetType?: TargetComboType) => void;
+  showTooltip: (e: React.MouseEvent, content: React.ReactElement) => void;
+  hideTooltip: () => void;
+  clearHideTimeout: () => void;
+}
+
+// 3. Extracted List Item for individual memoization
+const ComboItem = memo(function ComboItem({
+  combo,
+  onSelect,
+  showTooltip,
+  hideTooltip,
+  clearHideTimeout
+}: ComboItemProps) {
+  const { originalIndex, type, label, tiles, targetComboType } = combo;
+
+  const handleMouseEnter = useCallback((e: React.MouseEvent) => {
+    showTooltip(e, <TooltipContent type={type} />);
+  }, [showTooltip, type]);
+
+  const onConcealedClick = useCallback(() => {
+    onSelect(originalIndex, 'concealed', targetComboType);
+  }, [onSelect, originalIndex, targetComboType]);
+
+  const onMeldedClick = useCallback(() => {
+    onSelect(originalIndex, 'melded', targetComboType);
+  },[onSelect, originalIndex, targetComboType]);
+
+  return (
+    <div
+      className="potential-combo-item"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={hideTooltip}
+      onMouseMove={clearHideTimeout}
+    >
+      <div className="combo-type">{label}</div>
+
+      <div className="combo-tiles">
+        {tiles.map((tile, tileIndex) => (
+          <img
+            key={tileIndex}
+            src={tile.image}
+            alt={tile.name}
+            className="combo-tile-image"
+          />
+        ))}
+      </div>
+
+      <div className="combo-options">
+        <button className="combo-option-btn concealed" onClick={onConcealedClick}>
+          <div className="main-label">Concealed</div>
+          <div className="sub-label">(self-drawn)</div>
+        </button>
+        <button className="combo-option-btn melded" onClick={onMeldedClick}>
+          <div className="main-label">Melded</div>
+          <div className="sub-label">(from discard)</div>
+        </button>
+      </div>
+    </div>
+  );
+});
+
 export default function ComboSelector({ potentialCombos, onComboSelect, onCancel }: Props) {
-  const concealedTooltip = useTooltip();
-  const meldedTooltip = useTooltip();
+  // We only ever need a single tooltip for the mouse position
+  const tooltip = useTooltip();
+
+  const handleModalClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+  },[]);
+
+  const handleCloseClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onCancel();
+  }, [onCancel]);
+
+  // 4. Flatten the Data to reduce deep JSX branching loops below
+  const normalizedCombos = useMemo<NormalizedCombo[]>(() => {
+    const result: NormalizedCombo[] = [];
+
+    potentialCombos.forEach((combo, index) => {
+      const { comboType, tiles } = combo;
+
+      // Handle Upgradeable logic automatically without duplication
+      if (comboType === 'pair' || comboType === 'pung') {
+        const baseTile = tiles[0];
+        const types: TargetComboType[] = comboType === 'pair'
+          ? ['pair', 'pung', 'kong']
+          : ['pung', 'kong'];
+
+        types.forEach(type => {
+          const tileCount = type === 'pair' ? 2 : type === 'pung' ? 3 : 4;
+          result.push({
+            id: `${index}-${type}`,
+            originalIndex: index,
+            type,
+            label: type.charAt(0).toUpperCase() + type.slice(1),
+            tiles: Array(tileCount).fill(baseTile),
+            targetComboType: type
+          });
+        });
+      } else {
+        // Handle standard Non-Upgradeable items normally
+        result.push({
+          id: `${index}-${comboType}`,
+          originalIndex: index,
+          type: comboType as TargetComboType,
+          label: comboType.charAt(0).toUpperCase() + comboType.slice(1),
+          tiles,
+          targetComboType: undefined
+        });
+      }
+    });
+
+    return result;
+  }, [potentialCombos]);
 
   if (potentialCombos.length === 0) {
     return null;
   }
 
-  // Function to render tooltip content based on combo type
-  const renderTooltipContent = (type: string) => {
-    let title, description, tilesCount, scoringInfo;
-
-    switch(type) {
-      case 'pair':
-        title = 'Pair';
-        description = 'Two identical tiles that form the "eye" (or head), an essential component to complete a standard winning hand.';
-        tilesCount = 2;
-        scoringInfo = 'Essential for all winning hands. Generally scores lower than sequences and triplets.';
-        break;
-      case 'chow':
-        title = 'Chow';
-        description = 'A numerical sequence of three consecutive tiles from the same suit (e.g., 2-3-4 of Bamboo).';
-        tilesCount = 3;
-        scoringInfo = 'Usually scores less than pungs. In most rulesets, a discarded tile can only be claimed for a chow from the player to your immediate left.';
-        break;
-      case 'pung':
-        title = 'Pung';
-        description = 'A triplet of three identical tiles. This can be formed using any suited tiles, winds, or dragons.';
-        tilesCount = 3;
-        scoringInfo = 'Scores higher than chows. Melded pungs score less than concealed pungs.';
-        break;
-      case 'kong':
-        title = 'Kong';
-        description = 'A quadruplet of four identical tiles. While it contains four tiles, it counts as a single triplet for hand completion and grants an extra tile draw.';
-        tilesCount = 4;
-        scoringInfo = 'Highest scoring meld. A kong can be formed by adding a fourth tile to an existing pung.';
-        break;
-      default:
-        title = 'Unknown';
-        description = 'Invalid or unrecognized tile combination.';
-        tilesCount = 0;
-        scoringInfo = '';
-    }
-
-    return (
-      <div className="tooltip-content">
-        <div className="tooltip-definition">{title}</div>
-        <div className="tooltip-description">{description}</div>
-        <div className="tooltip-tiles">
-          {[...Array(tilesCount)].map((_, i) => (
-            <div key={i} className="tooltip-tile" style={{ backgroundColor: '#ccc' }}></div>
-          ))}
-        </div>
-        <div className="tooltip-scoring">{scoringInfo}</div>
-      </div>
-    );
-  };
-
-  // Unified display for all combo types
   return (
     <div className="combo-selector-overlay" onClick={onCancel}>
-      <div className="combo-selector-modal" onClick={e => e.stopPropagation()}>
+      <div className="combo-selector-modal" onClick={handleModalClick}>
         <div className="modal-header">
           <h3>Select Formation</h3>
           <button
             className="close-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onCancel();
-            }}
+            onClick={handleCloseClick}
             aria-label="Close"
           >
-            ×
+            &times;
           </button>
         </div>
         <p>Select the formation you want to use:</p>
 
         <div className="potential-combos-list">
-          {potentialCombos.map((combo, index) => {
-            // Check if this is an upgradeable combo (pair or pung)
-            const isUpgradeable = combo.comboType === 'pair' || combo.comboType === 'pung';
-
-            if (isUpgradeable) {
-              // For upgradeable combos, show all possible upgrade options
-              const baseTile = combo.tiles[0];
-              const upgradeOptions = [];
-
-              if (combo.comboType === 'pair') {
-                // From pair, can form pair, pung, or kong
-                upgradeOptions.push({
-                  type: 'pair',
-                  tiles: [baseTile, baseTile],
-                  label: 'Pair',
-                  description: 'Two identical tiles'
-                });
-
-                upgradeOptions.push({
-                  type: 'pung',
-                  tiles: [baseTile, baseTile, baseTile],
-                  label: 'Pung',
-                  description: 'Three identical tiles'
-                });
-
-                upgradeOptions.push({
-                  type: 'kong',
-                  tiles: [baseTile, baseTile, baseTile, baseTile],
-                  label: 'Kong',
-                  description: 'Four identical tiles'
-                });
-              } else if (combo.comboType === 'pung') {
-                // From pung, can form pung or kong
-                upgradeOptions.push({
-                  type: 'pung',
-                  tiles: [baseTile, baseTile, baseTile],
-                  label: 'Pung',
-                  description: 'Three identical tiles'
-                });
-
-                upgradeOptions.push({
-                  type: 'kong',
-                  tiles: [baseTile, baseTile, baseTile, baseTile],
-                  label: 'Kong',
-                  description: 'Four identical tiles'
-                });
-              }
-
-              return upgradeOptions.map((option, optIndex) => (
-                <div key={`${index}-${optIndex}`} className="potential-combo-item">
-                  <div className="combo-tiles">
-                    {option.tiles.map((tile, tileIndex) => (
-                      <img
-                        key={tileIndex}
-                        src={tile.image}
-                        alt={tile.name}
-                        className="combo-tile-image"
-                      />
-                    ))}
-                  </div>
-
-                  <div className="combo-type">
-                    {option.label}
-                  </div>
-
-                  <div className="combo-options">
-                    <div
-                      onMouseEnter={(e) => concealedTooltip.showTooltip(e, renderTooltipContent(option.type))}
-                      onMouseLeave={concealedTooltip.hideTooltip}
-                      onMouseMove={concealedTooltip.clearHideTimeout}
-                    >
-                      <button
-                        className="combo-option-btn concealed"
-                        onClick={() => onComboSelect(index, 'concealed', option.type as 'pair' | 'pung' | 'kong')}
-                      >
-                        <div className="main-label">Concealed</div>
-                        <div className="sub-label">(self-drawn)</div>
-                      </button>
-                    </div>
-                    <div
-                      onMouseEnter={(e) => meldedTooltip.showTooltip(e, renderTooltipContent(option.type))}
-                      onMouseLeave={meldedTooltip.hideTooltip}
-                      onMouseMove={meldedTooltip.clearHideTimeout}
-                    >
-                      <button
-                        className="combo-option-btn melded"
-                        onClick={() => onComboSelect(index, 'melded', option.type as 'pair' | 'pung' | 'kong')}
-                      >
-                        <div className="main-label">Melded</div>
-                        <div className="sub-label">(from discard)</div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ));
-            } else {
-              // For non-upgradeable combos (like chows), use the original display
-              return (
-                <div key={index} className="potential-combo-item">
-                  <div className="combo-tiles">
-                    {combo.tiles.map((tile, tileIndex) => (
-                      <img
-                        key={tileIndex}
-                        src={tile.image}
-                        alt={tile.name}
-                        className="combo-tile-image"
-                      />
-                    ))}
-                  </div>
-
-                  <div className="combo-type">
-                    {combo.comboType === 'pair' ? 'Pair' : combo.comboType.charAt(0).toUpperCase() + combo.comboType.slice(1)}
-                  </div>
-
-                  <div className="combo-options">
-                    <div
-                      onMouseEnter={(e) => concealedTooltip.showTooltip(e, renderTooltipContent(combo.comboType))}
-                      onMouseLeave={concealedTooltip.hideTooltip}
-                      onMouseMove={concealedTooltip.clearHideTimeout}
-                    >
-                      <button
-                        className="combo-option-btn concealed"
-                        onClick={() => onComboSelect(index, 'concealed')}
-                      >
-                        <div className="main-label">Concealed</div>
-                        <div className="sub-label">(self-drawn)</div>
-                      </button>
-                    </div>
-                    <div
-                      onMouseEnter={(e) => meldedTooltip.showTooltip(e, renderTooltipContent(combo.comboType))}
-                      onMouseLeave={meldedTooltip.hideTooltip}
-                      onMouseMove={meldedTooltip.clearHideTimeout}
-                    >
-                      <button
-                        className="combo-option-btn melded"
-                        onClick={() => onComboSelect(index, 'melded')}
-                      >
-                        <div className="main-label">Melded</div>
-                        <div className="sub-label">(from discard)</div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-          })}
+          {normalizedCombos.map((combo) => (
+            <ComboItem
+              key={combo.id}
+              combo={combo}
+              onSelect={onComboSelect}
+              showTooltip={tooltip.showTooltip}
+              hideTooltip={tooltip.hideTooltip}
+              clearHideTimeout={tooltip.clearHideTimeout}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Render tooltips */}
-      {concealedTooltip.show && (
+      {tooltip.show && (
         <div
-          className={`tooltip ${concealedTooltip.position.placement}`}
+          className={`tooltip ${tooltip.position.placement}`}
           style={{
-            top: `${concealedTooltip.position.top}px`,
-            left: `${concealedTooltip.position.left}px`
+            top: `${tooltip.position.top}px`,
+            left: `${tooltip.position.left}px`
           }}
         >
-          {concealedTooltip.content}
-          <div className={`tooltip-arrow ${concealedTooltip.position.placement}`}></div>
-        </div>
-      )}
-
-      {meldedTooltip.show && (
-        <div
-          className={`tooltip ${meldedTooltip.position.placement}`}
-          style={{
-            top: `${meldedTooltip.position.top}px`,
-            left: `${meldedTooltip.position.left}px`
-          }}
-        >
-          {meldedTooltip.content}
-          <div className={`tooltip-arrow ${meldedTooltip.position.placement}`}></div>
+          {tooltip.content}
+          <div className={`tooltip-arrow ${tooltip.position.placement}`} />
         </div>
       )}
     </div>

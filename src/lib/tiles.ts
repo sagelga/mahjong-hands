@@ -4,9 +4,11 @@ export interface TileDef {
   id: string;
   suit: Suit;
   value: number | string;
+  number?: number; // For backward compatibility
   name: string;
   unicode: string;
   image: string;
+  category?: string;
 }
 
 const getImageUrl = (id: string) => new URL(`../assets/tiles/${id}.svg`, import.meta.url).href;
