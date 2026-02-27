@@ -1,9 +1,12 @@
-import './MahjongRules.css'; // Reusing some base informative styles
+import './MahjongRules.css';
+import { CtaCard } from './CtaCard';
+import PageHeader from './PageHeader';
+import PageContent from './PageContent';
 
 export default function About() {
   return (
-    <main className="rules-container">
-      <h1 className="rules-title">About Mahjong Hand Builder</h1>
+    <PageContent className="rules-container">
+      <PageHeader title="About Mahjong Hand Builder" />
 
       <section className="rules-section">
         <h2 className="rules-subtitle">The Mission</h2>
@@ -33,13 +36,13 @@ export default function About() {
         </p>
       </section>
 
-      <div className="glass-panel" style={{ padding: '2rem', marginTop: '3rem', textAlign: 'center' }}>
-        <h3>Ready to build your hand?</h3>
-        <p style={{ margin: '1rem 0 1.5rem' }}>Start adding tiles to see our validator in action.</p>
-        <a href="/" className="filter-button active" style={{ display: 'inline-block', textDecoration: 'none' }}>
-           Go to Builder
-        </a>
-      </div>
-    </main>
+      <CtaCard
+        title="Ready to build your hand?"
+        description="Start adding tiles to see our validator in action."
+        buttons={[
+          { label: 'Go to Builder', href: '/' },
+        ]}
+      />
+    </PageContent>
   );
 }

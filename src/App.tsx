@@ -16,13 +16,13 @@ import TileGlossary from './components/TileGlossary';
 import About from './components/About';
 import ScoringGuide from './components/ScoringGuide';
 import StrategyGuide from './components/StrategyGuide';
+import NotFound from './components/NotFound';
 import { useComboGroups } from './hooks/useComboGroups';
 
 function AppContent() {
   const [selectedTiles, setSelectedTiles] = useState<TileDef[]>([]);
   const [activeFilter, setActiveFilter] = useState<Suit | 'All'>('All');
   const [comboGroups, setComboGroups] = useState<ComboGroup[]>([]);
-  const [autoGroupEnabled, setAutoGroupEnabled] = useState(true);
   const [showComboSelector, setShowComboSelector] = useState(false);
 
   const {
@@ -85,9 +85,6 @@ function AppContent() {
     const newSelectedTiles = [...selectedTiles, tile];
     setSelectedTiles(newSelectedTiles);
 
-    // If auto-grouping is disabled, we don't show the selector automatically
-    if (!autoGroupEnabled) return;
-
     // Check if this addition creates a pair (2 identical tiles)
     // If so, we'll show the combo selector for pair/pung/kong options
     const updatedPotentialCombos = detectPotentialCombos(newSelectedTiles).filter(combo => {
@@ -107,7 +104,7 @@ function AppContent() {
     if (hasNewlyFormedCombo) {
       setShowComboSelector(true);
     }
-  }, [selectedTiles, comboGroups, autoGroupEnabled]);
+  }, [selectedTiles, comboGroups]);
 
   const removeTile = useCallback((index: number) => {
     // Remove the tile from selected tiles
@@ -212,13 +209,6 @@ function AppContent() {
 
           <section className="section-full-width">
             <div className="settings-bar">
-              <button
-                className={`toggle-btn ${autoGroupEnabled ? 'active' : ''}`}
-                onClick={() => setAutoGroupEnabled(!autoGroupEnabled)}
-                title={autoGroupEnabled ? "Disable Auto-Grouping" : "Enable Auto-Grouping"}
-              >
-                {autoGroupEnabled ? 'Auto-Grouping: ON' : 'Auto-Grouping: OFF'}
-              </button>
               <a href="/rules" className="toggle-btn" title="View Mahjong Rules">
                 Learn Rules
               </a>
@@ -272,6 +262,7 @@ export default function App() {
           <Route path="/scoring" element={<ScoringGuide />} />
           <Route path="/strategy" element={<StrategyGuide />} />
           <Route path="/about" element={<About />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
     </Router>

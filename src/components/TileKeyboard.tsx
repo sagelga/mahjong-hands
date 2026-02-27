@@ -39,8 +39,8 @@ export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange
       </div>
 
       {/* Keyboard Grid */}
-      <div className="glass-panel keyboard-grid">
-        {filteredTiles.map(tile => {
+      <div key={activeFilter} className="glass-panel keyboard-grid">
+        {filteredTiles.map((tile, i) => {
           const currentCount = currentTiles.filter(t => t.id === tile.id).length;
 
           // Flowers have a limit of 1, other tiles have a limit of 4
@@ -53,6 +53,7 @@ export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange
               onClick={() => !isAtLimit && onTileClick(tile)} // Disable click if at limit
               title={`${tile.name}${isAtLimit ? ' (Limit reached)' : ''}`}
               className={`keyboard-tile-button ${isAtLimit ? 'at-limit' : ''}`}
+              style={{ animationDelay: `${i * 18}ms` }}
             >
               <img
                 src={tile.image}

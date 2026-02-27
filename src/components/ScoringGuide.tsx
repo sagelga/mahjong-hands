@@ -1,4 +1,9 @@
 import './ScoringGuide.css';
+import { CtaCard } from './CtaCard';
+import { SectionHeader } from './SectionHeader';
+import { InfoBox } from './InfoBox';
+import PageHeader from './PageHeader';
+import PageContent from './PageContent';
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 
@@ -87,15 +92,15 @@ export default function ScoringGuide() {
   );
 
   return (
-    <main className="scoring-container">
+    <PageContent className="scoring-container">
 
       {/* ── Hero ── */}
-      <div className="scoring-hero">
-        <h1>Mahjong Scoring Guide</h1>
-        <p>
-          How Fan (番) is earned in Hong Kong standard Mahjong — organized by set type, patterns, and winning conditions.
-        </p>
-        <div className="scoring-stats">
+      <PageHeader 
+        title="Mahjong Scoring Guide"
+        subtitle="How Fan (番) is earned in Hong Kong standard Mahjong — organized by set type, patterns, and winning conditions."
+      />
+
+      <div className="scoring-stats">
           <div className="stat-pill" style={{ borderColor: 'rgba(16,185,129,0.4)' }}>
             <div className="stat-pill-value" style={{ color: '#10b981' }}>{totalEntries}</div>
             <div className="stat-pill-label">Scoring Rules</div>
@@ -113,73 +118,54 @@ export default function ScoringGuide() {
             <div className="stat-pill-label">Thirteen Orphans</div>
           </div>
         </div>
-      </div>
 
       {/* ── 1. Basic Sets ── */}
       <div className="scoring-section">
-        <div className="section-header">
-          <span className="section-icon">🀄</span>
-          <h2 className="section-title">Basic Sets</h2>
-        </div>
+        <SectionHeader icon="🀄" title="Basic Sets" />
         <FanGallery items={BASIC_SETS} accent="green" />
-        <div className="info-box">
+        <InfoBox>
           <strong>Tip:</strong> Dragon Pungs and Wind Pungs stack with each other. Scoring two Dragon Pungs in the same hand earns 2 extra Fan before counting any hand patterns.
-        </div>
+        </InfoBox>
       </div>
 
       {/* ── 2. Flowers & Seasons ── */}
       <div className="scoring-section">
-        <div className="section-header">
-          <span className="section-icon">🌸</span>
-          <h2 className="section-title">Flowers & Seasons</h2>
-        </div>
+        <SectionHeader icon="🌸" title="Flowers & Seasons" />
         <FanGallery items={FLOWERS_SEASONS} accent="pink" />
-        <div className="info-box" data-accent="pink">
+        <InfoBox accent="pink">
           <strong>Note:</strong> Your seat's own Flower/Season is worth 1 Fan. Collecting all four Flowers or all four Seasons each add 2 Fan — independent of each other.
-        </div>
+        </InfoBox>
       </div>
 
       {/* ── 3. Pung / Kong Patterns ── */}
       <div className="scoring-section">
-        <div className="section-header">
-          <span className="section-icon">🐉</span>
-          <h2 className="section-title">Pung & Kong Patterns</h2>
-        </div>
+        <SectionHeader icon="🐉" title="Pung & Kong Patterns" />
         <FanGallery items={PUNG_KONG_PATTERNS} accent="amber" />
       </div>
 
       {/* ── 4. Whole Hand Patterns ── */}
       <div className="scoring-section">
-        <div className="section-header">
-          <span className="section-icon">✨</span>
-          <h2 className="section-title">Whole Hand Patterns</h2>
-        </div>
+        <SectionHeader icon="✨" title="Whole Hand Patterns" />
         <FanGallery items={WHOLE_HAND_PATTERNS} accent="blue" />
-        <div className="info-box" data-accent="blue">
+        <InfoBox accent="blue">
           <strong>One Suit Only</strong> (Full Flush) is the highest regular hand at 6 Fan.
           <strong> Seven Pairs</strong> at 4 Fan is a popular route to a fast win.
           These patterns apply to the entire hand structure — not individual sets.
-        </div>
+        </InfoBox>
       </div>
 
       {/* ── 5. Winning Conditions ── */}
       <div className="scoring-section">
-        <div className="section-header">
-          <span className="section-icon">🏆</span>
-          <h2 className="section-title">Winning Conditions</h2>
-        </div>
+        <SectionHeader icon="🏆" title="Winning Conditions" />
         <FanGallery items={WINNING_CONDITIONS} accent="violet" />
-        <div className="info-box" data-accent="violet">
+        <InfoBox accent="violet">
           These bonuses apply on top of your hand score. Self-draw (Tsumo) is the most impactful — all three players pay, and with each payer responsible for the full amount in many house rules.
-        </div>
+        </InfoBox>
       </div>
 
       {/* ── 6. Payment Quick-Reference ── */}
       <div className="scoring-section">
-        <div className="section-header">
-          <span className="section-icon">💰</span>
-          <h2 className="section-title">Fan → Payment Reference</h2>
-        </div>
+        <SectionHeader icon="💰" title="Fan → Payment Reference" />
         <div className="payment-grid">
           {PAYMENT_REFS.map(ref => (
             <div key={ref.fan} className="payment-card">
@@ -197,21 +183,21 @@ export default function ScoringGuide() {
             </div>
           ))}
         </div>
-        <div className="info-box">
+        <InfoBox>
           <strong>Note:</strong> Values follow Hong Kong standard doubling formula. A cap (上限) at 8–10 Fan is common in house rules. For Self-Draw, each of the three other players pays the listed amount.
-        </div>
+        </InfoBox>
       </div>
 
       {/* ── CTA ── */}
-      <div className="scoring-cta">
-        <h3>Build a high-Fan hand now</h3>
-        <p>Use the Hand Builder to construct and validate scoring patterns like Pung Hand or Seven Pairs.</p>
-        <div className="cta-buttons">
-          <a href="/" className="btn-primary">Open Hand Builder</a>
-          <a href="/strategy" className="btn-secondary">Strategy Guide →</a>
-        </div>
-      </div>
+      <CtaCard
+        title="Build a high-Fan hand now"
+        description="Use the Hand Builder to construct and validate scoring patterns like Pung Hand or Seven Pairs."
+        buttons={[
+          { label: 'Open Hand Builder', href: '/' },
+          { label: 'Strategy Guide →', href: '/strategy', variant: 'secondary' },
+        ]}
+      />
 
-    </main>
+    </PageContent>
   );
 }

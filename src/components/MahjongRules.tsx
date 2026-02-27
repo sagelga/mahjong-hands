@@ -1,7 +1,7 @@
 import './MahjongRules.css';
 import { memo } from 'react';
-
-
+import PageHeader from './PageHeader';
+import PageContent from './PageContent';
 
 const RULES_SECTIONS = [
   {
@@ -139,12 +139,12 @@ const RulesSection = ({ section }: { section: typeof RULES_SECTIONS[number] }) =
 
 const MahjongRules = () => {
   return (
-    <main className="rules-container">
-      <h1 className="rules-title">How to Play Mahjong</h1>
+    <PageContent className="rules-container">
+      <PageHeader title="How to Play Mahjong" />
       {RULES_SECTIONS.map((section) => (
         <RulesSection key={section.id} section={section} />
       ))}
-    </main>
+    </PageContent>
   );
 };
 

@@ -18,6 +18,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { restrictToHorizontalAxis, restrictToWindowEdges } from '@dnd-kit/modifiers';
 import type { TileDef } from '../lib/tiles';
 import type { ComboGroup } from '../lib/comboDetector';
+import { Trash2 } from 'lucide-react';
 
 import './MahjongHand.css';
 import './Tile.css';
@@ -235,7 +236,7 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
             className="clear-button"
             title="Clear hand"
           >
-            🗑️
+            <Trash2 size={14} strokeWidth={2.5} />
           </button>
         </div>
       </div>
