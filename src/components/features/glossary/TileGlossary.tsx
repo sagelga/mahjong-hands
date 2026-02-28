@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
+import type React from 'react';
 import { MAHJONG_TILES, SUITS } from '../../../lib/tiles';
 import type { TileDef } from '../../../lib/tiles';
+
+interface CustomCSSProperties extends React.CSSProperties {
+  '--rank-color'?: string;
+}
 import './TileGlossary.css';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
@@ -186,7 +191,7 @@ function TileDrawer({ tile, onClose }: { tile: TileDef; onClose: () => void }) {
 
         <div className="drawer-tips">
           {tips.map((tip, i) => (
-            <div key={i} className="drawer-tip-card" style={{ '--rank-color': RANK_COLORS[i] } as React.CSSProperties}>
+            <div key={i} className="drawer-tip-card" style={{ '--rank-color': RANK_COLORS[i] } as CustomCSSProperties}>
               <div className="tip-card-top">
                 <div className="tip-rank" style={{ background: RANK_COLORS[i] }}>#{i + 1}</div>
                 <div className="tip-names">

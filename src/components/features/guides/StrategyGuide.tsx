@@ -3,6 +3,7 @@ import { CtaCard } from '../../ui/CtaCard';
 import { SectionHeader } from '../../ui/SectionHeader';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
+import LearnPageNav from './LearnPageNav';
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 
@@ -333,7 +334,7 @@ export default function StrategyGuide() {
           { label: 'Scoring Guide →', href: '/scoring', variant: 'secondary' },
         ]}
       />
-
+      <LearnPageNav />
     </PageContent>
   );
 }

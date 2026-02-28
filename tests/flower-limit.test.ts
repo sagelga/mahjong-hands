@@ -1,12 +1,14 @@
+interface MockTile { id: string; suit: string; name: string; }
+
 // Simple test to verify flower limit functionality
 describe('Flower Tile Limit', () => {
   test('should enforce flower limit of 1 per type', () => {
     // Mock tile selection logic
-    const selectedTiles = [];
+    const selectedTiles: MockTile[] = [];
 
-    const addTile = (tile: any) => {
+    const addTile = (tile: MockTile) => {
       // Count current occurrences of this tile
-      const currentCount = selectedTiles.filter((t: any) => t.id === tile.id).length;
+      const currentCount = selectedTiles.filter((t: MockTile) => t.id === tile.id).length;
 
       // Flowers have a limit of 1, other tiles have a limit of 4
       const maxLimit = tile.id.startsWith('f') ? 1 : 4;
@@ -40,11 +42,11 @@ describe('Flower Tile Limit', () => {
 
   test('should allow multiple different flower tiles', () => {
     // Mock tile selection logic
-    const selectedTiles = [];
+    const selectedTiles: MockTile[] = [];
 
-    const addTile = (tile: any) => {
+    const addTile = (tile: MockTile) => {
       // Count current occurrences of this tile
-      const currentCount = selectedTiles.filter((t: any) => t.id === tile.id).length;
+      const currentCount = selectedTiles.filter((t: MockTile) => t.id === tile.id).length;
 
       // Flowers have a limit of 1, other tiles have a limit of 4
       const maxLimit = tile.id.startsWith('f') ? 1 : 4;
@@ -79,11 +81,11 @@ describe('Flower Tile Limit', () => {
 
   test('should allow 4 of non-flower tiles', () => {
     // Mock tile selection logic
-    const selectedTiles = [];
+    const selectedTiles: MockTile[] = [];
 
-    const addTile = (tile: any) => {
+    const addTile = (tile: MockTile) => {
       // Count current occurrences of this tile
-      const currentCount = selectedTiles.filter((t: any) => t.id === tile.id).length;
+      const currentCount = selectedTiles.filter((t: MockTile) => t.id === tile.id).length;
 
       // Flowers have a limit of 1, other tiles have a limit of 4
       const maxLimit = tile.id.startsWith('f') ? 1 : 4;
@@ -123,11 +125,11 @@ describe('Flower Tile Limit', () => {
 
   test('should enforce limit for each flower type individually', () => {
     // Mock tile selection logic
-    const selectedTiles = [];
+    const selectedTiles: MockTile[] = [];
 
-    const addTile = (tile: any) => {
+    const addTile = (tile: MockTile) => {
       // Count current occurrences of this tile
-      const currentCount = selectedTiles.filter((t: any) => t.id === tile.id).length;
+      const currentCount = selectedTiles.filter((t: MockTile) => t.id === tile.id).length;
 
       // Flowers have a limit of 1, other tiles have a limit of 4
       const maxLimit = tile.id.startsWith('f') ? 1 : 4;
@@ -152,7 +154,7 @@ describe('Flower Tile Limit', () => {
     ];
 
     // Add each different flower tile - should all succeed
-    flowerTiles.forEach((tile, index) => {
+    flowerTiles.forEach((tile) => {
       const success = addTile(tile);
       expect(success).toBe(true);
     });

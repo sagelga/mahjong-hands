@@ -39,7 +39,7 @@ const HOUSE_RULES: HouseRuleOption[] = [
   },
 ];
 
-export function HouseRuleSelector() {
+function HouseRuleSelector() {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);

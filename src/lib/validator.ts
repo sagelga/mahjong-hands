@@ -163,9 +163,8 @@ function canDecompose(counts: Record<string, number>): boolean {
         .join('|');
 
     // Check if we've already computed this state
-    if (memoizationCache.has(stateKey)) {
-        return memoizationCache.get(stateKey)!;
-    }
+    const cached = memoizationCache.get(stateKey);
+    if (cached !== undefined) return cached;
 
     // If no tiles left, we've successfully decomposed everything
     const remainingIds = Object.keys(counts).filter(id => counts[id] > 0);

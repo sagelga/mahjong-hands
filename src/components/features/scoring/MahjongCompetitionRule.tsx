@@ -4,7 +4,7 @@ import { SectionHeader } from '../../ui/SectionHeader';
 import { InfoBox } from '../../ui/InfoBox';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
-import { HouseRuleSelector } from '../builder/HouseRuleSelector';
+import HouseRuleSelector from '../builder/HouseRuleSelector';
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 // Based on World Mahjong Organization (WMO) official competition rules.

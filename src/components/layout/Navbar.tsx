@@ -47,6 +47,7 @@ export default function Navbar() {
 
   // Close on route change
   const location = useLocation();
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMenuOpen(false); }, [location.pathname]);
 
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');

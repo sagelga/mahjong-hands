@@ -1,4 +1,4 @@
-import '../features/guides/MahjongRules.css';
+import './About.css';
 import { CtaCard } from '../ui/CtaCard';
 import PageHeader from '../layout/PageHeader';
 import PageContent from '../layout/PageContent';

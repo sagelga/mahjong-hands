@@ -6,10 +6,11 @@ import { FanCard } from '../../ui/FanCard';
 import { CtaCard } from '../../ui/CtaCard';
 import TileKeyboard from '../builder/TileKeyboard';
 import type { Suit } from '../../../lib/tiles';
+import LearnPageNav from './LearnPageNav';
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 
-const SUITS = [
+const SUIT_CARDS = [
   {
     label: 'Characters',
     chinese: 'Wàn (萬)',
@@ -182,7 +183,7 @@ const MahjongRules = () => {
           If you are playing poker, you are more familar with Club, Heart, Diamond, Spade. The goes the same as mahjong, but this one is stone-sized and comes in these four suits:
         </p>
         <div className="rules-fan-grid">
-          {SUITS.map(suit => (
+          {SUIT_CARDS.map(suit => (
             <FanCard
               key={suit.label}
               fan={suit.count}
@@ -194,27 +195,27 @@ const MahjongRules = () => {
           ))}
         </div>
         <p className="rules-body">
-          Characters, Dots, and Bamboo each have numbers 1 to 9, with 4 copies of each tile — just like having four decks of cards. Honors use Chinese characters for Winds and Dragons, also with 4 copies per face.
+          Characters, Dots, and Bamboo each have face numbers value range from 1 to 9, with 4 copies of each tile — just like having four decks of poker cards. Honors in the other hand, use Chinese characters for Winds and Dragons, also with 4 copies per face.
         </p>
+
+         <p className="rules-body">For new players that can't read Chinese, don't worry about what it mean in your language. You only need to recognize the patterns so you can match it within your hand. Click the Characters, Dots, Bamboos, Honors and Flowers down below to see what the card looks like.</p>
 
         <TileSetViewer />
 
         <p className="rules-body">
-          Did you notice the 8 tiles are missing here? These are called flowers and seasons and it worked as a score bonus. We will go through that later in the scoring section.
+          Did you notice the 8 tiles are missing from 32+32+32+28 tiles above? These are called flowers and seasons and it worked as a score bonus. We will go through that later in the scoring section.
         </p>
-
-
       </div>
 
       {/* ── 2. How to Win ── */}
       <div className="rules-section">
         <h2>How to win in mahjong</h2>
         <p className="rules-body">
-          In mahjong, we will play in multiple rounds, with at least 4 rounds will be played in a single game. This allows everyone to take part as a banker and start the round first. We will explain the word again later.
+          In mahjong, we will play in multiple rounds, with at least 4 rounds will be played in a single game. This allows everyone to take part as a banker and start the round first. But we will walkthrough all the stages of the games later.
         </p>
 
         <p className="rules-body">
-          For each round, 4 players will each have <strong>13 tiles in their hand</strong>, and combined with another one tile from previous player's discard tile or drawn from the center (known as wall) forming a 14-tile that can consists of:
+          For each round, 4 players will each have <strong>13 tiles in their hand</strong> either hidden (concealed) or declaired (melded), and combined with another one tile from previous player's discard tile or drawn from the center (known as wall) forming a 14-tile that can consists of:
         </p>
         <div className="rules-fan-grid">
           {WIN_CONDITIONS.map(w => (
@@ -227,6 +228,9 @@ const MahjongRules = () => {
             />
           ))}
         </div>
+       <p className="rules-body">
+        Disclaimer: For new people that want to learn a generic mahjong ruleset, stick with the 4 sets and 1 pair. Other game variants might have something that is on top of this basic rule.
+        </p>
       </div>
 
       {/* ── 3. Hand Types ── */}
@@ -251,6 +255,7 @@ const MahjongRules = () => {
           { label: 'Tile Glossary →', href: '/glossary', variant: 'secondary' },
         ]}
       />
+      <LearnPageNav />
     </PageContent>
   );
 };

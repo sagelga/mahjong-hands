@@ -1,4 +1,9 @@
 import './FanCard.css';
+import type React from 'react';
+
+interface CustomCSSProperties extends React.CSSProperties {
+  '--pay-accent'?: string;
+}
 
 interface FanCardProps {
   fan: string | number;
@@ -28,9 +33,9 @@ export function FanCard({
     yellow: '--pay-accent: linear-gradient(90deg,#fbbf24,#fde68a);',
   };
 
-  const style = {
-    ['--pay-accent' as string]: accentClasses[accent].match(/linear-gradient\([^)]+\)/)?.[0],
-  } as React.CSSProperties;
+  const style: CustomCSSProperties = {
+    '--pay-accent': accentClasses[accent].match(/linear-gradient\([^)]+\)/)?.[0],
+  };
 
   return (
     <div className="fan-card" style={style}>

@@ -34,7 +34,7 @@ function AppContent() {
     calculateComboFormation
   } = useComboGroups();
 
-  const validation = useMemo(() => validateHand(selectedTiles), [selectedTiles, comboGroups]);
+  const validation = useMemo(() => validateHand(selectedTiles), [selectedTiles]);
 
   // Calculate potential combos using useMemo to avoid unnecessary recalculations
   const potentialCombos = useMemo(() => {
@@ -70,9 +70,7 @@ function AppContent() {
       '/learn/scoring': 'Learn Scoring - Mahjong Fan System',
       '/learn/scoring/house': 'House Rule Scoring - Mahjong Hand Builder',
       '/learn/scoring/hk-old': 'Hong Kong Old Style Scoring - Mahjong Hand Builder',
-      '/learn/scoring/riichi': 'Japanese Riichi Scoring - Mahjong Hand Builder',
       '/learn/scoring/mcr': 'Mahjong Competition Rules Scoring - Mahjong Hand Builder',
-      '/learn/tiles': 'Learn Tiles - Mahjong Tile Guide',
     };
     document.title = pageTitleMap[location.pathname] || 'Mahjong Hand Builder';
   }, [location.pathname]);

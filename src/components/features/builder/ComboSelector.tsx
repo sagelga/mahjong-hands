@@ -1,7 +1,9 @@
-import React, { useMemo, useCallback, memo } from 'react';
+import { useMemo, useCallback, memo } from 'react';
+import type React from 'react';
 import './ComboSelector.css';
 import '../../ui/Tooltip.css';
 
+import type { TileDef } from '../../../lib/tiles';
 import type { PotentialCombo, ComboFormation } from '../../../lib/comboDetector';
 import { useTooltip } from '../../../hooks/useTooltip';
 
@@ -18,7 +20,7 @@ interface NormalizedCombo {
   originalIndex: number;
   type: TargetComboType;
   label: string;
-  tiles: any[]; // Infers from PotentialCombo
+  tiles: TileDef[];
   targetComboType?: TargetComboType;
 }
 
@@ -78,7 +80,7 @@ const TooltipContent = memo(function TooltipContent({ type }: { type: string }) 
 interface ComboItemProps {
   combo: NormalizedCombo;
   onSelect: (index: number, formation: ComboFormation, targetType?: TargetComboType) => void;
-  showTooltip: (e: React.MouseEvent, content: React.ReactElement) => void;
+  showTooltip: (e: React.MouseEvent<HTMLDivElement>, content: React.ReactElement) => void;
   hideTooltip: () => void;
   clearHideTimeout: () => void;
 }
@@ -93,7 +95,7 @@ const ComboItem = memo(function ComboItem({
 }: ComboItemProps) {
   const { originalIndex, type, label, tiles, targetComboType } = combo;
 
-  const handleMouseEnter = useCallback((e: React.MouseEvent) => {
+  const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     showTooltip(e, <TooltipContent type={type} />);
   }, [showTooltip, type]);
 

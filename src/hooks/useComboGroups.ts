@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import type { TileDef } from '../lib/tiles';
-import type { ComboGroup } from '../lib/comboDetector';
+import type { ComboGroup, PotentialCombo } from '../lib/comboDetector';
 
 // Custom hook for managing combo groups
 export const useComboGroups = () => {
@@ -120,7 +120,7 @@ export const useComboGroups = () => {
 
   // Helper function to calculate combo formation based on upgrade
   const calculateComboFormation = useCallback((
-    selectedCombo: { tiles: TileDef[]; indices: number[]; comboType: 'pair' | 'pung' | 'chow' | 'kong' | 'upgrade'; },
+    selectedCombo: PotentialCombo,
     actualComboType: 'pair' | 'pung' | 'kong',
     currentTilesLength: number
   ): { comboTiles: TileDef[]; comboIndices: number[] } => {

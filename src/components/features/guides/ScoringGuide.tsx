@@ -4,11 +4,16 @@ import { SectionHeader } from '../../ui/SectionHeader';
 import { InfoBox } from '../../ui/InfoBox';
 import { FanCard } from '../../ui/FanCard';
 import PageHeader from '../../layout/PageHeader';
+import LearnPageNav from './LearnPageNav';
 import PageContent from '../../layout/PageContent';
-import { HouseRuleSelector } from '../builder/HouseRuleSelector';
+import HouseRuleSelector from '../builder/HouseRuleSelector';
 import { MAHJONG_TILES } from '../../../lib/tiles';
 
-const TileImage = ({ id }: { id: string }) => {
+interface TileImageProps {
+  id: string;
+}
+
+const TileImage = ({ id }: TileImageProps) => {
   const tile = MAHJONG_TILES.find(t => t.id === id);
   return tile ? <img src={tile.image} alt={tile.name} className="explanation-tile" /> : null;
 };
@@ -185,7 +190,7 @@ export default function ScoringGuide() {
           { label: 'Strategy Guide →', href: '/strategy', variant: 'secondary' },
         ]}
       />
-
-    </PageContent >
+      <LearnPageNav />
+    </PageContent>
   );
 }

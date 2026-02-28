@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import MahjongHand from '../src/components/MahjongHand';
+import MahjongHand from '../src/components/features/builder/MahjongHand';
 import type { TileDef } from '../src/lib/tiles';
 import type { ComboGroup } from '../src/lib/comboDetector';
 
@@ -79,7 +79,7 @@ describe('MahjongHand Component', () => {
     
     expect(screen.getByText('Your Hand')).toBeInTheDocument();
     expect(screen.getByText('Main: 4/14')).toBeInTheDocument();
-    expect(screen.getByText('🌸 1')).toBeInTheDocument(); // Flower count
+    expect(screen.getByText('Flowers')).toBeInTheDocument(); // Flower area label
   });
 
   test('renders tiles correctly', () => {

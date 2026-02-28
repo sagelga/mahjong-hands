@@ -6,31 +6,26 @@ import { Link } from 'react-router-dom';
 
 const LEARN_STEPS = [
   {
-    n: 1,
     title: 'Tiles',
     icon: '🀄',
     path: '/learn/tiles',
   },
   {
-    n: 2,
     title: 'Rules',
     icon: '📜',
     path: '/learn/rules',
   },
   {
-    n: 3,
     title: 'Starting the Round',
     icon: '🎲',
     path: '/learn/starting',
   },
   {
-    n: 4,
     title: 'Strategize Your Hand',
     icon: '🧠',
     path: '/learn/strategize',
   },
   {
-    n: 5,
     title: 'Scoring',
     icon: '📊',
     path: '/learn/scoring',
@@ -49,10 +44,10 @@ export default function Learn() {
 
       {/* ── Button Grid ── */}
       <div className="learn-grid">
-        {LEARN_STEPS.map((step) => (
-          <Link to={step.path} key={step.n} className="learn-card">
+        {LEARN_STEPS.map((step, index) => (
+          <Link to={step.path} key={index} className="learn-card">
             <div className="learn-content">
-              <div className="learn-number">{step.n}</div>
+              <div className="learn-number">{index + 1}</div>
               <div className="learn-title">{step.title}</div>
             </div>
             <div className="learn-icon">{step.icon}</div>

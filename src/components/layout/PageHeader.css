@@ -17,16 +17,6 @@
   margin-bottom: 0.75rem;
 }
 
-/* For pages that use the old rules-title class */
-.rules-title {
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-.glossary-title {
-  text-align: center;
-  margin-bottom: 1rem;
-}
 
 .page-subtitle {
   font-size: 1.1rem;

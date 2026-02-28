@@ -5,7 +5,7 @@ import { InfoBox } from '../../ui/InfoBox';
 import { FanCard } from '../../ui/FanCard';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
-import { HouseRuleSelector } from '../builder/HouseRuleSelector';
+import HouseRuleSelector from '../builder/HouseRuleSelector';
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 // Traditional Hong Kong Old Style scoring rules

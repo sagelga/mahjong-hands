@@ -120,9 +120,3 @@ export function detectPotentialCombos(tiles: TileDef[]): PotentialCombo[] {
   return potentialCombos;
 }
 
-/**
- * Checks if the selected tiles already form a combo
- */
-export function isPartOfExistingCombo(index: number, comboGroups: ComboGroup[]): boolean {
-  return comboGroups.some(group => group.indices.includes(index));
-}

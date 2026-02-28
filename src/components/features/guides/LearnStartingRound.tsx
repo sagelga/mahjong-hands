@@ -2,11 +2,17 @@ import './MahjongRules.css';
 import { CtaCard } from '../../ui/CtaCard';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
+import LearnPageNav from './LearnPageNav';
 
 export default function LearnStartingRound() {
   return (
     <PageContent className="rules-container">
-      <PageHeader title="Starting the Round" />
+      <PageHeader title="How to start a mahjong game" />
+
+      Setup
+      In my home, a sip of tea and or bring your favorite snacks and drinks are required. A playing environment should be cozy and be true to you as the game can go south very fast if you take it too serious.
+
+      So pick up your
 
       <section className="rules-section">
         <h2 className="rules-subtitle">Setup</h2>
@@ -55,6 +61,7 @@ export default function LearnStartingRound() {
           { label: 'Strategize Your Hand →', href: '/learn/strategize', variant: 'secondary' },
         ]}
       />
+      <LearnPageNav />
     </PageContent>
   );
 }

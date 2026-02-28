@@ -263,7 +263,7 @@ describe('useComboGroups', () => {
           tiles: [createMockTile('b1', 'Bamboo', 1)],
           comboType: 'pung',
           formation: 'concealed',
-          indices: [1, 3, 2] // Index 5 moved to position 2
+          indices: [1, 2, 4] // Index 5→2; indices 2,3,4 shift right: 3→4
         }
       ]);
     });
@@ -286,7 +286,7 @@ describe('useComboGroups', () => {
           tiles: [createMockTile('b1', 'Bamboo', 1)],
           comboType: 'pung',
           formation: 'concealed',
-          indices: [4, 3, 5] // Index 1 moved to position 4
+          indices: [2, 4, 5] // Index 1→4; indices 2,3,4 shift left: 3→2
         }
       ]);
     });
