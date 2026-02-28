@@ -4,6 +4,7 @@ import { SectionHeader } from '../../ui/SectionHeader';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
 import LearnPageNav from './LearnPageNav';
+import WaitTypePractice from './WaitTypePractice';
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 
@@ -323,6 +324,16 @@ export default function StrategyGuide() {
       <StrictRulesSection />
       <TipsSection />
       <WaitsSection />
+
+      {/* ── Interactive wait-type quiz ── */}
+      <div className="strategy-section">
+        <SectionHeader icon="🎯" title="Test Your Knowledge — Wait Types" />
+        <p style={{ marginBottom: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+          Read the tiles shown and pick the correct wait type. The missing tile(s) will be revealed after you answer.
+        </p>
+        <WaitTypePractice />
+      </div>
+
       <DoDontSection />
       <StepByStepGuide />
 

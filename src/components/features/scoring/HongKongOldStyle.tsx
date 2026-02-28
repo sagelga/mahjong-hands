@@ -1,14 +1,17 @@
 import '../guides/ScoringGuide.css';
 import { CtaCard } from '../../ui/CtaCard';
-import { SectionHeader } from '../../ui/SectionHeader';
-import { InfoBox } from '../../ui/InfoBox';
-import { FanCard } from '../../ui/FanCard';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
 import HouseRuleSelector from '../builder/HouseRuleSelector';
+import { ScoringStatsBar } from './ScoringStatsBar';
+import BasicSetsSection from './BasicSetsSection';
+import FlowersSeasonsSection from './FlowersSeasonsSection';
+import PungKongSection from './PungKongSection';
+import WholeHandSection from './WholeHandSection';
+import WinningConditionsSection from './WinningConditionsSection';
+import PaymentReferenceSection from './PaymentReferenceSection';
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
-// Traditional Hong Kong Old Style scoring rules
 
 const BASIC_SETS = [
   { name: 'Pung of Dragons',                 fan: 1, note: '' },
@@ -61,27 +64,6 @@ const PAYMENT_REFS = [
   { fan: 10, discard: '128', self: '64 ea.' },
 ];
 
-// ── HELPER ──────────────────────────────────────────────────────────────────
-
-type Accent = 'green' | 'pink' | 'amber' | 'blue' | 'violet';
-interface FanItem { name: string; fan: number; note: string; }
-
-function FanGallery({ items, accent }: { items: FanItem[]; accent: Accent }) {
-  return (
-    <div className="fan-gallery">
-      {items.map(item => (
-        <div key={item.name} className="fan-card" data-accent={accent}>
-          <div className="fan-badge" data-accent={accent}>
-            {item.fan} Fan
-          </div>
-          <div className="fan-card-name">{item.name}</div>
-          {item.note && <div className="fan-card-note">{item.note}</div>}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ── PAGE ─────────────────────────────────────────────────────────────────────
 
 export default function HongKongOldStyle() {
@@ -97,6 +79,13 @@ export default function HongKongOldStyle() {
     ...PUNG_KONG_PATTERNS.map(x => x.fan),
   );
 
+  const stats = [
+    { value: totalEntries, label: 'Scoring Rules',    color: '#10b981', borderColor: 'rgba(16,185,129,0.4)' },
+    { value: maxFan,       label: 'Max Fan (Limit)',  color: '#f59e0b', borderColor: 'rgba(245,158,11,0.4)' },
+    { value: 3,            label: 'Min Fan to Win',   color: '#3b82f6', borderColor: 'rgba(59,130,246,0.4)' },
+    { value: 13,           label: 'Thirteen Orphans', color: '#8b5cf6', borderColor: 'rgba(139,92,246,0.4)' },
+  ];
+
   return (
     <PageContent className="scoring-container">
 
@@ -108,93 +97,14 @@ export default function HongKongOldStyle() {
 
       <HouseRuleSelector />
 
-      <div className="scoring-stats">
-          <div className="stat-pill" style={{ borderColor: 'rgba(16,185,129,0.4)' }}>
-            <div className="stat-pill-value" style={{ color: '#10b981' }}>{totalEntries}</div>
-            <div className="stat-pill-label">Scoring Rules</div>
-          </div>
-          <div className="stat-pill" style={{ borderColor: 'rgba(245,158,11,0.4)' }}>
-            <div className="stat-pill-value" style={{ color: '#f59e0b' }}>{maxFan}</div>
-            <div className="stat-pill-label">Max Fan (Limit)</div>
-          </div>
-          <div className="stat-pill" style={{ borderColor: 'rgba(59,130,246,0.4)' }}>
-            <div className="stat-pill-value" style={{ color: '#3b82f6' }}>3</div>
-            <div className="stat-pill-label">Min Fan to Win</div>
-          </div>
-          <div className="stat-pill" style={{ borderColor: 'rgba(139,92,246,0.4)' }}>
-            <div className="stat-pill-value" style={{ color: '#8b5cf6' }}>13</div>
-            <div className="stat-pill-label">Thirteen Orphans</div>
-          </div>
-        </div>
+      <ScoringStatsBar stats={stats} />
 
-      {/* ── 1. Basic Sets ── */}
-      <div className="scoring-section">
-        <SectionHeader icon="🀄" title="Basic Sets" />
-        <FanGallery items={BASIC_SETS} accent="green" />
-        <InfoBox>
-          <strong>Tip:</strong> Dragon Pungs and Wind Pungs stack with each other. Scoring two Dragon Pungs in the same hand earns 2 extra Fan before counting any hand patterns.
-        </InfoBox>
-      </div>
-
-      {/* ── 2. Flowers & Seasons ── */}
-      <div className="scoring-section">
-        <SectionHeader icon="🌸" title="Flowers & Seasons" />
-        <FanGallery items={FLOWERS_SEASONS} accent="pink" />
-        <InfoBox accent="pink">
-          <strong>Note:</strong> Your seat's own Flower/Season is worth 1 Fan. Collecting all four Flowers or all four Seasons each add 2 Fan — independent of each other.
-        </InfoBox>
-      </div>
-
-      {/* ── 3. Pung / Kong Patterns ── */}
-      <div className="scoring-section">
-        <SectionHeader icon="🐉" title="Pung & Kong Patterns" />
-        <FanGallery items={PUNG_KONG_PATTERNS} accent="amber" />
-        <InfoBox accent="amber">
-          <strong>Big Three Dragons</strong> is a limit hand in many traditional rules, capping at 13 Fan regardless of other bonuses.
-        </InfoBox>
-      </div>
-
-      {/* ── 4. Whole Hand Patterns ── */}
-      <div className="scoring-section">
-        <SectionHeader icon="✨" title="Whole Hand Patterns" />
-        <FanGallery items={WHOLE_HAND_PATTERNS} accent="blue" />
-        <InfoBox accent="blue">
-          <strong>Thirteen Orphans</strong> is the ultimate limit hand at 13 Fan. <strong>One Suit Only</strong> (Full Flush) at 6 Fan is the highest regular hand pattern.
-        </InfoBox>
-      </div>
-
-      {/* ── 5. Winning Conditions ── */}
-      <div className="scoring-section">
-        <SectionHeader icon="🏆" title="Winning Conditions" />
-        <FanGallery items={WINNING_CONDITIONS} accent="violet" />
-        <InfoBox accent="violet">
-          These bonuses apply on top of your hand score. Self-draw (Tsumo) is the most impactful — all three players pay, and with each payer responsible for the full amount in many house rules.
-        </InfoBox>
-      </div>
-
-      {/* ── 6. Payment Quick-Reference ── */}
-      <div className="scoring-section">
-        <SectionHeader icon="💰" title="Fan → Payment Reference" />
-        <div className="payment-grid">
-          {PAYMENT_REFS.map((ref, idx) => {
-            const accents: Array<'green' | 'blue' | 'violet' | 'pink' | 'amber' | 'red' | 'orange' | 'yellow'> = ['green', 'blue', 'violet', 'pink', 'amber', 'red', 'orange', 'yellow'];
-            return (
-              <FanCard 
-                key={ref.fan} 
-                fan={ref.fan} 
-                fanLabel="Fan" 
-                title="Payment Reference"
-                description={`Discard: ${ref.discard} pts | Self: ${ref.self}`}
-                accent={accents[idx % 8]}
-                showDivider={true}
-              />
-            );
-          })}
-        </div>
-        <InfoBox>
-          <strong>Note:</strong> Values follow traditional Hong Kong doubling formula. Many house rules cap at 8–10 Fan (Limit). For Self-Draw, each of the three other players pays the listed amount.
-        </InfoBox>
-      </div>
+      <BasicSetsSection items={BASIC_SETS} />
+      <FlowersSeasonsSection items={FLOWERS_SEASONS} />
+      <PungKongSection items={PUNG_KONG_PATTERNS} />
+      <WholeHandSection items={WHOLE_HAND_PATTERNS} />
+      <WinningConditionsSection items={WINNING_CONDITIONS} />
+      <PaymentReferenceSection items={PAYMENT_REFS} />
 
       {/* ── CTA ── */}
       <CtaCard

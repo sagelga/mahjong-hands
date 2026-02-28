@@ -78,7 +78,6 @@ export default function Navbar() {
             <Link to="/learn/starting" className={`nav-dropdown-item ${location.pathname === '/learn/starting' ? 'active' : ''}`}>Starting</Link>
             <Link to="/learn/strategy" className={`nav-dropdown-item ${location.pathname === '/learn/strategy' ? 'active' : ''}`}>Strategy</Link>
             <Link to="/learn/scoring"  className={`nav-dropdown-item ${location.pathname === '/learn/scoring' ? 'active' : ''}`}>Scoring</Link>
-            <Link to="/learn/tiles"    className={`nav-dropdown-item ${location.pathname === '/learn/tiles' ? 'active' : ''}`}>Tiles</Link>
           </div>
         </div>
         

@@ -7,9 +7,9 @@ import { detectPotentialCombos, type ComboGroup, type ComboFormation } from './l
 import MahjongHand from './components/features/builder/MahjongHand';
 import TileKeyboard from './components/features/builder/TileKeyboard';
 import ComboSelector from './components/features/builder/ComboSelector';
+import ExampleHands from './components/features/builder/ExampleHands';
 import MahjongRules from './components/features/guides/MahjongRules';
 import Layout from './components/layout/Layout';
-import Header from './components/layout/Header';
 import ValidationMessage from './components/features/builder/ValidationMessage';
 import Separator from './components/ui/Separator';
 import TileGlossary from './components/features/glossary/TileGlossary';
@@ -145,6 +145,11 @@ function AppContent() {
     setComboGroups([]);
   }, []);
 
+  const loadExampleHand = useCallback((tiles: TileDef[]) => {
+    setSelectedTiles(tiles);
+    setComboGroups([]);
+  }, []);
+
   const handleComboSelect = useCallback((comboIndex: number, formation: ComboFormation, targetComboType?: 'pair' | 'pung' | 'kong' | 'chow' | 'upgrade') => {
     const selectedCombo = potentialCombos[comboIndex];
     if (!selectedCombo) return;
@@ -211,40 +216,42 @@ function AppContent() {
   return (
     <>
       {location.pathname === '/' ? (
-        <>
-          <Header />
+        <section className="section-full-width">
+          <MahjongHand
+            tiles={selectedTiles}
+            onRemoveTile={removeTile}
+            onReorderTiles={reorderTiles}
+            isValid={validation.isValid}
+            invalidTiles={validation.invalidTiles}
+            onClearHand={clearHand}
+            comboGroups={comboGroups}
+          />
 
-          <section className="section-full-width">
-            <MahjongHand
-              tiles={selectedTiles}
-              onRemoveTile={removeTile}
-              onReorderTiles={reorderTiles}
-              isValid={validation.isValid}
-              invalidTiles={validation.invalidTiles}
-              onClearHand={clearHand}
-              comboGroups={comboGroups}
-            />
-
+          {selectedTiles.length > 0 && (
             <ValidationMessage isValid={validation.isValid} reason={validation.reason} />
+          )}
 
-            <Separator />
+          <Separator />
 
-            <TileKeyboard
-              onTileClick={addTile}
-              activeFilter={activeFilter}
-              onFilterChange={setActiveFilter}
-              currentTiles={selectedTiles}
+          <TileKeyboard
+            onTileClick={addTile}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+            currentTiles={selectedTiles}
+          />
+
+          {selectedTiles.length === 0 && (
+            <ExampleHands onLoadHand={loadExampleHand} />
+          )}
+
+          {showComboSelector && potentialCombos.length > 0 && (
+            <ComboSelector
+              potentialCombos={potentialCombos}
+              onComboSelect={handleComboSelect}
+              onCancel={cancelComboSelection}
             />
-
-            {showComboSelector && potentialCombos.length > 0 && (
-              <ComboSelector
-                potentialCombos={potentialCombos}
-                onComboSelect={handleComboSelect}
-                onCancel={cancelComboSelection}
-              />
-            )}
-          </section>
-        </>
+          )}
+        </section>
       ) : (
         <MahjongRules />
       )}

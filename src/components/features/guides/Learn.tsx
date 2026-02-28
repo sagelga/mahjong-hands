@@ -6,11 +6,6 @@ import { Link } from 'react-router-dom';
 
 const LEARN_STEPS = [
   {
-    title: 'Tiles',
-    icon: '🀄',
-    path: '/learn/tiles',
-  },
-  {
     title: 'Rules',
     icon: '📜',
     path: '/learn/rules',

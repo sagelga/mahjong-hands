@@ -7,7 +7,8 @@
       "WebFetch(domain:en-academic.com)",
       "WebFetch(domain:mahjongscoring.org)",
       "WebFetch(domain:mahjong.wikidot.com)",
-      "WebFetch(domain:redmahjong.com)"
+      "WebFetch(domain:redmahjong.com)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

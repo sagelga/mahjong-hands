@@ -12,86 +12,16 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   horizontalListSortingStrategy,
-  useSortable,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { restrictToHorizontalAxis, restrictToWindowEdges } from '@dnd-kit/modifiers';
 import type { TileDef } from '../../../lib/tiles';
 import type { ComboGroup } from '../../../lib/comboDetector';
-import { Trash2 } from 'lucide-react';
 
 import './MahjongHand.css';
 import '../../ui/Tile.css';
-
-interface SortableItemProps {
-
-  id: string;
-  tile: TileDef;
-  index: number;
-  onRemove: (index: number) => void;
-  isValid: boolean;
-  isInvalidTile?: boolean;
-  comboGroup?: ComboGroup;
-}
-
-function SortableTile({ id, tile, index, onRemove, isValid, isInvalidTile, comboGroup }: SortableItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
-
-  const dragStyle = {
-    transform: CSS.Translate.toString(transform),
-    transition,
-    zIndex: isDragging ? 200 : 1,
-    opacity: isDragging ? 0.6 : 1,
-    cursor: isDragging ? 'grabbing' : 'pointer',
-    touchAction: 'none',
-  };
-
-  // Determine if this tile is part of a combo and what type
-  const isPartOfCombo = !!comboGroup;
-  const comboType = comboGroup?.formation;
-  const comboIndices = comboGroup?.indices || [];
-  const isFirstInCombo = comboIndices.length > 0 && comboIndices[0] === index;
-  const isLastInCombo = comboIndices.length > 0 && comboIndices[comboIndices.length - 1] === index;
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={dragStyle}
-      className={`tile-wrapper ${isDragging ? 'dragging' : ''} ${isPartOfCombo ? `combo-tile combo-${comboType}` : ''} ${isFirstInCombo ? 'combo-first' : ''} ${isLastInCombo ? 'combo-last' : ''}`}
-      {...attributes}
-      {...listeners}
-    >
-      <div
-        className={`tile-inner ${tile.suit === 'Flowers' ? 'flowers' : ''} ${isInvalidTile ? 'invalid' : ''} ${isValid ? 'valid' : 'default'} ${isPartOfCombo ? `combo-${comboType}` : ''}`}
-      >
-        <img
-          src={tile.image}
-          alt={tile.name}
-          className="tile-image"
-        />
-        {tile.suit === 'Flowers' && (
-          <span className="tile-flower-indicator">🌸</span>
-        )}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove(index);
-          }}
-          className="tile-remove-button"
-        >
-          ×
-        </button>
-      </div>
-    </div>
-  );
-}
+import SortableTile from './SortableTile';
+import HandHeader from './HandHeader';
+import FlowerTilesArea from './FlowerTilesArea';
 
 interface Props {
   tiles: TileDef[];
@@ -148,7 +78,6 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
     .filter(item => item.tile.suit !== 'Flowers');
 
   const mainHandCount = mainTiles.length;
-  const flowerTilesCount = flowerTiles.length;
 
   // Pre-compute combo membership for better performance
   const comboMembership = new Map<number, ComboGroup>();
@@ -164,10 +93,8 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
 
   // First, process all combo groups
   for (const comboGroup of comboGroups) {
-    // Add all tiles in this combo to the processed set
     comboGroup.indices.forEach(index => processedIndices.add(index));
 
-    // Render the entire combo as a group
     const comboTileElements = comboGroup.indices.map((globalIndex) => {
       const tile = tiles[globalIndex];
       const isInvalidTile = invalidTiles.includes(tile.id);
@@ -186,7 +113,6 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
       );
     });
 
-    // Add the combo container with tiles and label
     elements.push(
       <div
         key={`combo-${comboGroup.indices.join('-')}`}
@@ -225,21 +151,7 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
 
   return (
     <div className="keyboard-container">
-      <div className="hand-header">
-        <h2 className="hand-title">Your Hand</h2>
-        <div className="hand-info">
-          <span className={`hand-main-info ${isValid ? 'valid' : ''}`}>
-            Main: {mainHandCount}/14
-          </span>
-          <button
-            onClick={onClearHand}
-            className="clear-button"
-            title="Clear hand"
-          >
-            <Trash2 size={14} strokeWidth={2.5} />
-          </button>
-        </div>
-      </div>
+      <HandHeader mainHandCount={mainHandCount} isValid={isValid} onClearHand={onClearHand} />
 
       <div
         className={`glass-panel hand-container-wrapper ${isValid ? 'valid' : ''}`}
@@ -271,24 +183,7 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
           ))}
         </div>
 
-        {flowerTilesCount > 0 && (
-          <div className="hand-flowers-area">
-            <div className="flower-area-label">Flowers</div>
-            <div className="flower-tiles-row">
-              {flowerTiles.map(({ tile, index }) => (
-                <SortableTile
-                  key={`tile-${index}-${tile.id}`}
-                  id={`tile-${index}-${tile.id}`}
-                  tile={tile}
-                  index={index}
-                  onRemove={onRemoveTile}
-                  isValid={isValid}
-                  isInvalidTile={false}
-                />
-              ))}
-            </div>
-          </div>
-        )}
+        <FlowerTilesArea flowerTiles={flowerTiles} onRemoveTile={onRemoveTile} isValid={isValid} />
       </div>
     </div>
   );

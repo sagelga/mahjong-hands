@@ -1,14 +1,15 @@
 import '../guides/ScoringGuide.css';
 import { CtaCard } from '../../ui/CtaCard';
-import { SectionHeader } from '../../ui/SectionHeader';
 import { InfoBox } from '../../ui/InfoBox';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
 import HouseRuleSelector from '../builder/HouseRuleSelector';
+import { ScoringStatsBar } from './ScoringStatsBar';
+import LimitHandsSection from './LimitHandsSection';
+import HighValueSection from './HighValueSection';
+import StandardPatternsSection from './StandardPatternsSection';
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
-// Based on World Mahjong Organization (WMO) official competition rules.
-// Minimum score to win: 8 points. Patterns can stack unless otherwise noted.
 
 const LIMIT_HANDS = [
   { name: 'Big Four Winds',        fan: 88, note: 'Pungs/Kongs of all four Wind tiles' },
@@ -53,31 +54,17 @@ const STANDARD_PATTERNS = [
   { name: 'Self-Drawn',            fan: 1,  note: 'Won by drawing the winning tile yourself' },
 ];
 
-// ── HELPER ──────────────────────────────────────────────────────────────────
-
-type Accent = 'green' | 'pink' | 'amber' | 'blue' | 'violet';
-interface FanItem { name: string; fan: number; note: string; }
-
-function FanGallery({ items, accent }: { items: FanItem[]; accent: Accent }) {
-  return (
-    <div className="fan-gallery">
-      {items.map(item => (
-        <div key={item.name} className="fan-card" data-accent={accent}>
-          <div className="fan-badge" data-accent={accent}>
-            {item.fan} pts
-          </div>
-          <div className="fan-card-name">{item.name}</div>
-          {item.note && <div className="fan-card-note">{item.note}</div>}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ── PAGE ─────────────────────────────────────────────────────────────────────
 
 export default function MahjongCompetitionRule() {
   const totalPatterns = LIMIT_HANDS.length + HIGH_VALUE.length + STANDARD_PATTERNS.length;
+
+  const stats = [
+    { value: 81,           label: 'Patterns',     color: '#10b981', borderColor: 'rgba(16,185,129,0.4)' },
+    { value: 88,           label: 'Limit Points', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.4)' },
+    { value: 8,            label: 'Min to Win',   color: '#3b82f6', borderColor: 'rgba(59,130,246,0.4)' },
+    { value: totalPatterns, label: 'Shown Here',  color: '#8b5cf6', borderColor: 'rgba(139,92,246,0.4)' },
+  ];
 
   return (
     <PageContent className="scoring-container">
@@ -90,58 +77,15 @@ export default function MahjongCompetitionRule() {
 
       <HouseRuleSelector />
 
-      <div className="scoring-stats">
-        <div className="stat-pill" style={{ borderColor: 'rgba(16,185,129,0.4)' }}>
-          <div className="stat-pill-value" style={{ color: '#10b981' }}>81</div>
-          <div className="stat-pill-label">Patterns</div>
-        </div>
-        <div className="stat-pill" style={{ borderColor: 'rgba(245,158,11,0.4)' }}>
-          <div className="stat-pill-value" style={{ color: '#f59e0b' }}>88</div>
-          <div className="stat-pill-label">Limit Points</div>
-        </div>
-        <div className="stat-pill" style={{ borderColor: 'rgba(59,130,246,0.4)' }}>
-          <div className="stat-pill-value" style={{ color: '#3b82f6' }}>8</div>
-          <div className="stat-pill-label">Min to Win</div>
-        </div>
-        <div className="stat-pill" style={{ borderColor: 'rgba(139,92,246,0.4)' }}>
-          <div className="stat-pill-value" style={{ color: '#8b5cf6' }}>{totalPatterns}</div>
-          <div className="stat-pill-label">Shown Here</div>
-        </div>
-      </div>
+      <ScoringStatsBar stats={stats} />
 
       <InfoBox accent="blue">
         <strong>How MCR works:</strong> Patterns stack — you score every qualifying pattern in your winning hand and add them together. You need at least <strong>8 points</strong> to declare a win. The 88-point limit hands are the ceiling; no hand can score above 88.
       </InfoBox>
 
-      {/* ── 1. Limit Hands ── */}
-      <div className="scoring-section">
-        <SectionHeader icon="👑" title="Limit Hands — 88 Points" />
-        <p style={{ margin: '0 0 1rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-          These are the most prestigious hands in MCR. Each is worth the maximum 88 points alone — no stacking needed.
-        </p>
-        <FanGallery items={LIMIT_HANDS} accent="violet" />
-      </div>
-
-      {/* ── 2. High-Value Patterns ── */}
-      <div className="scoring-section">
-        <SectionHeader icon="🔥" title="High-Value Patterns — 6 to 64 Points" />
-        <p style={{ margin: '0 0 1rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-          These hands form the backbone of competitive MCR strategy. Combine them with standard bonuses to reach 8+ points.
-        </p>
-        <FanGallery items={HIGH_VALUE} accent="amber" />
-      </div>
-
-      {/* ── 3. Standard Patterns ── */}
-      <div className="scoring-section">
-        <SectionHeader icon="🃏" title="Standard Patterns & Bonuses — 1 to 4 Points" />
-        <p style={{ margin: '0 0 1rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-          Small but stackable bonuses. Self-draw, flower tiles, and wind pungs are common ways to push a 6-point hand over the 8-point threshold.
-        </p>
-        <FanGallery items={STANDARD_PATTERNS} accent="green" />
-        <InfoBox accent="amber">
-          <strong>Stacking example:</strong> All Chows (2) + All Simples (2) + Concealed Hand (2) + Self-Drawn (1) + Seat Wind Pung (2) = <strong>9 pts</strong> — a valid win with room for more.
-        </InfoBox>
-      </div>
+      <LimitHandsSection items={LIMIT_HANDS} />
+      <HighValueSection items={HIGH_VALUE} />
+      <StandardPatternsSection items={STANDARD_PATTERNS} />
 
       {/* ── CTA ── */}
       <CtaCard
