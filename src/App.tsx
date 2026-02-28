@@ -4,19 +4,22 @@ import './index.css';
 import type { TileDef, Suit } from './lib/tiles';
 import { validateHand } from './lib/validator';
 import { detectPotentialCombos, type ComboGroup, type ComboFormation } from './lib/comboDetector';
-import MahjongHand from './components/MahjongHand';
-import TileKeyboard from './components/TileKeyboard';
-import ComboSelector from './components/ComboSelector';
-import MahjongRules from './components/MahjongRules';
-import Layout from './components/Layout';
-import Header from './components/Header';
-import ValidationMessage from './components/ValidationMessage';
-import Separator from './components/Separator';
-import TileGlossary from './components/TileGlossary';
-import About from './components/About';
-import ScoringGuide from './components/ScoringGuide';
-import StrategyGuide from './components/StrategyGuide';
-import NotFound from './components/NotFound';
+import MahjongHand from './components/features/builder/MahjongHand';
+import TileKeyboard from './components/features/builder/TileKeyboard';
+import ComboSelector from './components/features/builder/ComboSelector';
+import MahjongRules from './components/features/guides/MahjongRules';
+import Layout from './components/layout/Layout';
+import Header from './components/layout/Header';
+import ValidationMessage from './components/features/builder/ValidationMessage';
+import Separator from './components/ui/Separator';
+import TileGlossary from './components/features/glossary/TileGlossary';
+import ScoringGuide from './components/features/guides/ScoringGuide';
+import HongKongOldStyle from './components/features/scoring/HongKongOldStyle';
+import MahjongCompetitionRule from './components/features/scoring/MahjongCompetitionRule';
+import StrategyGuide from './components/features/guides/StrategyGuide';
+import Learn from './components/features/guides/Learn';
+import LearnStartingRound from './components/features/guides/LearnStartingRound';
+import NotFound from './components/common/NotFound';
 import { useComboGroups } from './hooks/useComboGroups';
 
 function AppContent() {
@@ -59,11 +62,17 @@ function AppContent() {
   useEffect(() => {
     const pageTitleMap: Record<string, string> = {
       '/': 'Mahjong Hand Builder - Validate Your Winning Hands',
-      '/rules': 'Mahjong Rules - How to Play & Win',
       '/glossary': 'Mahjong Tile Glossary - Visual Guide to All Tiles',
-      '/scoring': 'Mahjong Scoring Guide - Fan System & Hand Values',
-      '/strategy': 'Mahjong Strategy Guide - Tips, Waits & Mastery',
-      '/about': 'About Mahjong Hand Builder - Our Mission',
+      '/learn': 'Learn Mahjong - Step by Step Guide',
+      '/learn/rules': 'Learn Rules - Mahjong Rules Guide',
+      '/learn/starting': 'Learn Starting the Round - Mahjong Guide',
+      '/learn/strategy': 'Learn Strategy - Mahjong Strategy Guide',
+      '/learn/scoring': 'Learn Scoring - Mahjong Fan System',
+      '/learn/scoring/house': 'House Rule Scoring - Mahjong Hand Builder',
+      '/learn/scoring/hk-old': 'Hong Kong Old Style Scoring - Mahjong Hand Builder',
+      '/learn/scoring/riichi': 'Japanese Riichi Scoring - Mahjong Hand Builder',
+      '/learn/scoring/mcr': 'Mahjong Competition Rules Scoring - Mahjong Hand Builder',
+      '/learn/tiles': 'Learn Tiles - Mahjong Tile Guide',
     };
     document.title = pageTitleMap[location.pathname] || 'Mahjong Hand Builder';
   }, [location.pathname]);
@@ -208,12 +217,6 @@ function AppContent() {
           <Header />
 
           <section className="section-full-width">
-            <div className="settings-bar">
-              <a href="/rules" className="toggle-btn" title="View Mahjong Rules">
-                Learn Rules
-              </a>
-            </div>
-
             <MahjongHand
               tiles={selectedTiles}
               onRemoveTile={removeTile}
@@ -257,11 +260,15 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<AppContent />} />
-          <Route path="/rules" element={<MahjongRules />} />
           <Route path="/glossary" element={<TileGlossary />} />
-          <Route path="/scoring" element={<ScoringGuide />} />
-          <Route path="/strategy" element={<StrategyGuide />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/learn" element={<Learn />} />
+          <Route path="/learn/rules" element={<MahjongRules />} />
+          <Route path="/learn/starting" element={<LearnStartingRound />} />
+          <Route path="/learn/strategy" element={<StrategyGuide />} />
+          <Route path="/learn/scoring" element={<ScoringGuide />} />
+          <Route path="/learn/scoring/house" element={<ScoringGuide />} />
+          <Route path="/learn/scoring/hk-old" element={<HongKongOldStyle />} />
+          <Route path="/learn/scoring/mcr" element={<MahjongCompetitionRule />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>

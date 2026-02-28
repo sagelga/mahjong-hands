@@ -1,0 +1,8 @@
+@import '../../styles/variables.css';
+
+.separator {
+  width: 100%;
+  height: 1px;
+  background: var(--border-color);
+  margin: 0.5rem 0;
+}

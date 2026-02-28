@@ -1,0 +1,140 @@
+@import '../../../styles/variables.css';
+
+.combo-selector-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.combo-selector-modal {
+  background: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: var(--radius-xl);
+  max-width: 550px;
+  width: 90%;
+  box-shadow: var(--shadow-elevated);
+  border: 1px solid var(--border-color);
+}
+
+.combo-selector-modal h3 {
+  margin: 0;
+  color: var(--accent-primary);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.combo-selector-modal p {
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.close-button {
+  background: var(--bg-tertiary);
+  border: none;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.close-button:hover { background: var(--border-color); color: var(--text-primary); }
+
+.potential-combo-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  margin-bottom: 0.75rem;
+  transition: all var(--transition-fast);
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .potential-combo-item {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+  }
+}
+
+.potential-combo-item:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-secondary);
+}
+
+.combo-type {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  min-width: 80px;
+}
+
+.combo-tiles { display: flex; flex-wrap: wrap; gap: 4px; }
+.combo-tile-image { width: 36px; height: 50px; object-fit: cover; }
+
+.combo-options {
+  display: flex;
+  gap: 0.75rem;
+  flex-grow: 1;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .combo-options {
+    justify-content: stretch;
+  }
+}
+
+.combo-option-btn {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-weight: 700;
+  transition: all var(--transition-fast);
+  text-align: center;
+  flex: 1;
+  min-width: 80px;
+}
+
+.combo-option-btn:hover {
+  filter: brightness(1.2);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.combo-option-btn .main-label {
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.combo-option-btn .sub-label {
+  font-size: 0.6rem;
+  font-weight: 500;
+  opacity: 0.8;
+  line-height: 1;
+}

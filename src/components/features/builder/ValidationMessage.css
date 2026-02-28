@@ -1,0 +1,29 @@
+@import '../../../styles/variables.css';
+
+.validation-message {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.validation-message.valid {
+  background-color: rgba(16, 185, 129, 0.08);
+  border: 1px solid var(--accent-primary);
+}
+
+.validation-message.invalid {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+.validation-message-icon.valid { color: var(--accent-primary); }
+.validation-message-icon.invalid { color: var(--text-secondary); }
+.validation-message-text { font-weight: 600; }
+.validation-message-text.valid { color: var(--accent-primary); }
+.validation-message-text.invalid { color: var(--text-secondary); }
+
+.validation-cursor { margin-left: 4px; font-weight: 800; color: var(--accent-primary); }

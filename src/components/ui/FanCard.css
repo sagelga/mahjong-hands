@@ -1,0 +1,66 @@
+@import '../../styles/variables.css';
+
+/* ── Fan Card ─────────────────────────────────────────────────────────────── */
+.fan-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.fan-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--pay-accent, var(--gradient-primary));
+}
+
+.fan-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.fan-value {
+  font-size: 1.85rem;
+  font-weight: 900;
+  line-height: 1;
+  background: var(--pay-accent, var(--gradient-primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.fan-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 700;
+  margin-left: 0.25rem;
+}
+
+.fan-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-color);
+  margin: 0.75rem 0;
+}
+
+.fan-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: 0.35rem;
+}
+
+.fan-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}

@@ -1,0 +1,124 @@
+@import '../../../styles/variables.css';
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+.learn-container {
+  max-width: 900px;
+  width: 100%;
+  padding: 2rem 1.5rem 4rem;
+  line-height: 1.7;
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────── */
+.learn-hero {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.learn-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.03em;
+}
+
+.learn-hero p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ── Button Grid ─────────────────────────────────────────────────────── */
+.learn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.learn-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  min-height: 80px;
+}
+
+.learn-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(16, 185, 129, 0.15);
+}
+
+.learn-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.learn-number {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--accent-primary);
+  line-height: 1;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.learn-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  transition: all var(--transition-normal);
+  opacity: 0;
+}
+
+.learn-icon {
+  font-size: 1.5rem;
+  opacity: 0;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+}
+
+/* Hover effects - show title and icon */
+.learn-card:hover .learn-number {
+  opacity: 0.3;
+  transform: scale(0.8);
+}
+
+.learn-card:hover .learn-title {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.learn-card:hover .learn-icon {
+  opacity: 1;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .learn-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .learn-grid {
+    grid-template-columns: 1fr;
+  }
+}

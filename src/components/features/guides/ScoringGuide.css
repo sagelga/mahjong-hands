@@ -1,0 +1,268 @@
+@import '../../../styles/variables.css';
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.scoring-container {
+  max-width: 900px;
+  width: 100%;
+  padding: 2rem 1.5rem 4rem;
+  line-height: 1.7;
+}
+
+
+/* ── Section ─────────────────────────────────────────────────────────── */
+.scoring-section {
+  margin-bottom: 4rem;
+}
+
+
+/* ── Payment cards ────────────────────────────────────────────────────── */
+.payment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+  gap: 0.75rem;
+}
+
+.payment-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.payment-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--pay-accent, var(--gradient-primary));
+}
+
+.payment-card:nth-child(1) { --pay-accent: linear-gradient(90deg,#10b981,#34d399); }
+.payment-card:nth-child(2) { --pay-accent: linear-gradient(90deg,#3b82f6,#60a5fa); }
+.payment-card:nth-child(3) { --pay-accent: linear-gradient(90deg,#8b5cf6,#a78bfa); }
+.payment-card:nth-child(4) { --pay-accent: linear-gradient(90deg,#ec4899,#f472b6); }
+.payment-card:nth-child(5) { --pay-accent: linear-gradient(90deg,#f59e0b,#fbbf24); }
+.payment-card:nth-child(6) { --pay-accent: linear-gradient(90deg,#ef4444,#f87171); }
+.payment-card:nth-child(7) { --pay-accent: linear-gradient(90deg,#f97316,#fb923c); }
+.payment-card:nth-child(8) { --pay-accent: linear-gradient(90deg,#fbbf24,#fde68a); }
+
+.payment-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.payment-fan {
+  font-size: 1.85rem;
+  font-weight: 900;
+  line-height: 1;
+  background: var(--pay-accent, var(--gradient-primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.payment-fan-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.payment-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-color);
+  margin: 0.75rem 0;
+}
+
+.payment-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: 0.35rem;
+}
+
+.payment-card-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ── Payment rows (HKOS payment reference) ────────────────────────────── */
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-type {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.payment-amount {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ── Stats row ─────────────────────────────────────────────────────────── */
+.scoring-stats {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.stat-pill {
+  flex: 1;
+  min-width: 100px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.stat-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-pill-value {
+  font-size: 1.75rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-pill-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-secondary);
+}
+
+/* ── Fan / Han gallery cards ───────────────────────────────────────────── */
+.fan-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.fan-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.fan-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+}
+
+.fan-card[data-accent='green']::before  { background: linear-gradient(90deg, #10b981, #34d399); }
+.fan-card[data-accent='pink']::before   { background: linear-gradient(90deg, #ec4899, #f472b6); }
+.fan-card[data-accent='amber']::before  { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.fan-card[data-accent='blue']::before   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.fan-card[data-accent='violet']::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+
+.fan-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.fan-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  width: fit-content;
+}
+
+.fan-badge[data-accent='green']  { background: rgba(16,185,129,0.15);  color: #10b981; }
+.fan-badge[data-accent='pink']   { background: rgba(236,72,153,0.15);  color: #ec4899; }
+.fan-badge[data-accent='amber']  { background: rgba(245,158,11,0.15);  color: #f59e0b; }
+.fan-badge[data-accent='blue']   { background: rgba(59,130,246,0.15);  color: #3b82f6; }
+.fan-badge[data-accent='violet'] { background: rgba(139,92,246,0.15);  color: #8b5cf6; }
+
+.fan-card-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.fan-card-note {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .payment-grid { grid-template-columns: repeat(2, 1fr); }
+  .fan-gallery  { grid-template-columns: repeat(2, 1fr); }
+  .scoring-stats { gap: 0.5rem; }
+  .stat-pill { min-width: 80px; }
+}
+
+.hand-example {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+}
+
+.hand-example-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.hand-example-tiles {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.explanation-tile {
+  width: 24px;
+  height: auto;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+}
+
+.hand-example-divider {
+  width: 4px;
+}

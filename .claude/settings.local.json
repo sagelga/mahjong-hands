@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "WebSearch",
+      "WebFetch(domain:www.redmahjong.com)",
+      "WebFetch(domain:en-academic.com)",
+      "WebFetch(domain:mahjongscoring.org)",
+      "WebFetch(domain:mahjong.wikidot.com)",
+      "WebFetch(domain:redmahjong.com)"
     ]
   }
 }
