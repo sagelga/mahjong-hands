@@ -11,9 +11,9 @@ const LEARN_STEPS = [
     path: '/learn/rules',
   },
   {
-    title: 'Starting the Round',
+    title: 'Game Setup',
     icon: '🎲',
-    path: '/learn/starting',
+    path: '/learn/setup',
   },
   {
     title: 'Strategize Your Hand',

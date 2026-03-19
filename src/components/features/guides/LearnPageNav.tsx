@@ -3,7 +3,7 @@ import './LearnPageNav.css';
 
 const LEARN_PAGES = [
   { path: '/learn/rules',    title: 'Rules' },
-  { path: '/learn/starting', title: 'Starting the Round' },
+  { path: '/learn/setup', title: 'Game Setup' },
   { path: '/learn/strategy', title: 'Strategy' },
   { path: '/learn/scoring',  title: 'Scoring' },
 ];

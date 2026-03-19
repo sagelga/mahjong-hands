@@ -1,5 +1,5 @@
 import './MahjongRules.css';
-import './LearnStartingRound.css';
+import './LearnSetupRound.css';
 import type React from 'react';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
@@ -50,7 +50,7 @@ const CLAIMS = [
     color: '#ef4444',
     from: 'Any player',
     example: ['9', '9', '9', '9'],
-    desc: 'Claim a discard to complete a quadruplet of 4 identical tiles. Grants one extra draw.',
+    desc: 'Claim a discard to complete a set of 4 identical tiles. Grants one extra draw.',
     rules: [
       'From any player at the table',
       'You must already hold 3 matching tiles',
@@ -74,12 +74,12 @@ const CLAIMS = [
   },
 ];
 
-export default function LearnStartingRound() {
+export default function LearnSetupRound() {
   return (
     <PageContent className="rules-container">
       <PageHeader
-        title="Starting the Round"
-        subtitle="How to build the wall, assign wind seats, and kick off a round of Mahjong."
+        title="Game Setup"
+        subtitle="How to build the wall, pick seats, and start a round of Mahjong."
       />
 
       {/* ── Before you play ── */}
@@ -102,7 +102,7 @@ export default function LearnStartingRound() {
           After shuffling, each player pushes tiles into a row of <strong>18 tiles wide, 2 tiles tall</strong>, face-down. The four wall sections form a closed square — your drawing pile for the round.
         </p>
 
-        <div className="starting-wall-demo">
+        <div className="setup-wall-demo">
           <div className="wall-row">
             {Array.from({ length: 18 }).map((_, i) => <div key={i} className="wall-tile" />)}
           </div>
@@ -121,13 +121,13 @@ export default function LearnStartingRound() {
       <div className="rules-section">
         <h2>Wind positions</h2>
         <p className="rules-body">
-          Roll the dice to determine the first dealer — they take the <strong>East</strong> seat. Positions then go counter-clockwise: East → South → West → North.
+          Roll the dice to pick the first dealer — they take the <strong>East</strong> seat. Positions then go counter-clockwise: East → South → West → North.
         </p>
-        <div className="starting-winds-grid">
+        <div className="setup-winds-grid">
           {WINDS.map(w => (
             <div
               key={w.name}
-              className="starting-wind-card"
+              className="setup-wind-card"
               style={{ '--wind-color': w.color } as React.CSSProperties}
             >
               <div className="wind-order">{w.order}</div>
@@ -146,7 +146,7 @@ export default function LearnStartingRound() {
       <div className="rules-section">
         <h2>How a round begins</h2>
         <p className="rules-body">
-          Once the wall is built and seats are assigned, follow these steps to start:
+          Once the wall is built and seats are set, follow these steps to start:
         </p>
         <ol className="rules-steps">
           <li className="rules-step">
@@ -156,17 +156,17 @@ export default function LearnStartingRound() {
           </li>
           <li className="rules-step">
             <span className="rules-step-text">
-              <strong>East draws the 14th tile.</strong> The dealer immediately draws one extra tile to begin their first turn.
+              <strong>East draws the 14th tile.</strong> The dealer draws one extra tile to begin their first turn.
             </span>
           </li>
           <li className="rules-step">
             <span className="rules-step-text">
-              <strong>Reveal any flower tiles.</strong> Flowers are placed face-up and immediately replaced by drawing from the back of the wall.
+              <strong>Reveal any flower tiles.</strong> Flowers are placed face-up and replaced by drawing from the back of the wall.
             </span>
           </li>
           <li className="rules-step">
             <span className="rules-step-text">
-              <strong>East discards.</strong> The dealer chooses one tile to discard face-up to the center, ending their turn.
+              <strong>East discards.</strong> The dealer picks one tile to discard face-up to the center, ending their turn.
             </span>
           </li>
           <li className="rules-step">
@@ -239,7 +239,7 @@ export default function LearnStartingRound() {
 
       <CtaCard
         title="Practice assembling a hand"
-        description="Use the Hand Builder to experiment with Chows, Pungs, and Kongs before your next game."
+        description="Use the Hand Builder to try out Chows, Pungs, and Kongs before your next game."
         buttons={[
           { label: 'Open Hand Builder', href: '/' },
           { label: 'Learn Strategy →', href: '/learn/strategy', variant: 'secondary' },

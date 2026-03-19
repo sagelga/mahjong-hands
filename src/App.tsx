@@ -18,7 +18,9 @@ import HongKongOldStyle from './components/features/scoring/HongKongOldStyle';
 import MahjongCompetitionRule from './components/features/scoring/MahjongCompetitionRule';
 import StrategyGuide from './components/features/guides/StrategyGuide';
 import Learn from './components/features/guides/Learn';
-import LearnStartingRound from './components/features/guides/LearnStartingRound';
+import LearnSetupRound from './components/features/guides/LearnSetupRound';
+import PracticePage from './components/features/practice/PracticePage';
+import TileTrackerPage from './components/features/tracker/TileTrackerPage';
 import NotFound from './components/common/NotFound';
 import { useComboGroups } from './hooks/useComboGroups';
 
@@ -65,7 +67,7 @@ function AppContent() {
       '/glossary': 'Mahjong Tile Glossary - Visual Guide to All Tiles',
       '/learn': 'Learn Mahjong - Step by Step Guide',
       '/learn/rules': 'Learn Rules - Mahjong Rules Guide',
-      '/learn/starting': 'Learn Starting the Round - Mahjong Guide',
+      '/learn/setup': 'Learn Game Setup - Mahjong Guide',
       '/learn/strategy': 'Learn Strategy - Mahjong Strategy Guide',
       '/learn/scoring': 'Learn Scoring - Mahjong Fan System',
       '/learn/scoring/house': 'House Rule Scoring - Mahjong Hand Builder',
@@ -265,10 +267,12 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<AppContent />} />
+          <Route path="/practice" element={<PracticePage />} />
+          <Route path="/tracker" element={<TileTrackerPage />} />
           <Route path="/glossary" element={<TileGlossary />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/learn/rules" element={<MahjongRules />} />
-          <Route path="/learn/starting" element={<LearnStartingRound />} />
+          <Route path="/learn/setup" element={<LearnSetupRound />} />
           <Route path="/learn/strategy" element={<StrategyGuide />} />
           <Route path="/learn/scoring" element={<ScoringGuide />} />
           <Route path="/learn/scoring/house" element={<ScoringGuide />} />

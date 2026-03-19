@@ -61,7 +61,9 @@ export default function Navbar() {
 
       <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
         <Link to="/"         className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Builder</Link>
-        
+        <Link to="/practice" className={`nav-link ${location.pathname === '/practice' ? 'active' : ''}`}>Practice</Link>
+        <Link to="/tracker"  className={`nav-link ${location.pathname === '/tracker' ? 'active' : ''}`}>Tracker</Link>
+
         <div className="nav-dropdown-container" ref={learnDropdownRef}>
           <button
             className={`nav-link nav-dropdown-toggle ${location.pathname.startsWith('/learn') ? 'active' : ''}`}
@@ -75,7 +77,7 @@ export default function Navbar() {
           
           <div className={`nav-dropdown-menu ${learnDropdownOpen || menuOpen ? 'open' : ''}`}>
             <Link to="/learn/rules"    className={`nav-dropdown-item ${location.pathname === '/learn/rules' ? 'active' : ''}`}>Rules</Link>
-            <Link to="/learn/starting" className={`nav-dropdown-item ${location.pathname === '/learn/starting' ? 'active' : ''}`}>Starting</Link>
+            <Link to="/learn/setup" className={`nav-dropdown-item ${location.pathname === '/learn/setup' ? 'active' : ''}`}>Setup</Link>
             <Link to="/learn/strategy" className={`nav-dropdown-item ${location.pathname === '/learn/strategy' ? 'active' : ''}`}>Strategy</Link>
             <Link to="/learn/scoring"  className={`nav-dropdown-item ${location.pathname === '/learn/scoring' ? 'active' : ''}`}>Scoring</Link>
           </div>

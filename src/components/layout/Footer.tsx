@@ -27,13 +27,15 @@ export default function Footer() {
           <div className="footer-col">
             <h4 className="footer-col-heading">Tools</h4>
             <Link to="/" className="footer-link">Hand Builder</Link>
+            <Link to="/practice" className="footer-link">Tenpai Checker</Link>
+            <Link to="/tracker" className="footer-link">Tile Tracker</Link>
           </div>
 
           <div className="footer-col">
             <h4 className="footer-col-heading">Learn</h4>
             <Link to="/learn"    className="footer-link">Step by Step</Link>
             <Link to="/learn/rules"    className="footer-link">Rules</Link>
-            <Link to="/learn/starting" className="footer-link">Starting</Link>
+            <Link to="/learn/setup" className="footer-link">Setup</Link>
             <Link to="/learn/strategy" className="footer-link">Strategy</Link>
             <Link to="/learn/scoring"  className="footer-link">Scoring</Link>
             <Link to="/learn/tiles"    className="footer-link">Tiles</Link>
