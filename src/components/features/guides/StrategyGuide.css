@@ -17,10 +17,7 @@
 .strategy-hero h1 {
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 900;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
   margin-bottom: 0.75rem;
   letter-spacing: -0.03em;
 }
@@ -59,7 +56,18 @@
   flex-direction: column;
   gap: 0.5rem;
   transition: all var(--transition-fast);
+  animation: scaleIn 0.38s ease both;
 }
+
+.strict-rules-grid .strict-rule-card:nth-child(1) { animation-delay: 0.04s; }
+.strict-rules-grid .strict-rule-card:nth-child(2) { animation-delay: 0.10s; }
+.strict-rules-grid .strict-rule-card:nth-child(3) { animation-delay: 0.16s; }
+.strict-rules-grid .strict-rule-card:nth-child(4) { animation-delay: 0.22s; }
+.strict-rules-grid .strict-rule-card:nth-child(5) { animation-delay: 0.28s; }
+.strict-rules-grid .strict-rule-card:nth-child(6) { animation-delay: 0.34s; }
+.strict-rules-grid .strict-rule-card:nth-child(7) { animation-delay: 0.40s; }
+.strict-rules-grid .strict-rule-card:nth-child(8) { animation-delay: 0.46s; }
+.strict-rules-grid .strict-rule-card:nth-child(n+9) { animation-delay: 0.46s; }
 
 .strict-rule-card:hover {
   transform: translateY(-2px);
@@ -106,7 +114,15 @@
   position: relative;
   overflow: hidden;
   transition: all var(--transition-normal);
+  animation: scaleIn 0.4s ease both;
 }
+
+.tip-grid .tip-card:nth-child(1) { animation-delay: 0.05s; }
+.tip-grid .tip-card:nth-child(2) { animation-delay: 0.13s; }
+.tip-grid .tip-card:nth-child(3) { animation-delay: 0.21s; }
+.tip-grid .tip-card:nth-child(4) { animation-delay: 0.29s; }
+.tip-grid .tip-card:nth-child(5) { animation-delay: 0.37s; }
+.tip-grid .tip-card:nth-child(6) { animation-delay: 0.45s; }
 
 .tip-card::before {
   content: '';
@@ -246,7 +262,11 @@
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-color);
   overflow: hidden;
+  animation: scaleIn 0.4s ease both;
 }
+
+.do-column   { animation-delay: 0.05s; }
+.dont-column { animation-delay: 0.14s; }
 
 .do-header {
   background: rgba(16, 185, 129, 0.12);
@@ -328,6 +348,7 @@
   color: #fff;
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(16,185,129,0.35);
+  animation: popIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .mastery-line {
@@ -336,7 +357,21 @@
   flex: 1;
   background: var(--border-color);
   margin: 6px 0;
+  transform-origin: top center;
+  animation: drawDown 0.35s ease both;
 }
+
+/* Mastery item stagger */
+.mastery-item:nth-child(1) .mastery-dot  { animation-delay: 0.05s; }
+.mastery-item:nth-child(1) .mastery-line { animation-delay: 0.22s; }
+.mastery-item:nth-child(2) .mastery-dot  { animation-delay: 0.35s; }
+.mastery-item:nth-child(2) .mastery-line { animation-delay: 0.52s; }
+.mastery-item:nth-child(3) .mastery-dot  { animation-delay: 0.65s; }
+.mastery-item:nth-child(3) .mastery-line { animation-delay: 0.82s; }
+.mastery-item:nth-child(4) .mastery-dot  { animation-delay: 0.95s; }
+.mastery-item:nth-child(4) .mastery-line { animation-delay: 1.12s; }
+.mastery-item:nth-child(5) .mastery-dot  { animation-delay: 1.25s; }
+.mastery-item:nth-child(5) .mastery-line { animation-delay: 1.42s; }
 
 .mastery-content {
   flex: 1;

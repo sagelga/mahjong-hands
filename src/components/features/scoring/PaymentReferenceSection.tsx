@@ -1,4 +1,5 @@
 import '../guides/ScoringGuide.css';
+import { Banknote } from 'lucide-react';
 import { SectionHeader } from '../../ui/SectionHeader';
 import { InfoBox } from '../../ui/InfoBox';
 import { FanCard } from '../../ui/FanCard';
@@ -18,7 +19,7 @@ export default function PaymentReferenceSection({ items }: Props) {
 
   return (
     <div className="scoring-section">
-      <SectionHeader icon="💰" title="Fan → Payment Reference" />
+      <SectionHeader icon={<Banknote size={20} />} title="Fan → Payment Reference" />
       <div className="payment-grid">
         {items.map((ref, idx) => (
           <FanCard

@@ -34,7 +34,6 @@ const HIGH_VALUE = [
   { name: 'Mixed One-Suit',        fan: 8,  note: 'Half flush — one suit plus any honor tiles' },
   { name: 'Reversible Tiles',      fan: 8,  note: 'All tiles in hand are rotationally symmetrical' },
   { name: 'All Pungs',             fan: 6,  note: 'Hand composed entirely of Pungs and Kongs' },
-  { name: 'Half Flush',            fan: 6,  note: 'Alias for Mixed One-Suit in some rule texts' },
 ];
 
 const STANDARD_PATTERNS = [
@@ -62,8 +61,8 @@ export default function MahjongCompetitionRule() {
   const stats = [
     { value: 81,           label: 'Patterns',     color: '#10b981', borderColor: 'rgba(16,185,129,0.4)' },
     { value: 88,           label: 'Limit Points', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.4)' },
-    { value: 8,            label: 'Min to Win',   color: '#3b82f6', borderColor: 'rgba(59,130,246,0.4)' },
-    { value: totalPatterns, label: 'Shown Here',  color: '#8b5cf6', borderColor: 'rgba(139,92,246,0.4)' },
+    { value: '8 pts',      label: 'Min to Win',   color: '#3b82f6', borderColor: 'rgba(59,130,246,0.4)' },
+    { value: totalPatterns, label: 'Shown (of 81)', color: '#8b5cf6', borderColor: 'rgba(139,92,246,0.4)' },
   ];
 
   return (
@@ -75,8 +74,8 @@ export default function MahjongCompetitionRule() {
         subtitle="The World Mahjong Organization's official competitive standard — 81 patterns, points-based scoring."
       />
 
-      <HouseRuleSelector />
 
+      <HouseRuleSelector />
       <ScoringStatsBar stats={stats} />
 
       <InfoBox accent="blue">

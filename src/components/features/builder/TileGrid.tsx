@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import type { TileDef } from '../../../lib/tiles';
 import type { Suit } from '../../../lib/tiles';
 import './TileKeyboard.css';
@@ -9,14 +10,20 @@ interface Props {
   onTileClick: (tile: TileDef) => void;
 }
 
-export default function TileGrid({ filteredTiles, activeFilter, currentTiles, onTileClick }: Props) {
-  const isFlowerTile = (tileId: string): boolean => tileId.startsWith('f');
+export default memo(function TileGrid({ filteredTiles, activeFilter, currentTiles, onTileClick }: Props) {
+  const tileCountMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const tile of currentTiles) {
+      map.set(tile.id, (map.get(tile.id) ?? 0) + 1);
+    }
+    return map;
+  }, [currentTiles]);
 
   return (
     <div key={activeFilter} className="glass-panel keyboard-grid">
       {filteredTiles.map((tile, i) => {
-        const currentCount = currentTiles.filter(t => t.id === tile.id).length;
-        const maxLimit = isFlowerTile(tile.id) ? 1 : 4;
+        const currentCount = tileCountMap.get(tile.id) ?? 0;
+        const maxLimit = tile.id.startsWith('f') ? 1 : 4;
         const isAtLimit = currentCount >= maxLimit;
 
         return (
@@ -40,4 +47,4 @@ export default function TileGrid({ filteredTiles, activeFilter, currentTiles, on
       })}
     </div>
   );
-}
+});

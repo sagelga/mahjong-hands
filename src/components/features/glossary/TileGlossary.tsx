@@ -26,8 +26,16 @@ export default function TileGlossary() {
         }
       />
 
+      <SuitsInfoPanel />
+
+      <nav className="glossary-suit-nav" aria-label="Jump to suit">
+        {SUITS.map(suit => (
+          <a key={suit} href={`#suit-${suit.toLowerCase()}`} className="suit-nav-pill">{suit}</a>
+        ))}
+      </nav>
+
       {SUITS.map(suit => (
-        <section key={suit} className="glossary-section">
+        <section key={suit} id={`suit-${suit.toLowerCase()}`} className="glossary-section">
           <h2 className="section-label">{suit}</h2>
           <div className="glossary-grid">
             {MAHJONG_TILES.filter(tile => tile.suit === suit).map(tile => (
@@ -41,8 +49,6 @@ export default function TileGlossary() {
           </div>
         </section>
       ))}
-
-      <SuitsInfoPanel />
 
       {selectedTile && (
         <TileDrawer tile={selectedTile} onClose={() => setSelectedTile(null)} />

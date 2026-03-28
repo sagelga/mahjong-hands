@@ -2,10 +2,10 @@ import { Link, useLocation } from 'react-router-dom';
 import './LearnPageNav.css';
 
 const LEARN_PAGES = [
+  { path: '/learn',          title: 'Overview' },
   { path: '/learn/rules',    title: 'Rules' },
-  { path: '/learn/setup', title: 'Game Setup' },
+  { path: '/learn/setup',    title: 'Game Setup' },
   { path: '/learn/strategy', title: 'Strategy' },
-  { path: '/learn/scoring',  title: 'Scoring' },
 ];
 
 export default function LearnPageNav() {

@@ -1,109 +1,106 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import type { NavItem } from '@/types/ui';
 import './Navbar.css';
-import { useState, useEffect, useRef } from 'react';
 
-export default function Navbar() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme');
-      if (saved) return saved as 'light' | 'dark';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'dark';
-  });
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [learnDropdownOpen, setLearnDropdownOpen] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
-  const learnDropdownRef = useRef<HTMLDivElement>(null);
+interface NavbarProps {
+  brandName: string;
+  brandHref?: string;
+  navbarBg: string;
+  links: NavItem[];
+  controls?: React.ReactNode;
+}
+
+export default function Navbar({
+  brandName,
+  brandHref = '/',
+  navbarBg,
+  links,
+  controls,
+}: NavbarProps) {
+  const { pathname } = useLocation();
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => { setOpenDropdown(null); }, [pathname]);
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  // Close on outside click
-  useEffect(() => {
-    if (!menuOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
+    if (!openDropdown) return;
+    const handleClick = (e: MouseEvent) => {
+      const ref = dropdownRefs.current[openDropdown];
+      if (ref && !ref.contains(e.target as Node)) setOpenDropdown(null);
+    };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, [menuOpen]);
+  }, [openDropdown]);
 
-  // Close Learn dropdown on outside click
-  useEffect(() => {
-    if (!learnDropdownOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (learnDropdownRef.current && !learnDropdownRef.current.contains(e.target as Node)) {
-        setLearnDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [learnDropdownOpen]);
-
-  // Close on route change
-  const location = useLocation();
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
-
-  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  const isItemActive = (item: NavItem): boolean => {
+    if (item.children) return item.children.some((c: NavItem) => pathname === c.href || pathname.startsWith(c.href + '/'));
+    if (item.href === '/') return pathname === '/';
+    return pathname === item.href || pathname.startsWith(item.href + '/');
+  };
 
   return (
-    <nav className="nav-container" ref={navRef}>
-      <div className="nav-logo-container">
-        <div className="nav-logo">MH</div>
-        <span className="nav-hidden-title">MAHJONG</span>
-      </div>
-
-      <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
-        <Link to="/"         className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Builder</Link>
-        <Link to="/practice" className={`nav-link ${location.pathname === '/practice' ? 'active' : ''}`}>Practice</Link>
-        <Link to="/tracker"  className={`nav-link ${location.pathname === '/tracker' ? 'active' : ''}`}>Tracker</Link>
-
-        <div className="nav-dropdown-container" ref={learnDropdownRef}>
-          <button
-            className={`nav-link nav-dropdown-toggle ${location.pathname.startsWith('/learn') ? 'active' : ''}`}
-            onClick={() => setLearnDropdownOpen(prev => !prev)}
-          >
-            Learn
-            <svg className="nav-dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-          </button>
-          
-          <div className={`nav-dropdown-menu ${learnDropdownOpen || menuOpen ? 'open' : ''}`}>
-            <Link to="/learn/rules"    className={`nav-dropdown-item ${location.pathname === '/learn/rules' ? 'active' : ''}`}>Rules</Link>
-            <Link to="/learn/setup" className={`nav-dropdown-item ${location.pathname === '/learn/setup' ? 'active' : ''}`}>Setup</Link>
-            <Link to="/learn/strategy" className={`nav-dropdown-item ${location.pathname === '/learn/strategy' ? 'active' : ''}`}>Strategy</Link>
-            <Link to="/learn/scoring"  className={`nav-dropdown-item ${location.pathname === '/learn/scoring' ? 'active' : ''}`}>Scoring</Link>
-          </div>
+    <nav className="navbar" style={{ '--navbar-bg': navbarBg } as React.CSSProperties}>
+      <div className="nav-top">
+        <div className="nav-top-inner">
+          <Link to={brandHref} className="nav-logo-text">{brandName}</Link>
+          {controls && <div className="nav-top-right">{controls}</div>}
         </div>
-        
-        <Link to="/glossary" className={`nav-link ${location.pathname === '/glossary' ? 'active' : ''}`}>Glossary</Link>
       </div>
 
-      <div className="nav-right">
-        <button
-          onClick={toggleTheme}
-          className="theme-toggle"
-          title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        >
-          {theme === 'light' ? 'Dark' : 'Light'}
-        </button>
-        <button
-          className={`nav-hamburger ${menuOpen ? 'open' : ''}`}
-          onClick={() => setMenuOpen(prev => !prev)}
-          aria-label="Toggle navigation menu"
-          aria-expanded={menuOpen}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+      <div className="nav-bottom">
+        <div className="nav-bottom-inner">
+          <ul className="nav-list" role="menubar">
+            {links.map((item) =>
+              item.children ? (
+                <li key={item.label} role="none">
+                  <div
+                    className="nav-dropdown-container"
+                    ref={(el) => { dropdownRefs.current[item.label] = el; }}
+                  >
+                    <button
+                      className={`nav-link nav-dropdown-toggle${isItemActive(item) ? ' active' : ''}`}
+                      onClick={() => setOpenDropdown(prev => prev === item.label ? null : item.label)}
+                      aria-haspopup="true"
+                      aria-expanded={openDropdown === item.label}
+                      role="menuitem"
+                    >
+                      {item.label}
+                      <svg
+                        className={`nav-dropdown-arrow${openDropdown === item.label ? ' open' : ''}`}
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"
+                      >
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+                    <div className={`nav-dropdown-menu${openDropdown === item.label ? ' open' : ''}`} role="menu">
+                      {item.children.map((child: NavItem) =>
+                        child.external ? (
+                          <a key={child.href} href={child.href} className="nav-dropdown-item" target="_blank" rel="noopener noreferrer" role="menuitem">{child.label}</a>
+                        ) : (
+                          <Link key={child.href} to={child.href} className={`nav-dropdown-item${pathname === child.href ? ' active' : ''}`} role="menuitem">{child.label}</Link>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ) : item.disabled ? (
+                <li key={item.label} role="none">
+                  <span className="nav-link nav-link-disabled" role="menuitem" aria-disabled="true">{item.label}</span>
+                </li>
+              ) : item.external ? (
+                <li key={item.label} role="none">
+                  <a href={item.href} className="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem">{item.label}</a>
+                </li>
+              ) : (
+                <li key={item.label} role="none">
+                  <Link to={item.href} className={`nav-link${isItemActive(item) ? ' active' : ''}`} role="menuitem">{item.label}</Link>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
       </div>
     </nav>
   );

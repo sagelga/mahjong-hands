@@ -62,7 +62,7 @@
 }
 
 .toggle-btn.active {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(5, 150, 105, 0.1);
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }

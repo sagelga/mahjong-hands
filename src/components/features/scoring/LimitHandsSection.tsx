@@ -1,4 +1,5 @@
 import '../guides/ScoringGuide.css';
+import { Crown } from 'lucide-react';
 import { SectionHeader } from '../../ui/SectionHeader';
 import { FanGallery } from '../../ui/FanGallery';
 import type { FanItem } from '../../ui/FanGallery';
@@ -10,7 +11,7 @@ interface Props {
 export default function LimitHandsSection({ items }: Props) {
   return (
     <div className="scoring-section">
-      <SectionHeader icon="👑" title="Limit Hands — 88 Points" />
+      <SectionHeader icon={<Crown size={20} />} title="Limit Hands — 88 Points" />
       <p style={{ margin: '0 0 1rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
         These are the most prestigious hands in MCR. Each is worth the maximum 88 points alone — no stacking needed.
       </p>

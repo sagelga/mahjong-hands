@@ -187,7 +187,7 @@ export default function PracticePage() {
 
       <PageHeader
         title="Tenpai Practice"
-        subtitle="Look at the situation below and find all tiles that complete your hand."
+        subtitle="Tenpai means your hand is one tile away from winning. Find every tile that would complete it."
       />
 
       {/* ── Stats bar ── */}
@@ -227,6 +227,7 @@ export default function PracticePage() {
           Discard Pile
           <span className="practice-count-badge">{scenario.discards.length} tiles</span>
         </h2>
+        <p className="practice-section-context">Tiles already discarded by you — they cannot complete your hand.</p>
         <div className="practice-hand-area">
           {scenario.discards.length === 0 ? (
             <span className="practice-empty-msg">No discards yet</span>
@@ -243,6 +244,7 @@ export default function PracticePage() {
       {/* ── Opponents ── */}
       <div className="practice-section">
         <h2>Opponents' Exposed Sets</h2>
+        <p className="practice-section-context">Called sets your opponents have revealed — tiles in their sets are still in play.</p>
         <div className="practice-opponents-grid">
           {scenario.opponents.map((opp, i) => (
             <OpponentPanel

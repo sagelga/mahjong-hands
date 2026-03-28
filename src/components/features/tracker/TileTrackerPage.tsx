@@ -1,71 +1,92 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef, memo } from 'react';
 import { MAHJONG_TILES, type TileDef } from '../../../lib/tiles';
-import PageHeader from '../../layout/PageHeader';
-import PageContent from '../../layout/PageContent';
 import './TileTrackerPage.css';
 
 type TrackerSuit = 'Characters' | 'Dots' | 'Bamboo' | 'Honors';
 
-const TRACKER_SUITS: { key: TrackerSuit; label: string }[] = [
-  { key: 'Characters', label: 'Characters' },
-  { key: 'Dots', label: 'Dots' },
-  { key: 'Bamboo', label: 'Bamboo' },
-  { key: 'Honors', label: 'Honors' },
+const TRACKER_SUITS: { key: TrackerSuit; char: string; label: string }[] = [
+  { key: 'Characters', char: '万', label: 'Characters' },
+  { key: 'Dots',       char: '筒', label: 'Dots' },
+  { key: 'Bamboo',     char: '条', label: 'Bamboo' },
+  { key: 'Honors',     char: '字', label: 'Honors' },
 ];
 
-const SUIT_PREFIX: Record<TrackerSuit, string> = {
-  Characters: 'c',
-  Dots: 'd',
-  Bamboo: 'b',
-  Honors: 'h',
-};
+// O(1) tile lookup
+const TILE_MAP = new Map(MAHJONG_TILES.map(t => [t.id, t]));
 
-const HONOR_LABELS: Record<number, string> = {
-  1: '東',
-  2: '南',
-  3: '西',
-  4: '北',
-  5: '白',
-  6: '發',
-  7: '中',
-};
+const BOARD_TILES: { suit: TrackerSuit; char: string; tiles: TileDef[] }[] =
+  TRACKER_SUITS.map(({ key, char }) => ({
+    suit: key,
+    char,
+    tiles: MAHJONG_TILES.filter(t => t.suit === key),
+  }));
 
-// All non-flower tiles, grouped by suit for the tracker board
-const BOARD_TILES: { suit: TrackerSuit; tiles: TileDef[] }[] = TRACKER_SUITS.map(({ key }) => ({
-  suit: key,
-  tiles: MAHJONG_TILES.filter(t => t.suit === key),
-}));
-
-// ─── TrackerTile ────────────────────────────────────────────────────────────
-function TrackerTile({ tile, remaining }: { tile: TileDef; remaining: number }) {
+// ─── TrackerTile ─────────────────────────────────────────────────────────────
+const TrackerTile = memo(function TrackerTile({
+  tile,
+  remaining,
+  onRecord,
+}: {
+  tile: TileDef;
+  remaining: number;
+  onRecord: (id: string) => void;
+}) {
   const stateClass =
     remaining === 0 ? 'tracker-tile--exhausted' :
     remaining === 1 ? 'tracker-tile--danger' :
     remaining === 2 ? 'tracker-tile--warning' :
-    remaining === 3 ? 'tracker-tile--dim' :
-    '';
+    remaining === 3 ? 'tracker-tile--dim' : '';
+
+  const stateAria =
+    remaining === 0 ? ', exhausted' :
+    remaining === 1 ? ', final copy' :
+    remaining === 2 ? ', running rare' : '';
 
   return (
-    <div className={`tracker-tile ${stateClass}`}>
-      <img src={tile.image} alt={tile.name} className="tracker-tile-img" />
-      <span className="tracker-tile-count">{remaining}</span>
-    </div>
+    <button
+      className={`tracker-tile ${stateClass}`}
+      onClick={() => onRecord(tile.id)}
+      disabled={remaining <= 0}
+      aria-label={`${tile.name}: ${remaining} remaining${stateAria}`}
+    >
+      <img src={tile.image} alt="" aria-hidden="true" className="tracker-tile-img" />
+      <div className="tracker-tile-dots" aria-hidden="true">
+        {Array.from({ length: 4 }, (_, i) => (
+          <span
+            key={i}
+            className={`tracker-dot ${i < remaining ? 'tracker-dot--filled' : 'tracker-dot--empty'}`}
+          />
+        ))}
+      </div>
+    </button>
   );
-}
+});
 
-// ─── TrackerBoard ───────────────────────────────────────────────────────────
-function TrackerBoard({ seenCounts }: { seenCounts: Record<string, number> }) {
+// ─── TrackerBoard ─────────────────────────────────────────────────────────────
+function TrackerBoard({
+  seenCounts,
+  onRecord,
+}: {
+  seenCounts: Record<string, number>;
+  onRecord: (id: string) => void;
+}) {
   return (
     <div className="tracker-board">
-      {BOARD_TILES.map(({ suit, tiles }) => (
-        <div key={suit} className="tracker-suit-row">
-          <span className="tracker-suit-label">{suit}</span>
+      {BOARD_TILES.map(({ suit, char, tiles }) => (
+        <div
+          key={suit}
+          className="tracker-suit-row"
+          role="group"
+          aria-label={`${suit} tiles`}
+        >
+          <span className="tracker-suit-label" aria-hidden="true">{char}</span>
           <div className="tracker-suit-tiles">
             {tiles.map(tile => (
               <TrackerTile
                 key={tile.id}
                 tile={tile}
                 remaining={4 - (seenCounts[tile.id] ?? 0)}
+                onRecord={onRecord}
               />
             ))}
           </div>
@@ -75,99 +96,128 @@ function TrackerBoard({ seenCounts }: { seenCounts: Record<string, number> }) {
   );
 }
 
-// ─── SuitSelector ───────────────────────────────────────────────────────────
-function SuitSelector({
-  activeSuit,
-  onSuitChange,
-}: {
-  activeSuit: TrackerSuit;
-  onSuitChange: (suit: TrackerSuit) => void;
-}) {
+// ─── WallStats ────────────────────────────────────────────────────────────────
+function WallStats({ seenCounts }: { seenCounts: Record<string, number> }) {
+  const { exhausted, danger, warning, totalSeen } = useMemo(() => {
+    let exhausted = 0, danger = 0, warning = 0, totalSeen = 0;
+    for (const { tiles } of BOARD_TILES) {
+      for (const tile of tiles) {
+        const r = 4 - (seenCounts[tile.id] ?? 0);
+        const seen = seenCounts[tile.id] ?? 0;
+        totalSeen += seen;
+        if (r === 0) exhausted++;
+        else if (r === 1) danger++;
+        else if (r === 2) warning++;
+      }
+    }
+    return { exhausted, danger, warning, totalSeen };
+  }, [seenCounts]);
+
+  if (exhausted === 0 && danger === 0 && warning === 0) {
+    // Show seen count once tiles have been recorded; nothing at fresh start
+    if (totalSeen === 0) return null;
+    return (
+      <span className="wall-stats-empty" aria-live="polite" aria-atomic="true">
+        Seen {totalSeen}
+      </span>
+    );
+  }
+
   return (
-    <div className="tracker-suit-selector">
-      {TRACKER_SUITS.map(({ key, label }) => (
-        <button
-          key={key}
-          className={`tracker-suit-btn ${activeSuit === key ? 'active' : ''}`}
-          onClick={() => onSuitChange(key)}
-        >
-          {label}
-        </button>
-      ))}
+    <div className="wall-stats" aria-live="polite" aria-atomic="true">
+      {exhausted > 0 && (
+        <span className="wall-stat wall-stat--exhausted">Gone {exhausted}</span>
+      )}
+      {danger > 0 && (
+        <span className="wall-stat wall-stat--danger">Final {danger}</span>
+      )}
+      {warning > 0 && (
+        <span className="wall-stat wall-stat--warning">Rare {warning}</span>
+      )}
     </div>
   );
 }
 
-// ─── Numpad ─────────────────────────────────────────────────────────────────
-function Numpad({
-  activeSuit,
-  seenCounts,
-  onRecord,
-}: {
-  activeSuit: TrackerSuit;
-  seenCounts: Record<string, number>;
-  onRecord: (tileId: string) => void;
-}) {
-  const isHonors = activeSuit === 'Honors';
-  const prefix = SUIT_PREFIX[activeSuit];
-
-  const buttons = useMemo(() =>
-    Array.from({ length: 9 }, (_, i) => {
-      const num = i + 1;
-      const tileId = `${prefix}${num}`;
-      const isHidden = isHonors && num > 7;
-      const remaining = 4 - (seenCounts[tileId] ?? 0);
-
-      return {
-        num,
-        tileId,
-        label: isHonors ? (HONOR_LABELS[num] ?? '') : String(num),
-        disabled: isHidden || remaining <= 0,
-        isHidden,
-      };
-    }),
-    [prefix, isHonors, seenCounts],
-  );
-
-  return (
-    <div className="tracker-numpad">
-      {buttons.map(btn => (
-        <button
-          key={btn.num}
-          className={`tracker-numpad-btn ${btn.isHidden ? 'tracker-numpad-btn--hidden' : ''}`}
-          disabled={btn.disabled}
-          onClick={() => onRecord(btn.tileId)}
-        >
-          {btn.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-// ─── ActionBar ──────────────────────────────────────────────────────────────
-function ActionBar({
+// ─── BottomBar ────────────────────────────────────────────────────────────────
+function BottomBar({
+  lastAction,
+  canUndo,
   onUndo,
   onReset,
-  canUndo,
 }: {
+  lastAction: TileDef | null;
+  canUndo: boolean;
   onUndo: () => void;
   onReset: () => void;
-  canUndo: boolean;
 }) {
+  const [armed, setArmed] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, []);
+
+  const handleReset = () => {
+    if (armed) {
+      onReset();
+      setArmed(false);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    } else {
+      setArmed(true);
+      timerRef.current = setTimeout(() => setArmed(false), 3000);
+    }
+  };
+
   return (
-    <div className="tracker-action-bar">
-      <button className="tracker-btn-undo" onClick={onUndo} disabled={!canUndo}>
-        Undo
-      </button>
-      <button className="tracker-btn-reset" onClick={onReset}>
-        Reset
-      </button>
+    <div className="tracker-bottom-bar">
+      {/* Screen-reader announcement for armed state */}
+      <div aria-live="assertive" aria-atomic="true" className="tracker-sr-only">
+        {armed ? 'Clear all armed. Tap Confirm to erase all tracked tiles.' : ''}
+      </div>
+
+      <div
+        className="tracker-last-action"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {lastAction ? (
+          <>
+            <img
+              src={lastAction.image}
+              alt=""
+              aria-hidden="true"
+              className="tracker-last-action-img"
+            />
+            <span className="tracker-last-action-name">{lastAction.name}</span>
+          </>
+        ) : (
+          <span className="tracker-hint">Tap any tile to record it</span>
+        )}
+      </div>
+
+      <div className="tracker-bottom-actions">
+        <button
+          className="tracker-btn tracker-btn--undo"
+          onClick={onUndo}
+          disabled={!canUndo}
+          aria-label="Undo last recorded tile"
+        >
+          ↩ Undo
+        </button>
+        <button
+          className={`tracker-btn tracker-btn--reset${armed ? ' armed' : ''}`}
+          onClick={handleReset}
+          aria-label={armed ? 'Confirm — tap to erase all tracked tiles' : 'Clear all tracked tiles'}
+        >
+          {armed ? 'Confirm' : 'Clear'}
+        </button>
+      </div>
     </div>
   );
 }
 
-// ─── Main page ──────────────────────────────────────────────────────────────
+// ─── Main page ────────────────────────────────────────────────────────────────
 export default function TileTrackerPage() {
   useEffect(() => {
     document.title = 'Tile Tracker - Mahjong Hand Builder';
@@ -175,15 +225,19 @@ export default function TileTrackerPage() {
 
   const [seenCounts, setSeenCounts] = useState<Record<string, number>>({});
   const [history, setHistory] = useState<string[]>([]);
-  const [activeSuit, setActiveSuit] = useState<TrackerSuit>('Characters');
 
   const lastAction = useMemo(() => {
     if (history.length === 0) return null;
-    const lastId = history[history.length - 1];
-    return MAHJONG_TILES.find(t => t.id === lastId) ?? null;
+    return TILE_MAP.get(history[history.length - 1]) ?? null;
   }, [history]);
 
+  // Debounce prevents double-tap recording the same tile twice
+  const recordDebounceRef = useRef(false);
   const recordTile = useCallback((tileId: string) => {
+    if (recordDebounceRef.current) return;
+    recordDebounceRef.current = true;
+    setTimeout(() => { recordDebounceRef.current = false; }, 150);
+
     setSeenCounts(prev => {
       const current = prev[tileId] ?? 0;
       if (current >= 4) return prev;
@@ -213,27 +267,22 @@ export default function TileTrackerPage() {
   }, []);
 
   return (
-    <PageContent className="tracker-page">
-      <PageHeader
-        title="Tile Tracker"
-        subtitle="Track discarded tiles during a live game."
-      />
-
-      <TrackerBoard seenCounts={seenCounts} />
-
-      <div className="tracker-controls">
-        <div className="tracker-last-action">
-          {lastAction ? (
-            <>Last: <span className="tracker-last-action-tile">{lastAction.name}</span></>
-          ) : (
-            'Select a suit and tap a tile number'
-          )}
-        </div>
-
-        <SuitSelector activeSuit={activeSuit} onSuitChange={setActiveSuit} />
-        <Numpad activeSuit={activeSuit} seenCounts={seenCounts} onRecord={recordTile} />
-        <ActionBar onUndo={undo} onReset={reset} canUndo={history.length > 0} />
+    <div className="tracker-page">
+      <div className="tracker-status-bar">
+        <span className="tracker-status-title">Tile Tracker</span>
+        <WallStats seenCounts={seenCounts} />
       </div>
-    </PageContent>
+
+      <div className="tracker-board-wrap">
+        <TrackerBoard seenCounts={seenCounts} onRecord={recordTile} />
+      </div>
+
+      <BottomBar
+        lastAction={lastAction}
+        canUndo={history.length > 0}
+        onUndo={undo}
+        onReset={reset}
+      />
+    </div>
   );
 }

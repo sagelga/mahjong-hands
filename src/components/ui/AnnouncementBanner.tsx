@@ -1,10 +1,11 @@
 import './AnnouncementBanner.css';
+import { TriangleAlert } from 'lucide-react';
 
 export default function AnnouncementBanner() {
   return (
     <div className="beta-banner">
       <div className="beta-banner-content">
-        <span className="beta-banner-icon">🚧</span>
+        <span className="beta-banner-icon"><TriangleAlert size={16} /></span>
         <span className="beta-banner-message">
           <strong>This website is still in beta.</strong> We're constantly improving it!
         </span>

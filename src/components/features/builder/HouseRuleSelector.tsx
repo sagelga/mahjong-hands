@@ -16,19 +16,19 @@ const HOUSE_RULES: HouseRuleOption[] = [
     id: 'house',
     label: 'Simplified House Rule',
     description: 'Casual play — win before others do.',
-    path: '/learn/scoring',
+    path: '/scoring',
   },
   {
     id: 'hk-old',
     label: 'Hong Kong Old Style',
     description: 'Fan-based — focus on bigger hands.',
-    path: '/learn/scoring/hk-old',
+    path: '/scoring/hk-old',
   },
   {
     id: 'mcr',
     label: 'Mahjong Competition Rules',
     description: 'WMO official competitive standard.',
-    path: '/learn/scoring/mcr',
+    path: '/scoring/mcr',
     badge: 'WMO',
   },
 ];
@@ -40,8 +40,8 @@ function HouseRuleSelector() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const getCurrentRule = (): HouseRuleOption => {
-    if (location.pathname.includes('hk-old')) return HOUSE_RULES[1];
-    if (location.pathname.includes('mcr')) return HOUSE_RULES[2];
+    if (location.pathname.includes('hk-old'))    return HOUSE_RULES[1];
+    if (location.pathname.includes('mcr'))        return HOUSE_RULES[2];
     return HOUSE_RULES[0];
   };
 

@@ -7,23 +7,23 @@ import { Link } from 'react-router-dom';
 const LEARN_STEPS = [
   {
     title: 'Rules',
-    icon: '📜',
+    icon: '規',
     path: '/learn/rules',
   },
   {
     title: 'Game Setup',
-    icon: '🎲',
+    icon: '局',
     path: '/learn/setup',
   },
   {
     title: 'Strategize Your Hand',
-    icon: '🧠',
-    path: '/learn/strategize',
+    icon: '策',
+    path: '/learn/strategy',
   },
   {
-    title: 'Scoring',
-    icon: '📊',
-    path: '/learn/scoring',
+    title: 'Rulesets',
+    icon: '分',
+    path: '/scoring',
   },
 ];
 

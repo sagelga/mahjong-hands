@@ -7,7 +7,7 @@
   margin-bottom: 1.5rem;
 }
 
-.section-icon { font-size: 1.5rem; line-height: 1; }
+.section-icon { display: flex; align-items: center; flex-shrink: 0; color: var(--text-secondary); }
 
 .section-title {
   font-size: 1.2rem;

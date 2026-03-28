@@ -11,6 +11,7 @@ const NAV_LINKS: NavItem[] = [
   { label: 'Builder', href: '/' },
   { label: 'Practice', href: '/practice' },
   { label: 'Tracker', href: '/tracker' },
+  { label: 'Calculator', href: '/calculator' },
   {
     label: 'Learn',
     href: '/learn',
@@ -21,7 +22,6 @@ const NAV_LINKS: NavItem[] = [
     ],
   },
   { label: 'Rulesets', href: '/scoring' },
-  { label: 'Calculator', href: '/calculator' },
   { label: 'Glossary', href: '/glossary' },
 ];
 

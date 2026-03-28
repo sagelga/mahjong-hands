@@ -10,6 +10,7 @@
   transition: all var(--transition-fast);
   position: relative;
   overflow: hidden;
+  animation: scaleIn 0.35s ease both;
 }
 
 .fan-card::before {
@@ -29,10 +30,7 @@
   font-size: 1.85rem;
   font-weight: 900;
   line-height: 1;
-  background: var(--pay-accent, var(--gradient-primary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
 }
 
 .fan-label {

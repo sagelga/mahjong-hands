@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -52,10 +53,13 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
   );
 
   // Create a map for faster lookup of tile indices
-  const tileIdToIndexMap = new Map<string | number, number>();
-  tiles.forEach((tile, index) => {
-    tileIdToIndexMap.set(`tile-${index}-${tile.id}`, index);
-  });
+  const tileIdToIndexMap = useMemo(() => {
+    const map = new Map<string | number, number>();
+    tiles.forEach((tile, index) => {
+      map.set(`tile-${index}-${tile.id}`, index);
+    });
+    return map;
+  }, [tiles]);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -69,23 +73,28 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
   }
 
   // Separate flower tiles from main tiles for layout
-  const flowerTiles = tiles
-    .map((tile, index) => ({ tile, index }))
-    .filter(item => item.tile.suit === 'Flowers');
-
-  const mainTiles = tiles
-    .map((tile, index) => ({ tile, index }))
-    .filter(item => item.tile.suit !== 'Flowers');
+  const { flowerTiles, mainTiles } = useMemo(() => {
+    const flowers = tiles
+      .map((tile, index) => ({ tile, index }))
+      .filter(item => item.tile.suit === 'Flowers');
+    const main = tiles
+      .map((tile, index) => ({ tile, index }))
+      .filter(item => item.tile.suit !== 'Flowers');
+    return { flowerTiles: flowers, mainTiles: main };
+  }, [tiles]);
 
   const mainHandCount = mainTiles.length;
 
   // Pre-compute combo membership for better performance
-  const comboMembership = new Map<number, ComboGroup>();
-  comboGroups.forEach(comboGroup => {
-    comboGroup.indices.forEach(index => {
-      comboMembership.set(index, comboGroup);
+  const comboMembership = useMemo(() => {
+    const map = new Map<number, ComboGroup>();
+    comboGroups.forEach(comboGroup => {
+      comboGroup.indices.forEach(index => {
+        map.set(index, comboGroup);
+      });
     });
-  });
+    return map;
+  }, [comboGroups]);
 
   // Group tiles by their combo groups to render them in containers
   const elements = [];
@@ -173,10 +182,14 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
           </DndContext>
 
           {/* Ghost slots to show 14 intended tiles */}
+          {mainHandCount === 0 && (
+            <p className="hand-empty-hint">Pick tiles below to build your hand</p>
+          )}
           {mainHandCount < 14 && Array.from({ length: 14 - mainHandCount }).map((_, i) => (
             <div
               key={`blank-${i}`}
               className="blank-tile-slot"
+              aria-hidden="true"
             >
               +
             </div>

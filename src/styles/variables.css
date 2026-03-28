@@ -1,22 +1,28 @@
 :root {
   /* Design Tokens - Dark Mode (Default) - Midnight Black Theme */
   --bg-primary: #0a0a0a;
-  --bg-secondary: #000000;
+  --bg-secondary: #040d09;
   --bg-tertiary: #171717;
   --text-primary: #ffffff;
   --text-secondary: #a3a3a3;
   --text-disabled: rgba(255, 255, 255, 0.25);
 
-  --accent-primary: #10b981;
-  --accent-hover: #059669;
+  --accent-primary: #059669;
+
+  /* Shared accent tokens used by Navbar, Footer, modals, and cookie/theme sheets */
+  --color-accent: #059669;
+  --color-accent-hover: #34d399;
+  --color-accent-fg: #ffffff;
+  --accent-hover: #047857;
+  --accent-display: #34d399;
   --accent-danger: #ef4444;
   --accent-danger-hover: #dc2626;
 
-  --gradient-primary: linear-gradient(135deg, #10b981, #059669);
+  --gradient-primary: linear-gradient(135deg, #059669, #047857);
   --gradient-gold: linear-gradient(135deg, #f59e0b, #d97706);
 
   --border-color: #1a1a1a;
-  --bg-win: #064e3b;
+  --bg-win: #052e16;
 
   /* Shared Tokens */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);

@@ -1,4 +1,10 @@
 import './StrategyGuide.css';
+import {
+  AlertTriangle, ArrowLeft, ArrowLeftRight, Calculator, Clock,
+  Eye, EyeOff, Flower2, Hash, Lightbulb, Lock, Map,
+  RefreshCw, Scale, Search, Shield, Shuffle, SkipForward,
+  Swords, Target, Zap,
+} from 'lucide-react';
 import { CtaCard } from '../../ui/CtaCard';
 import { SectionHeader } from '../../ui/SectionHeader';
 import PageHeader from '../../layout/PageHeader';
@@ -11,85 +17,85 @@ import WaitTypePractice from './WaitTypePractice';
 
 const STRICT_RULES = [
   {
-    icon: '⚖️',
+    icon: <Scale size={18} />,
     severity: 'important',
     title: 'Winner claims first',
     body: 'If you will win the hand by claiming a discarded tile, you get priority over anyone else that might need it for chow/pung/kong.',
   },
   {
-    icon: '🃏',
+    icon: <ArrowLeft size={18} />,
     severity: 'important',
     title: 'Chow = Left Player Only',
     body: 'A Chow (sequence of 3) can ONLY be claimed from the discard of your left-hand neighbor. You cannot Chow from the tile discarded by the opposite or right player.',
   },
   {
-    icon: '🃏',
+    icon: <SkipForward size={18} />,
     severity: 'important',
     title: 'Pung/Kong = skip player',
     body: 'When a player discard your missing tile to form a Pung or Kong, you can claim it immediately, and its now your turn. You still have to discard a tile to end your turn.',
   },
   {
-    icon: '🧮',
+    icon: <Calculator size={18} />,
     severity: 'important',
     title: 'Always end the turn with 13 tiles',
     body: 'After your turn ends, you must have exactly 13 tiles, including ones you already exposed. Flowers and kongs don\'t count towards the 13 tiles.',
   },
   {
-    icon: '🚫',
+    icon: <Eye size={18} />,
     severity: 'important',
     title: 'Expose tile immediately',
     body: 'When you choose to pick a tile from discard, you must immediately expose it on the table (known as melded set). You cannot hold it in your hand and discard it later.'
   },
   {
-    icon: '🚫',
+    icon: <ArrowLeftRight size={18} />,
     severity: 'warning',
     title: 'Discard or wall tile? Choose one.',
     body: 'When you draw, you either take it from discard (to form a valid melded set), or draw a new tile from the wall. You cannot draw both or meld when you don\'t have the tile to form sequence set.'
   },
   {
-    icon: '🔒',
+    icon: <Lock size={18} />,
     severity: 'warning',
     title: 'No changing minds',
     body: 'Once you claim a tile and expose a meld on the table, those tiles are locked. You cannot break them apart later to form other combinations with your concealed hand.',
   },
   {
-    icon: '🎯',
+    icon: <Target size={18} />,
     severity: 'warning',
     title: 'You Can Win From Anyone',
     body: 'Unlike a Chow, you can claim the final tile you need to complete your 14-tile winning hand (Mahjong) from ANY player\'s discard, not just the player to your left.',
   },
   {
-    icon: '♻️',
+    icon: <RefreshCw size={18} />,
     severity: 'caution',
     title: 'No Immediate Identical Discard',
     body: 'If you claim a discarded tile to complete a Chow (e.g., taking a 3 to make a 1-2-3), you generally cannot immediately discard the exact same tile (a 3) from your hand on that same turn.',
   },
   {
-    icon: '🕵️',
+    icon: <EyeOff size={18} />,
     severity: 'warning',
     title: 'Keep Self-Drawn Melds Hidden',
     body: 'If you complete a Chow, Pung, or Kong entirely by drawing from the wall, keep it hidden in your hand! Beginners often expose them early, but doing so gives away free information and may invalidate certain "Concealed Hand" scoring conditions.',
   },
   {
-    icon: '🔢',
+    icon: <Hash size={18} />,
     severity: 'caution',
     title: 'Kongs Require a Replacement',
     body: 'When you declare a Kong (4-of-a-kind), you must draw a replacement tile from the back end of the wall before discarding. If you forget, your hand will be short a tile and declared dead.',
   },
   {
-    icon: '🥷',
+    icon: <Swords size={18} />,
     severity: 'warning',
     title: 'Robbing the Kong',
     body: 'If a player draws a tile and adds it to their exposed Pung to promote it to a Kong, and that specific tile is the one you need to win, you can claim it! This rare move is called "Robbing the Kong".',
   },
   {
-    icon: '⏱️',
+    icon: <Clock size={18} />,
     severity: 'caution',
     title: 'Only the Latest Discard is Valid',
     body: 'You can only claim the last tile that was discarded. The moment the next player touches a tile to draw from the wall, the previous discard is "dead" and can no longer be claimed by anyone.',
   },
   {
-    icon: '🌸',
+    icon: <Flower2 size={18} />,
     severity: 'caution',
     title: 'Flower Require a Replacement',
     body: 'When you draw a flower, you must immediately replace it with a tile from the wall. If you forget, your hand will be short a tile and declared dead.',
@@ -97,12 +103,12 @@ const STRICT_RULES = [
 ];
 
 const TIPS = [
-  { icon: '🎯', title: 'Focus on One Suit', body: 'Building around a single suit drastically reduces the tiles you need to track and makes sequences and triplets easier to form.' },
-  { icon: '🔍', title: 'Watch the Discards', body: 'The discard pile is free information. If three 5-Dots are discarded, a 5-Dot Pung is impossible — adjust your targets.' },
-  { icon: '🧩', title: 'Keep Flexible Tiles', body: 'Middle tiles (4–6) fit into more sequences than terminals (1, 9). Prefer tiles with multiple options in the early game.' },
-  { icon: '🛡️', title: 'Play Defensively', body: "If an opponent is in Tenpai, discard safe tiles — tiles already discarded by others or tiles clearly outside their visible sets." },
-  { icon: '⚡', title: 'Win Fast, Win Often', body: "Don't chase a 6-Fan hand when 3 Fan will win. A fast modest win beats a slow ambitious loss every session." },
-  { icon: '🌸', title: 'Claim Flowers Early', body: 'Declare bonus tiles immediately — they earn Fan at game end and give a replacement draw. Never delay!' },
+  { icon: <Target size={18} />, title: 'Focus on One Suit', body: 'Building around a single suit drastically reduces the tiles you need to track and makes sequences and triplets easier to form.' },
+  { icon: <Search size={18} />, title: 'Watch the Discards', body: 'The discard pile is free information. If three 5-Dots are discarded, a 5-Dot Pung is impossible — adjust your targets.' },
+  { icon: <Shuffle size={18} />, title: 'Keep Flexible Tiles', body: 'Middle tiles (4–6) fit into more sequences than terminals (1, 9). Prefer tiles with multiple options in the early game.' },
+  { icon: <Shield size={18} />, title: 'Play Defensively', body: "If an opponent is in Tenpai, discard safe tiles — tiles already discarded by others or tiles clearly outside their visible sets." },
+  { icon: <Zap size={18} />, title: 'Win Fast, Win Often', body: "Don't chase a 6-Fan hand when 3 Fan will win. A fast modest win beats a slow ambitious loss every session." },
+  { icon: <Flower2 size={18} />, title: 'Claim Flowers Early', body: 'Declare bonus tiles immediately — they earn Fan at game end and give a replacement draw. Never delay!' },
 ];
 
 const WAITS = [
@@ -167,7 +173,7 @@ const MASTERY = [
 ];
 
 const SEVERITY_STYLE: Record<string, { bg: string; border: string; badge: string; badgeText: string }> = {
-  important: { bg: 'rgba(239, 68, 68, 0.06)', border: 'rgba(239, 68, 68, 0.25)', badge: 'rgba(239,68,68,0.15)', badgeText: '#ef4444' },
+  important: { bg: 'rgba(239, 68, 68, 0.06)', border: 'rgba(239, 68, 68, 0.25)', badge: 'rgba(239,68,68,0.15)', badgeText: '#f87171' },
   warning: { bg: 'rgba(245,158,11,0.06)', border: 'rgba(245,158,11,0.25)', badge: 'rgba(245,158,11,0.15)', badgeText: '#f59e0b' },
   caution: { bg: 'rgba(99, 102, 241, 0.06)', border: 'rgba(99, 102, 241, 0.25)', badge: 'rgba(99,102,241,0.15)', badgeText: '#818cf8' },
 };
@@ -177,7 +183,7 @@ const SEVERITY_STYLE: Record<string, { bg: string; border: string; badge: string
 function StrictRulesSection() {
   return (
     <div className="strategy-section">
-      <SectionHeader icon="⚠️" title="Don't Get Penalized!" />
+      <SectionHeader icon={<AlertTriangle size={20} />} title="Don't Get Penalized!" />
       <p style={{ marginBottom: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
         Breaking these rules, especially in a competitive play results you in score penalties.
         Memorize these rules so you can get along with others well!
@@ -207,7 +213,7 @@ function StrictRulesSection() {
 function TipsSection() {
   return (
     <div className="strategy-section">
-      <SectionHeader icon="💡" title="Core Principles for Every Player" />
+      <SectionHeader icon={<Lightbulb size={20} />} title="Core Principles for Every Player" />
       <div className="tip-grid">
         {TIPS.map(tip => (
           <div key={tip.title} className="tip-card">
@@ -224,7 +230,7 @@ function TipsSection() {
 function WaitsSection() {
   return (
     <div className="strategy-section">
-      <SectionHeader icon="🃏" title="Understanding Wait Types (Tenpai)" />
+      <SectionHeader icon={<Shuffle size={20} />} title="Understanding Wait Types (Tenpai)" />
       <p style={{ marginBottom: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
         When your hand is one tile away from winning, you're in <strong style={{ color: 'var(--text-primary)' }}>Tenpai</strong>.
         Always aim for the wait type with the most winning tiles.
@@ -257,7 +263,7 @@ function WaitsSection() {
 function DoDontSection() {
   return (
     <div className="strategy-section">
-      <SectionHeader icon="⚖️" title="Do's & Don'ts" />
+      <SectionHeader icon={<Scale size={20} />} title="Do's & Don'ts" />
       <div className="do-dont-wrapper">
         <div className="do-column">
           <div className="do-header">✓ Do</div>
@@ -285,7 +291,7 @@ function DoDontSection() {
 function StepByStepGuide() {
   return (
     <div className="strategy-section">
-      <SectionHeader icon="🗺️" title="Mastery Roadmap" />
+      <SectionHeader icon={<Map size={20} />} title="Mastery Roadmap" />
       <p style={{ marginBottom: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
         Improving at Mahjong is a step-by-step journey. This is the recommended order for deliberate practice:
       </p>
@@ -327,7 +333,7 @@ export default function StrategyGuide() {
 
       {/* ── Interactive wait-type quiz ── */}
       <div className="strategy-section">
-        <SectionHeader icon="🎯" title="Test Your Knowledge — Wait Types" />
+        <SectionHeader icon={<Target size={20} />} title="Test Your Knowledge — Wait Types" />
         <p style={{ marginBottom: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
           Read the tiles shown and pick the correct wait type. The missing tile(s) will be revealed after you answer.
         </p>
@@ -342,7 +348,7 @@ export default function StrategyGuide() {
         description="Apply these strategies in the Hand Builder. Construct your Tenpai hand and see if it validates."
         buttons={[
           { label: 'Open Hand Builder', href: '/' },
-          { label: 'Scoring Guide →', href: '/scoring', variant: 'secondary' },
+          { label: 'Rulesets →', href: '/scoring', variant: 'secondary' },
         ]}
       />
       <LearnPageNav />

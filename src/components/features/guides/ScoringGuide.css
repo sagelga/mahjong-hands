@@ -31,7 +31,17 @@
   transition: all var(--transition-fast);
   position: relative;
   overflow: hidden;
+  animation: scaleIn 0.35s ease both;
 }
+
+.payment-grid .payment-card:nth-child(1) { animation-delay: 0.04s; }
+.payment-grid .payment-card:nth-child(2) { animation-delay: 0.10s; }
+.payment-grid .payment-card:nth-child(3) { animation-delay: 0.16s; }
+.payment-grid .payment-card:nth-child(4) { animation-delay: 0.22s; }
+.payment-grid .payment-card:nth-child(5) { animation-delay: 0.28s; }
+.payment-grid .payment-card:nth-child(6) { animation-delay: 0.34s; }
+.payment-grid .payment-card:nth-child(7) { animation-delay: 0.40s; }
+.payment-grid .payment-card:nth-child(8) { animation-delay: 0.46s; }
 
 .payment-card::before {
   content: '';
@@ -59,10 +69,7 @@
   font-size: 1.85rem;
   font-weight: 900;
   line-height: 1;
-  background: var(--pay-accent, var(--gradient-primary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
 }
 
 .payment-fan-label {
@@ -131,7 +138,13 @@
   padding: 1rem;
   text-align: center;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  animation: fadeUp 0.4s ease both;
 }
+
+.stat-pill:nth-child(1) { animation-delay: 0.05s; }
+.stat-pill:nth-child(2) { animation-delay: 0.12s; }
+.stat-pill:nth-child(3) { animation-delay: 0.19s; }
+.stat-pill:nth-child(4) { animation-delay: 0.26s; }
 
 .stat-pill:hover {
   transform: translateY(-2px);
@@ -172,7 +185,22 @@
   position: relative;
   overflow: hidden;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  animation: scaleIn 0.35s ease both;
 }
+
+.fan-gallery .fan-card:nth-child(1)  { animation-delay: 0.03s; }
+.fan-gallery .fan-card:nth-child(2)  { animation-delay: 0.08s; }
+.fan-gallery .fan-card:nth-child(3)  { animation-delay: 0.13s; }
+.fan-gallery .fan-card:nth-child(4)  { animation-delay: 0.18s; }
+.fan-gallery .fan-card:nth-child(5)  { animation-delay: 0.23s; }
+.fan-gallery .fan-card:nth-child(6)  { animation-delay: 0.28s; }
+.fan-gallery .fan-card:nth-child(7)  { animation-delay: 0.33s; }
+.fan-gallery .fan-card:nth-child(8)  { animation-delay: 0.38s; }
+.fan-gallery .fan-card:nth-child(9)  { animation-delay: 0.43s; }
+.fan-gallery .fan-card:nth-child(10) { animation-delay: 0.48s; }
+.fan-gallery .fan-card:nth-child(11) { animation-delay: 0.53s; }
+.fan-gallery .fan-card:nth-child(12) { animation-delay: 0.58s; }
+.fan-gallery .fan-card:nth-child(n+13) { animation-delay: 0.58s; }
 
 .fan-card::before {
   content: '';
@@ -208,7 +236,7 @@
 .fan-badge[data-accent='pink']   { background: rgba(236,72,153,0.15);  color: #ec4899; }
 .fan-badge[data-accent='amber']  { background: rgba(245,158,11,0.15);  color: #f59e0b; }
 .fan-badge[data-accent='blue']   { background: rgba(59,130,246,0.15);  color: #3b82f6; }
-.fan-badge[data-accent='violet'] { background: rgba(139,92,246,0.15);  color: #8b5cf6; }
+.fan-badge[data-accent='violet'] { background: rgba(139,92,246,0.15);  color: #a78bfa; }
 
 .fan-card-name {
   font-size: 0.85rem;

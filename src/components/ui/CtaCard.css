@@ -7,6 +7,7 @@
   border-radius: var(--radius-xl);
   position: relative;
   overflow: hidden;
+  animation: fadeUp 0.5s ease 0.1s both;
 }
 
 .cta-card::before {

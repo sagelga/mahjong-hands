@@ -1,11 +1,12 @@
 import './ScoringGuide.css';
+import { Rocket } from 'lucide-react';
 import { SectionHeader } from '../../ui/SectionHeader';
 import { InfoBox } from '../../ui/InfoBox';
 
 export default function VariantsSection() {
   return (
     <div className="scoring-section">
-      <SectionHeader icon="🚀" title="Upgrade the game to the next level" />
+      <SectionHeader icon={<Rocket size={20} />} title="Upgrade the game to the next level" />
       <p style={{ margin: 0, marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
         There are so many variants of mahjong in the world, some might contain additional rulesets or even new tiles.
       </p>

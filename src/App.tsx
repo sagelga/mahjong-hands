@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './index.css';
 import type { TileDef, Suit } from './lib/tiles';
@@ -8,21 +8,23 @@ import MahjongHand from './components/features/builder/MahjongHand';
 import TileKeyboard from './components/features/builder/TileKeyboard';
 import ComboSelector from './components/features/builder/ComboSelector';
 import ExampleHands from './components/features/builder/ExampleHands';
-import MahjongRules from './components/features/guides/MahjongRules';
 import Layout from './components/layout/Layout';
 import ValidationMessage from './components/features/builder/ValidationMessage';
 import Separator from './components/ui/Separator';
-import TileGlossary from './components/features/glossary/TileGlossary';
-import ScoringGuide from './components/features/guides/ScoringGuide';
-import HongKongOldStyle from './components/features/scoring/HongKongOldStyle';
-import MahjongCompetitionRule from './components/features/scoring/MahjongCompetitionRule';
-import StrategyGuide from './components/features/guides/StrategyGuide';
-import Learn from './components/features/guides/Learn';
-import LearnSetupRound from './components/features/guides/LearnSetupRound';
-import PracticePage from './components/features/practice/PracticePage';
-import TileTrackerPage from './components/features/tracker/TileTrackerPage';
-import NotFound from './components/common/NotFound';
 import { useComboGroups } from './hooks/useComboGroups';
+
+const MahjongRules = lazy(() => import('./components/features/guides/MahjongRules'));
+const TileGlossary = lazy(() => import('./components/features/glossary/TileGlossary'));
+const ScoringGuide = lazy(() => import('./components/features/guides/ScoringGuide'));
+const HongKongOldStyle = lazy(() => import('./components/features/scoring/HongKongOldStyle'));
+const MahjongCompetitionRule = lazy(() => import('./components/features/scoring/MahjongCompetitionRule'));
+const StrategyGuide = lazy(() => import('./components/features/guides/StrategyGuide'));
+const Learn = lazy(() => import('./components/features/guides/Learn'));
+const LearnSetupRound = lazy(() => import('./components/features/guides/LearnSetupRound'));
+const PracticePage = lazy(() => import('./components/features/practice/PracticePage'));
+const TileTrackerPage = lazy(() => import('./components/features/tracker/TileTrackerPage'));
+const NotFound = lazy(() => import('./components/common/NotFound'));
+const ScoringCalculator = lazy(() => import('./components/features/scoring/ScoringCalculator'));
 
 function AppContent() {
   const [selectedTiles, setSelectedTiles] = useState<TileDef[]>([]);
@@ -68,11 +70,11 @@ function AppContent() {
       '/learn': 'Learn Mahjong - Step by Step Guide',
       '/learn/rules': 'Learn Rules - Mahjong Rules Guide',
       '/learn/setup': 'Learn Game Setup - Mahjong Guide',
-      '/learn/strategy': 'Learn Strategy - Mahjong Strategy Guide',
-      '/learn/scoring': 'Learn Scoring - Mahjong Fan System',
-      '/learn/scoring/house': 'House Rule Scoring - Mahjong Hand Builder',
-      '/learn/scoring/hk-old': 'Hong Kong Old Style Scoring - Mahjong Hand Builder',
-      '/learn/scoring/mcr': 'Mahjong Competition Rules Scoring - Mahjong Hand Builder',
+      '/learn/strategy': 'Mahjong Strategy Guide',
+      '/scoring': 'Scoring Guide - Mahjong Fan System',
+      '/scoring/hk-old': 'Hong Kong Old Style Scoring - Mahjong Hand Builder',
+      '/scoring/mcr': 'Mahjong Competition Rules Scoring - Mahjong Hand Builder',
+      '/calculator': 'Score Calculator - Mahjong Hand Builder',
     };
     document.title = pageTitleMap[location.pathname] || 'Mahjong Hand Builder';
   }, [location.pathname]);
@@ -265,21 +267,23 @@ export default function App() {
   return (
     <Router>
       <Layout>
-        <Routes>
-          <Route path="/" element={<AppContent />} />
-          <Route path="/practice" element={<PracticePage />} />
-          <Route path="/tracker" element={<TileTrackerPage />} />
-          <Route path="/glossary" element={<TileGlossary />} />
-          <Route path="/learn" element={<Learn />} />
-          <Route path="/learn/rules" element={<MahjongRules />} />
-          <Route path="/learn/setup" element={<LearnSetupRound />} />
-          <Route path="/learn/strategy" element={<StrategyGuide />} />
-          <Route path="/learn/scoring" element={<ScoringGuide />} />
-          <Route path="/learn/scoring/house" element={<ScoringGuide />} />
-          <Route path="/learn/scoring/hk-old" element={<HongKongOldStyle />} />
-          <Route path="/learn/scoring/mcr" element={<MahjongCompetitionRule />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<AppContent />} />
+            <Route path="/practice" element={<PracticePage />} />
+            <Route path="/tracker" element={<TileTrackerPage />} />
+            <Route path="/glossary" element={<TileGlossary />} />
+            <Route path="/learn" element={<Learn />} />
+            <Route path="/learn/rules" element={<MahjongRules />} />
+            <Route path="/learn/setup" element={<LearnSetupRound />} />
+            <Route path="/learn/strategy" element={<StrategyGuide />} />
+            <Route path="/scoring" element={<ScoringGuide />} />
+            <Route path="/scoring/hk-old" element={<HongKongOldStyle />} />
+            <Route path="/scoring/mcr" element={<MahjongCompetitionRule />} />
+            <Route path="/calculator" element={<ScoringCalculator />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </Layout>
     </Router>
   );

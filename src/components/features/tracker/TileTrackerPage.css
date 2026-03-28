@@ -1,307 +1,364 @@
 @import '../../../styles/variables.css';
 
-/* ── Page layout ─────────────────────────────────────────────────────────── */
+/* ── Screen-reader only ──────────────────────────────────────────────────── */
+.tracker-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Full-screen shell ───────────────────────────────────────────────────── */
 .tracker-page {
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - 56px);
+  height: calc(100dvh - 56px);   /* fill viewport below navbar */
+  overflow: hidden;
+  background: var(--bg-primary);
 }
 
-/* ── Tracker board (top, scrollable) ─────────────────────────────────────── */
+/* ── Status bar (top) ────────────────────────────────────────────────────── */
+.tracker-status-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.tracker-status-title {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* ── Wall stats ──────────────────────────────────────────────────────────── */
+.wall-stats {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.wall-stats-empty {
+  font-size: 0.62rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.wall-stat {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 99px;
+  border: 1.5px solid currentColor;
+}
+
+.wall-stat--exhausted {
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.wall-stat--danger  { color: var(--accent-danger); }
+.wall-stat--warning { color: #f59e0b; }
+
+/* ── Board wrap (fills remaining space) ──────────────────────────────────── */
+.tracker-board-wrap {
+  flex: 1;
+  min-height: 0;      /* critical: lets flex item shrink below content size */
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem 0.5rem;
+}
+
 .tracker-board {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  padding: 0.5rem 0 1rem;
+  justify-content: center;
+  gap: clamp(0.5rem, 2.5vh, 2rem);
 }
 
+/* ── Suit row ────────────────────────────────────────────────────────────── */
 .tracker-suit-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 4px;
 }
 
 .tracker-suit-label {
-  font-size: 0.62rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 900;
   color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  width: 56px;
+  width: 20px;
   flex-shrink: 0;
-  text-align: right;
+  text-align: center;
+  line-height: 1;
+  user-select: none;
 }
 
 .tracker-suit-tiles {
+  flex: 1;
   display: flex;
-  flex-wrap: wrap;
-  gap: clamp(3px, 0.6vw, 6px);
+  gap: 3px;
 }
 
-/* ── Tracker tile ────────────────────────────────────────────────────────── */
+/* ── Tile button ─────────────────────────────────────────────────────────── */
 .tracker-tile {
-  position: relative;
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: opacity var(--transition-fast), filter var(--transition-fast);
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 1px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
+.tracker-tile:not(:disabled):active {
+  background: rgba(16, 185, 129, 0.22);
+  box-shadow: inset 0 0 0 2px var(--accent-primary);
+  transform: scale(0.85);
+}
+
+.tracker-tile:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 1px;
+}
+
+.tracker-tile:disabled {
+  cursor: default;
+}
+
+/* ── Tile image ──────────────────────────────────────────────────────────── */
 .tracker-tile-img {
-  width: clamp(28px, 7vw, 42px);
+  width: 100%;
   height: auto;
   object-fit: contain;
   border-radius: var(--radius-sm);
   border: 2px solid var(--border-color);
   background: var(--bg-tertiary);
-  padding: 2px;
+  padding: 1px;
   transition: border-color var(--transition-fast), opacity var(--transition-fast);
+  display: block;
 }
 
-.tracker-tile-count {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  font-size: 9px;
-  font-weight: 900;
+/* ── Wii-style dots ──────────────────────────────────────────────────────── */
+.tracker-tile-dots {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--bg-primary);
-  background: var(--accent-primary);
-  color: #fff;
-  line-height: 1;
-  pointer-events: none;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  gap: 2px;
 }
 
-/* 3 remaining — slightly dimmed */
-.tracker-tile--dim {
-  opacity: 0.85;
+.tracker-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
 }
 
-.tracker-tile--dim .tracker-tile-count {
-  background: var(--text-secondary);
-}
+.tracker-dot--empty  { background: var(--border-color); }
+.tracker-dot--filled { background: var(--accent-primary); }
 
-/* 2 remaining — amber warning */
-.tracker-tile--warning .tracker-tile-img {
-  border-color: #f59e0b;
-}
+/* ── Tile state modifiers ────────────────────────────────────────────────── */
 
-.tracker-tile--warning .tracker-tile-count {
-  background: #f59e0b;
-  color: #000;
-}
+/* 3 remaining — dim */
+.tracker-tile--dim .tracker-tile-img  { opacity: 0.65; }
+.tracker-tile--dim .tracker-dot--filled { background: var(--text-secondary); }
 
-/* 1 remaining — red danger + pulse */
-.tracker-tile--danger .tracker-tile-img {
-  border-color: var(--accent-danger);
-}
+/* 2 remaining — amber */
+.tracker-tile--warning .tracker-tile-img    { border-color: #f59e0b; }
+.tracker-tile--warning .tracker-dot--filled { background: #f59e0b; }
 
-.tracker-tile--danger .tracker-tile-count {
+/* 1 remaining — red + pulse */
+.tracker-tile--danger .tracker-tile-img    { border-color: var(--accent-danger); }
+.tracker-tile--danger .tracker-dot--filled {
   background: var(--accent-danger);
-  animation: dangerPulse 1.5s ease-in-out infinite;
+  animation: dangerPulse 1.4s ease-in-out infinite;
+  will-change: transform;
 }
 
 @keyframes dangerPulse {
   0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.2); }
+  50%       { transform: scale(1.3); }
 }
 
-/* 0 remaining — greyed out */
+/* 0 remaining — greyed out, no interaction */
 .tracker-tile--exhausted {
   opacity: 0.25;
   filter: grayscale(1);
 }
 
-.tracker-tile--exhausted .tracker-tile-count {
-  background: var(--text-disabled);
-  animation: none;
-}
-
-/* ── Controls area (bottom, sticky) ──────────────────────────────────────── */
-.tracker-controls {
-  position: sticky;
-  bottom: 0;
-  background: var(--bg-primary);
-  border-top: 1px solid var(--border-color);
-  padding: 0.85rem 1rem 1.25rem;
+/* ── Bottom bar ──────────────────────────────────────────────────────────── */
+.tracker-bottom-bar {
+  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  z-index: 10;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
 }
 
-/* ── Suit selector ───────────────────────────────────────────────────────── */
-.tracker-suit-selector {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+.tracker-last-action {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
   gap: 0.4rem;
 }
 
-.tracker-suit-btn {
-  padding: 0.55rem 0.25rem;
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  background: var(--bg-tertiary);
+.tracker-last-action-img {
+  width: 30px;
+  height: auto;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-color);
+}
+
+.tracker-last-action-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tracker-hint {
+  font-size: 0.68rem;
   color: var(--text-secondary);
-  font-size: 0.72rem;
+  opacity: 0.7;
+}
+
+.tracker-bottom-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+/* ── Action buttons ──────────────────────────────────────────────────────── */
+.tracker-btn {
+  height: 36px;
+  padding: 0 0.85rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
   transition: border-color var(--transition-fast), background var(--transition-fast),
-              color var(--transition-fast), transform var(--transition-fast);
-  text-align: center;
+              opacity var(--transition-fast), transform var(--transition-fast);
   white-space: nowrap;
 }
 
-.tracker-suit-btn:hover {
-  border-color: var(--accent-primary);
-  color: var(--text-primary);
+.tracker-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
-.tracker-suit-btn.active {
-  border-color: var(--accent-primary);
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--accent-primary);
-  font-weight: 800;
-}
-
-/* ── Numpad ───────────────────────────────────────────────────────────────── */
-.tracker-numpad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.4rem;
-  max-width: 320px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.tracker-numpad-btn {
-  aspect-ratio: 1.3;
-  min-height: clamp(48px, 12vw, 64px);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-lg);
+.tracker-btn--undo {
   background: var(--bg-tertiary);
-  color: var(--text-primary);
-  font-size: clamp(1.1rem, 4vw, 1.5rem);
-  font-weight: 800;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: border-color var(--transition-fast), background var(--transition-fast),
-              transform var(--transition-fast), box-shadow var(--transition-fast);
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-.tracker-numpad-btn:hover:not(:disabled) {
-  border-color: var(--accent-primary);
-  background: rgba(16, 185, 129, 0.08);
-  transform: translateY(-1px);
-}
-
-.tracker-numpad-btn:active:not(:disabled) {
-  transform: scale(0.95);
-  background: rgba(16, 185, 129, 0.15);
-}
-
-.tracker-numpad-btn:disabled {
-  opacity: 0.2;
-  cursor: not-allowed;
-}
-
-.tracker-numpad-btn--hidden {
-  visibility: hidden;
-}
-
-/* ── Action bar (Undo + Reset) ───────────────────────────────────────────── */
-.tracker-action-bar {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
-}
-
-.tracker-btn-undo,
-.tracker-btn-reset {
-  padding: 0.65rem 1rem;
-  border-radius: var(--radius-lg);
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: border-color var(--transition-fast), background var(--transition-fast),
-              transform var(--transition-fast), opacity var(--transition-fast);
-}
-
-.tracker-btn-undo {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   color: var(--text-primary);
 }
 
-.tracker-btn-undo:hover:not(:disabled) {
+.tracker-btn--undo:hover:not(:disabled) {
   border-color: var(--accent-primary);
-  background: rgba(16, 185, 129, 0.06);
 }
 
-.tracker-btn-undo:disabled {
+.tracker-btn--undo:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
 
-.tracker-btn-reset {
+.tracker-btn--reset {
   background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   color: var(--accent-danger);
 }
 
-.tracker-btn-reset:hover {
+.tracker-btn--reset:hover {
   border-color: var(--accent-danger);
-  background: rgba(239, 68, 68, 0.08);
+  background: rgba(239, 68, 68, 0.07);
 }
 
-/* ── Last action feedback ────────────────────────────────────────────────── */
-.tracker-last-action {
-  text-align: center;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  min-height: 1.2rem;
-  line-height: 1.2rem;
-}
-
-.tracker-last-action-tile {
-  color: var(--accent-primary);
+.tracker-btn--reset.armed {
+  border-color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.22);
   font-weight: 800;
+  animation: armedPulse 1s ease-in-out infinite;
 }
 
-/* ── Responsive ──────────────────────────────────────────────────────────── */
-@media (max-width: 380px) {
-  .tracker-suit-label {
-    width: 40px;
-    font-size: 0.55rem;
+@keyframes armedPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50%       { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); }
+}
+
+/* ── Mobile: horizontal-scrolling suit rows ──────────────────────────────── */
+/*
+   9 tiles × 44px = 396px + gaps — impossible to fit on 375px in one row.
+   Solution: each suit row scrolls horizontally so tiles can be 52px.
+   All 4 suits stay visible; user swipes to reach tiles 6-9.
+*/
+@media (max-width: 639px) {
+  .tracker-board {
+    justify-content: space-around;
   }
 
-  .tracker-suit-btn {
-    font-size: 0.62rem;
-    padding: 0.45rem 0.15rem;
+  .tracker-suit-tiles {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;       /* Firefox */
+    -ms-overflow-style: none;    /* IE/Edge */
+    padding-bottom: 3px;         /* don't clip dot shadow */
+    gap: 5px;
+  }
+
+  .tracker-suit-tiles::-webkit-scrollbar { display: none; }
+
+  .tracker-tile {
+    flex: 0 0 52px;              /* fixed width, don't grow/shrink */
+    padding: 5px 2px;
   }
 }
 
+/* ── Desktop ─────────────────────────────────────────────────────────────── */
 @media (min-width: 768px) {
-  .tracker-controls {
-    max-width: 480px;
-    margin: 0 auto;
-    width: 100%;
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  }
+  .tracker-board-wrap { padding: 0.5rem 1rem; }
+  .tracker-suit-label { font-size: 1.2rem; width: 28px; }
+  .tracker-suit-tiles { gap: 5px; }
+  .tracker-tile       { padding: 6px 2px; gap: 4px; }
 
-  .tracker-suit-label {
-    width: 72px;
-  }
+  .tracker-dot { width: 8px; height: 8px; }
+  .tracker-tile-dots { gap: 4px; }
+
+  .tracker-status-bar { padding: 0.5rem 1rem; }
+  .tracker-bottom-bar { padding: 0.6rem 1rem; }
+  .tracker-btn        { height: 40px; font-size: 0.82rem; padding: 0 1.1rem; }
+  .tracker-last-action-img  { width: 38px; }
+  .tracker-last-action-name { font-size: 0.82rem; }
+}
+
+/* ── Landscape (phone) ───────────────────────────────────────────────────── */
+@media (orientation: landscape) and (max-height: 500px) {
+  .tracker-status-bar { padding: 0.2rem 0.75rem; }
+  .tracker-board-wrap { padding: 0.15rem 0.5rem; }
+  .tracker-bottom-bar { padding: 0.3rem 0.75rem; }
+  .tracker-btn        { height: 30px; font-size: 0.72rem; }
 }

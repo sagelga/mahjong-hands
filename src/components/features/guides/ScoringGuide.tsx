@@ -20,8 +20,8 @@ export default function ScoringGuide() {
         subtitle="When the game is finally over, it's time to count the score!"
       />
 
-      <HouseRuleSelector />
 
+      <HouseRuleSelector />
       <SimplifiedRulesSection />
       <PaymentGridSection />
       <ProgressionSection />
@@ -34,7 +34,7 @@ export default function ScoringGuide() {
         description="Use the Hand Builder to construct and validate scoring patterns like Pung Hand or Seven Pairs."
         buttons={[
           { label: 'Open Hand Builder', href: '/' },
-          { label: 'Strategy Guide →', href: '/strategy', variant: 'secondary' },
+          { label: 'Strategy Guide →', href: '/learn/strategy', variant: 'secondary' },
         ]}
       />
       <LearnPageNav />

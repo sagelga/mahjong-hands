@@ -63,6 +63,19 @@
   justify-content: center;
   align-items: center;
   min-height: 80px;
+  position: relative;
+}
+
+.hand-empty-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  pointer-events: none;
+  margin: 0;
 }
 
 .hand-flowers-area {
@@ -92,7 +105,12 @@
 
 .hand-container-wrapper.valid {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 24px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 1px var(--accent-primary);
+}
+
+body.is-winning .hand-container-wrapper.valid {
+  border-color: #34d399;
+  box-shadow: 0 0 32px rgba(52, 211, 153, 0.3);
 }
 
 /* Combo Grouping System */

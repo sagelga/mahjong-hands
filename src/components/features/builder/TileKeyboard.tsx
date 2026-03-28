@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { MAHJONG_TILES } from '../../../lib/tiles';
 import type { TileDef, Suit } from '../../../lib/tiles';
 import './TileKeyboard.css';
@@ -13,9 +14,10 @@ interface Props {
 }
 
 export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange, currentTiles }: Props) {
-  const filteredTiles = activeFilter === 'All'
-    ? MAHJONG_TILES
-    : MAHJONG_TILES.filter(t => t.suit === activeFilter);
+  const filteredTiles = useMemo(
+    () => activeFilter === 'All' ? MAHJONG_TILES : MAHJONG_TILES.filter(t => t.suit === activeFilter),
+    [activeFilter]
+  );
 
   return (
     <div className="keyboard-container">

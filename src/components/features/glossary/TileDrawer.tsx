@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type React from 'react';
 import type { TileDef } from '../../../lib/tiles';
 import './TileGlossary.css';
@@ -146,8 +146,10 @@ interface TileDrawerProps {
 
 export default function TileDrawer({ tile, onClose }: TileDrawerProps) {
   const { copies, tips } = getTileTips(tile);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
+    closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -156,15 +158,15 @@ export default function TileDrawer({ tile, onClose }: TileDrawerProps) {
   return (
     <>
       <div className="drawer-backdrop" onClick={onClose} />
-      <aside className="tile-drawer" role="dialog" aria-label={`${tile.name} details`}>
+      <aside className="tile-drawer" role="dialog" aria-modal="true" aria-label={`${tile.name} details`}>
 
         <div className="drawer-header">
-          <img src={tile.image} alt={tile.name} className="drawer-tile-img" />
+          <img src={tile.image} alt={tile.name} className="drawer-tile-img" width="52" height="72" />
           <div className="drawer-title-group">
             <div className="drawer-tile-name">{tile.name}</div>
             <div className="drawer-tile-suit">{tile.suit}</div>
           </div>
-          <button className="drawer-close" onClick={onClose} aria-label="Close">✕</button>
+          <button ref={closeRef} className="drawer-close" onClick={onClose} aria-label="Close">✕</button>
         </div>
 
         <div className="drawer-copies-badge">

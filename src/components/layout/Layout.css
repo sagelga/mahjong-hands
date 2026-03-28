@@ -1,13 +1,11 @@
-/* Layout CSS - Accounts for AnnouncementBanner height */
+/* Layout CSS */
 
-/* Account for AnnouncementBanner height (approx 48px) */
-.main-content {
-  padding-top: 4.5rem !important; /* Banner height + spacing */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Mobile responsive - adjust for smaller screens */
-@media (max-width: 640px) {
-  .main-content {
-    padding-top: 4rem !important; /* Slightly less padding on mobile */
-  }
+.main-content {
+  flex: 1;
 }

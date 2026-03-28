@@ -17,7 +17,12 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  animation: fadeUp 0.4s ease both;
 }
+
+.practice-stat-card:nth-child(1) { animation-delay: 0.05s; }
+.practice-stat-card:nth-child(2) { animation-delay: 0.12s; }
+.practice-stat-card:nth-child(3) { animation-delay: 0.19s; }
 
 .practice-stat-card::before {
   content: '';
@@ -31,10 +36,7 @@
   display: block;
   font-size: 1.6rem;
   font-weight: 900;
-  background: var(--gradient-primary);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--accent-display);
   line-height: 1.1;
 }
 
@@ -58,8 +60,14 @@
   font-size: 1.05rem;
   font-weight: 800;
   color: var(--text-primary);
-  margin: 0 0 1rem;
+  margin: 0 0 0.4rem;
   letter-spacing: -0.01em;
+}
+
+.practice-section-context {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin: 0 0 1rem;
 }
 
 .practice-section p {
@@ -180,7 +188,12 @@
   border-radius: var(--radius-xl);
   overflow: hidden;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  animation: scaleIn 0.4s ease both;
 }
+
+.practice-opponents-grid .opponent-card:nth-child(1) { animation-delay: 0.05s; }
+.practice-opponents-grid .opponent-card:nth-child(2) { animation-delay: 0.13s; }
+.practice-opponents-grid .opponent-card:nth-child(3) { animation-delay: 0.21s; }
 
 .opponent-card::before {
   content: '';
@@ -321,14 +334,14 @@
 .answer-grid-tiles {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
 }
 
 /* ── Answer tile ──────────────────────────────────────────────────────────── */
 .answer-tile {
   position: relative;
-  width: clamp(34px, 6.5vw, 46px);
-  height: clamp(46px, 8.7vw, 62px);
+  width: clamp(44px, 7.5vw, 52px);
+  height: clamp(58px, 10vw, 68px);
   background: var(--bg-tertiary);
   border: 2px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -479,6 +492,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  animation: popIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .practice-result-icon--correct   { background: #10b981; color: #fff; }

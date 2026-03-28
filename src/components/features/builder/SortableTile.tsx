@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { TileDef } from '../../../lib/tiles';
@@ -15,7 +16,7 @@ export interface SortableItemProps {
   comboGroup?: ComboGroup;
 }
 
-export default function SortableTile({ id, tile, index, onRemove, isValid, isInvalidTile, comboGroup }: SortableItemProps) {
+export default memo(function SortableTile({ id, tile, index, onRemove, isValid, isInvalidTile, comboGroup }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -65,10 +66,11 @@ export default function SortableTile({ id, tile, index, onRemove, isValid, isInv
             onRemove(index);
           }}
           className="tile-remove-button"
+          aria-label={`Remove ${tile.name}`}
         >
           ×
         </button>
       </div>
     </div>
   );
-}
+});

@@ -12,14 +12,17 @@
 
 .page-title {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
   margin-bottom: 0.75rem;
+  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
-
 
 .page-subtitle {
   font-size: 1.1rem;
   color: var(--text-secondary);
   line-height: 1.6;
+  animation: fadeUp 0.45s ease 0.13s both;
 }

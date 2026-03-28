@@ -1,4 +1,5 @@
 import '../guides/ScoringGuide.css';
+import { ListChecks } from 'lucide-react';
 import { SectionHeader } from '../../ui/SectionHeader';
 import { InfoBox } from '../../ui/InfoBox';
 import { FanGallery } from '../../ui/FanGallery';
@@ -11,7 +12,7 @@ interface Props {
 export default function StandardPatternsSection({ items }: Props) {
   return (
     <div className="scoring-section">
-      <SectionHeader icon="🃏" title="Standard Patterns & Bonuses — 1 to 4 Points" />
+      <SectionHeader icon={<ListChecks size={20} />} title="Standard Patterns & Bonuses — 1 to 4 Points" />
       <p style={{ margin: '0 0 1rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
         Small but stackable bonuses. Self-draw, flower tiles, and wind pungs are common ways to push a 6-point hand over the 8-point threshold.
       </p>

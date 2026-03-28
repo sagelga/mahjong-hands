@@ -95,8 +95,8 @@ export default function HongKongOldStyle() {
         subtitle="Traditional Hong Kong Mahjong scoring with classic fan values and limit hands."
       />
 
-      <HouseRuleSelector />
 
+      <HouseRuleSelector />
       <ScoringStatsBar stats={stats} />
 
       <BasicSetsSection items={BASIC_SETS} />
@@ -112,7 +112,7 @@ export default function HongKongOldStyle() {
         description="Use the Hand Builder to construct and validate scoring patterns like Pung Hand or Seven Pairs."
         buttons={[
           { label: 'Open Hand Builder', href: '/' },
-          { label: 'Strategy Guide →', href: '/strategy', variant: 'secondary' },
+          { label: 'Strategy Guide →', href: '/learn/strategy', variant: 'secondary' },
         ]}
       />
 
