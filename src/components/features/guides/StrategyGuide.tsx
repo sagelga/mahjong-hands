@@ -174,7 +174,7 @@ const MASTERY = [
 
 const SEVERITY_STYLE: Record<string, { bg: string; border: string; badge: string; badgeText: string }> = {
   important: { bg: 'rgba(239, 68, 68, 0.06)', border: 'rgba(239, 68, 68, 0.25)', badge: 'rgba(239,68,68,0.15)', badgeText: '#f87171' },
-  warning: { bg: 'rgba(245,158,11,0.06)', border: 'rgba(245,158,11,0.25)', badge: 'rgba(245,158,11,0.15)', badgeText: '#f59e0b' },
+  warning: { bg: 'rgba(245,158,11,0.06)', border: 'rgba(245,158,11,0.25)', badge: 'rgba(245,158,11,0.15)', badgeText: 'var(--warning-text)' },
   caution: { bg: 'rgba(99, 102, 241, 0.06)', border: 'rgba(99, 102, 241, 0.25)', badge: 'rgba(99,102,241,0.15)', badgeText: '#818cf8' },
 };
 

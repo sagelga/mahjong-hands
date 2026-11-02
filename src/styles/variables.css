@@ -15,6 +15,7 @@
   --accent-soft: rgba(16, 185, 129, 0.12);
   --accent-danger: #f87171;
   --accent-danger-hover: #ef4444;
+  --warning-text: #f59e0b;
 
   /* Shared accent tokens used by Navbar, Footer, modals, and cookie/theme sheets */
   --color-accent: #10b981;
@@ -73,8 +74,9 @@
   --accent-hover: #065f46;
   --accent-display: #047857;
   --accent-soft: rgba(4, 120, 87, 0.1);
-  --accent-danger: #dc2626;
-  --accent-danger-hover: #b91c1c;
+  --accent-danger: #b91c1c;
+  --accent-danger-hover: #991b1b;
+  --warning-text: #a34708;
 
   --color-accent: #047857;
   --color-accent-hover: #059669;

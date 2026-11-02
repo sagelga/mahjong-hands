@@ -180,7 +180,7 @@ export default function TileDrawer({ tile, onClose }: TileDrawerProps) {
 
         <div className="drawer-tips">
           {tips.map((tip, i) => (
-            <div key={i} className="drawer-tip-card" style={{ '--rank-color': RANK_COLORS[i] } as CustomCSSProperties}>
+            <div key={i} className="drawer-tip-card" style={{ '--rank-color': RANK_COLORS[i], '--rank-text': i === 2 ? 'var(--warning-text)' : RANK_COLORS[i] } as CustomCSSProperties}>
               <div className="tip-card-top">
                 <div className="tip-rank" style={{ background: RANK_COLORS[i] }}>#{i + 1}</div>
                 <div className="tip-names">

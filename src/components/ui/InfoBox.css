@@ -16,8 +16,14 @@
 .info-box[data-accent="pink"]   { background: rgba(236,72,153,0.06);  border-color: rgba(236,72,153,0.2); }
 .info-box[data-accent="pink"] strong   { color: #ec4899; }
 .info-box[data-accent="amber"]  { background: rgba(245,158,11,0.06);  border-color: rgba(245,158,11,0.2); }
-.info-box[data-accent="amber"] strong  { color: #f59e0b; }
+.info-box[data-accent="amber"] strong  { color: var(--warning-text); }
 .info-box[data-accent="blue"]   { background: rgba(59,130,246,0.06);  border-color: rgba(59,130,246,0.2); }
 .info-box[data-accent="blue"] strong   { color: #3b82f6; }
 .info-box[data-accent="violet"] { background: rgba(139,92,246,0.06);  border-color: rgba(139,92,246,0.2); }
 .info-box[data-accent="violet"] strong { color: #a78bfa; }
+
+
+/* Light theme: accent labels need a darker ink on tinted paper. */
+[data-theme='light'] .info-box[data-accent='pink'] strong  { color: #be185d; }
+[data-theme='light'] .info-box[data-accent='blue'] strong  { color: #1d4ed8; }
+[data-theme='light'] .info-box[data-accent='violet'] strong { color: #6d28d9; }

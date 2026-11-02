@@ -33,7 +33,7 @@ const CLAIMS = [
   {
     name: 'Pung',
     chinese: '碰 Pèng',
-    color: '#f59e0b',
+    color: 'var(--warning-text)',
     from: 'Any player',
     example: ['7', '7', '7'],
     desc: 'Claim a discard to complete a triplet of 3 identical tiles.',
