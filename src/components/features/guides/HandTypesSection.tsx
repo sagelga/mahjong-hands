@@ -33,7 +33,7 @@ const HAND_TYPES = [
     name: 'Pung',
     chinese: '碰 Pèng',
     tiles: ['7', '7', '7'],
-    color: '#f59e0b',
+    color: 'var(--warning-text)',
     role: 'Triplet set',
     desc: "Three identical tiles. Works with any tile type.",
     rules: [

@@ -210,3 +210,6 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Keep long-form copy in a readable measure; cards and grids stay full width. */
+.rules-section > p { max-width: 72ch; }

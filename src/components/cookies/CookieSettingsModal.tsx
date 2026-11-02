@@ -10,22 +10,25 @@ interface CookieSettingsModalProps {
 }
 
 const CookieSettingsModal: React.FC<CookieSettingsModalProps> = ({ isOpen, onClose, onSave }) => {
-  const [preferences, setPreferences] = useState({ functional: true, analytics: false });
-  const [mounted, setMounted] = useState(false);
+  const [preferences, setPreferences] = useState(() => {
+    const current = getCookiePreferences();
+    return { functional: current.functional, analytics: current.analytics };
+  });
 
   useEffect(() => {
-    setMounted(true);
+    if (!isOpen) return;
     const current = getCookiePreferences();
-    setPreferences({ functional: current.functional, analytics: current.analytics });
-  }, []);
+    const timer = window.setTimeout(() => {
+      setPreferences({ functional: current.functional, analytics: current.analytics });
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [isOpen]);
 
   const handleSave = () => {
     setCookiePreferences({ ...preferences, consentGiven: true, consentTimestamp: Date.now() });
     onSave();
     onClose();
   };
-
-  if (!mounted) return null;
 
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} title="Cookie Settings">

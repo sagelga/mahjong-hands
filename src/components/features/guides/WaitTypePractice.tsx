@@ -135,7 +135,7 @@ export default function WaitTypePractice() {
     const grade =
       pct === 100 ? { label: 'Perfect!', color: '#10b981' } :
       pct >= 80   ? { label: 'Great job!', color: '#34d399' } :
-      pct >= 60   ? { label: 'Getting there', color: '#f59e0b' } :
+      pct >= 60   ? { label: 'Getting there', color: 'var(--warning-text)' } :
                     { label: 'Keep practicing', color: '#ef4444' };
 
     return (

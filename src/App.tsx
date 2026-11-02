@@ -1,16 +1,16 @@
 import { useState, useMemo, useEffect, useCallback, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import './index.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import type { TileDef, Suit } from './lib/tiles';
 import { validateHand } from './lib/validator';
 import { detectPotentialCombos, type ComboGroup, type ComboFormation } from './lib/comboDetector';
 import MahjongHand from './components/features/builder/MahjongHand';
+
 import TileKeyboard from './components/features/builder/TileKeyboard';
 import ComboSelector from './components/features/builder/ComboSelector';
 import ExampleHands from './components/features/builder/ExampleHands';
 import Layout from './components/layout/Layout';
 import ValidationMessage from './components/features/builder/ValidationMessage';
-import Separator from './components/ui/Separator';
+import BuilderIntro from './components/features/builder/BuilderIntro';
 import { useComboGroups } from './hooks/useComboGroups';
 
 const MahjongRules = lazy(() => import('./components/features/guides/MahjongRules'));
@@ -54,30 +54,9 @@ function AppContent() {
 
 
   useEffect(() => {
-    if (validation.isValid) {
-      document.body.classList.add('is-winning');
-    } else {
-      document.body.classList.remove('is-winning');
-    }
+    document.body.classList.toggle('is-winning', validation.isValid);
+    return () => document.body.classList.remove('is-winning');
   }, [validation.isValid]);
-
-  const location = useLocation();
-
-  useEffect(() => {
-    const pageTitleMap: Record<string, string> = {
-      '/': 'Mahjong Hand Builder - Validate Your Winning Hands',
-      '/glossary': 'Mahjong Tile Glossary - Visual Guide to All Tiles',
-      '/learn': 'Learn Mahjong - Step by Step Guide',
-      '/learn/rules': 'Learn Rules - Mahjong Rules Guide',
-      '/learn/setup': 'Learn Game Setup - Mahjong Guide',
-      '/learn/strategy': 'Mahjong Strategy Guide',
-      '/scoring': 'Scoring Guide - Mahjong Fan System',
-      '/scoring/hk-old': 'Hong Kong Old Style Scoring - Mahjong Hand Builder',
-      '/scoring/mcr': 'Mahjong Competition Rules Scoring - Mahjong Hand Builder',
-      '/calculator': 'Score Calculator - Mahjong Hand Builder',
-    };
-    document.title = pageTitleMap[location.pathname] || 'Mahjong Hand Builder';
-  }, [location.pathname]);
 
   const addTile = useCallback((tile: TileDef) => {
     // Count current occurrences of this tile
@@ -218,48 +197,42 @@ function AppContent() {
   }, []);
 
   return (
-    <>
-      {location.pathname === '/' ? (
-        <section className="section-full-width">
-          <MahjongHand
-            tiles={selectedTiles}
-            onRemoveTile={removeTile}
-            onReorderTiles={reorderTiles}
-            isValid={validation.isValid}
-            invalidTiles={validation.invalidTiles}
-            onClearHand={clearHand}
-            comboGroups={comboGroups}
-          />
+    <section className="section-full-width">
+      <BuilderIntro />
 
-          {selectedTiles.length > 0 && (
-            <ValidationMessage isValid={validation.isValid} reason={validation.reason} />
-          )}
+      <MahjongHand
+        tiles={selectedTiles}
+        onRemoveTile={removeTile}
+        onReorderTiles={reorderTiles}
+        isValid={validation.isValid}
+        invalidTiles={validation.invalidTiles}
+        onClearHand={clearHand}
+        comboGroups={comboGroups}
+      />
 
-          <Separator />
-
-          <TileKeyboard
-            onTileClick={addTile}
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
-            currentTiles={selectedTiles}
-          />
-
-          {selectedTiles.length === 0 && (
-            <ExampleHands onLoadHand={loadExampleHand} />
-          )}
-
-          {showComboSelector && potentialCombos.length > 0 && (
-            <ComboSelector
-              potentialCombos={potentialCombos}
-              onComboSelect={handleComboSelect}
-              onCancel={cancelComboSelection}
-            />
-          )}
-        </section>
-      ) : (
-        <MahjongRules />
+      {selectedTiles.length > 0 && (
+        <ValidationMessage isValid={validation.isValid} reason={validation.reason} />
       )}
-    </>
+
+      <TileKeyboard
+        onTileClick={addTile}
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+        currentTiles={selectedTiles}
+      />
+
+      {selectedTiles.length === 0 && (
+        <ExampleHands onLoadHand={loadExampleHand} />
+      )}
+
+      {showComboSelector && potentialCombos.length > 0 && (
+        <ComboSelector
+          potentialCombos={potentialCombos}
+          onComboSelect={handleComboSelect}
+          onCancel={cancelComboSelection}
+        />
+      )}
+    </section>
   );
 }
 

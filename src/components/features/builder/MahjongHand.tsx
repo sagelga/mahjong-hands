@@ -34,6 +34,8 @@ interface Props {
   comboGroups?: ComboGroup[];
 }
 
+const HAND_SIZE = 14;
+
 export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isValid, invalidTiles = [], onClearHand, comboGroups = [] }: Props) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -84,6 +86,30 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
   }, [tiles]);
 
   const mainHandCount = mainTiles.length;
+  const remainingTiles = Math.max(0, HAND_SIZE - mainHandCount);
+  const isWinningHand = isValid && mainHandCount === HAND_SIZE;
+
+  let hintText: string;
+  if (mainHandCount === 0) {
+    hintText = 'Pick a tile from the tray to start.';
+  } else if (mainHandCount < HAND_SIZE) {
+    hintText = `${remainingTiles} ${remainingTiles === 1 ? 'tile' : 'tiles'} to complete.`;
+  } else if (isWinningHand) {
+    hintText = 'Winning hand.';
+  } else {
+    hintText = '14 tiles · check the shape.';
+  }
+
+  let stateText: string;
+  if (mainHandCount < HAND_SIZE) {
+    stateText = `${remainingTiles} ${remainingTiles === 1 ? 'tile' : 'tiles'} to complete`;
+  } else if (isWinningHand) {
+    stateText = 'Winning hand';
+  } else {
+    stateText = 'Check the shape';
+  }
+
+  const rackState = isWinningHand ? 'win' : mainHandCount === HAND_SIZE ? 'check' : 'idle';
 
   // Pre-compute combo membership for better performance
   const comboMembership = useMemo(() => {
@@ -126,6 +152,7 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
       <div
         key={`combo-${comboGroup.indices.join('-')}`}
         className={`combo-container ${comboGroup.comboType} ${comboGroup.formation}`}
+        style={{ gridColumn: `span ${Math.max(comboGroup.indices.length, 1)}` }}
       >
         <div className="combo-tiles-row">
           {comboTileElements}
@@ -160,13 +187,13 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
 
   return (
     <div className="keyboard-container">
-      <HandHeader mainHandCount={mainHandCount} isValid={isValid} onClearHand={onClearHand} />
-
       <div
-        className={`glass-panel hand-container-wrapper ${isValid ? 'valid' : ''}`}
+        className={`hand-container-wrapper ${isValid ? 'valid' : ''}`}
         data-testid="hand-container"
       >
-        <div className="hand-main-grid">
+        <HandHeader mainHandCount={mainHandCount} isValid={isValid} onClearHand={onClearHand} />
+
+        <div className="hand-rack" role="group" aria-label="Hand rack, 14 slots">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -181,11 +208,8 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
             </SortableContext>
           </DndContext>
 
-          {/* Ghost slots to show 14 intended tiles */}
-          {mainHandCount === 0 && (
-            <p className="hand-empty-hint">Pick tiles below to build your hand</p>
-          )}
-          {mainHandCount < 14 && Array.from({ length: 14 - mainHandCount }).map((_, i) => (
+          {/* Ghost slots keep the rack at 14 positions */}
+          {Array.from({ length: remainingTiles }).map((_, i) => (
             <div
               key={`blank-${i}`}
               className="blank-tile-slot"
@@ -197,6 +221,14 @@ export default function MahjongHand({ tiles, onRemoveTile, onReorderTiles, isVal
         </div>
 
         <FlowerTilesArea flowerTiles={flowerTiles} onRemoveTile={onRemoveTile} isValid={isValid} />
+
+        <div className="hand-rack-footer">
+          <p className="hand-hint">{hintText}</p>
+          <div className="hand-state" data-state={rackState} aria-live="polite">
+            <span className="hand-state-dot" aria-hidden="true" />
+            <span>{stateText}</span>
+          </div>
+        </div>
       </div>
     </div>
   );

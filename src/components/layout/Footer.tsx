@@ -79,7 +79,7 @@ export default function Footer({
               </span>
             )}
             <div className="footer-controls">
-              <button className="footer-toggle-btn" onClick={() => setShowTheme(true)} aria-label="Theme settings">
+              <button className="footer-toggle-btn" onClick={() => setShowTheme(true)}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
                   <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
@@ -88,7 +88,7 @@ export default function Footer({
                 </svg>
                 <span>Theme</span>
               </button>
-              <button className="footer-toggle-btn" onClick={() => setShowCookies(true)} aria-label="Cookie settings">
+              <button className="footer-toggle-btn" onClick={() => setShowCookies(true)}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
                   <path d="M8.5 8.5v.01" /><path d="M16 15.5v.01" /><path d="M12 12v.01" />

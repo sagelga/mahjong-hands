@@ -87,3 +87,20 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+@media (max-width: 480px) {
+  .learn-page-nav {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.75rem;
+  }
+
+  .lpn-prev,
+  .lpn-next {
+    flex: 1 1 100%;
+  }
+
+  .lpn-btn {
+    max-width: 100%;
+  }
+}

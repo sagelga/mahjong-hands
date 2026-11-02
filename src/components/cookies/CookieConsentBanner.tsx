@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import BottomSheet from '@/components/ui/BottomSheet';
 import CookieSettingsModal from './CookieSettingsModal';
 import { getCookiePreferences, setCookiePreferences } from '@/utils/cookies';
 import './CookieConsentBanner.css';
@@ -11,7 +10,7 @@ const CookieConsentBanner: React.FC = () => {
   useEffect(() => {
     const prefs = getCookiePreferences();
     if (!prefs.consentGiven) {
-      const timer = setTimeout(() => setIsVisible(true), 400);
+      const timer = setTimeout(() => setIsVisible(true), 600);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -28,32 +27,51 @@ const CookieConsentBanner: React.FC = () => {
 
   return (
     <>
-      <BottomSheet isOpen={isVisible} onClose={handleRejectAll} title="Cookie Preferences">
-        <div className="cookie-banner-body">
-          <p className="cookie-banner-description">
-            We use cookies to improve your experience. Functional cookies are always active.
-            You can choose whether to allow analytics cookies.
-          </p>
-          <div className="cookie-banner-links">
-            <a href="https://sagelga.com/privacy-policy" className="cookie-banner-link" target="_blank" rel="noopener noreferrer">
-              Privacy Policy
-            </a>
-            <span className="cookie-banner-sep">·</span>
-            <button className="cookie-banner-link" onClick={() => setShowSettings(true)}>
-              Manage preferences
+      {isVisible && (
+        <aside className="cookie-bar" role="region" aria-label="Cookie preferences">
+          <div className="cookie-bar-copy">
+            <p>
+              <strong>Cookies.</strong> Functional cookies keep your hand. Analytics stay off
+              unless you allow them.{' '}
+              <a
+                href="https://sagelga.com/privacy-policy"
+                className="cookie-bar-privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Privacy Policy
+              </a>
+            </p>
+          </div>
+          <div className="cookie-bar-actions">
+            <button
+              type="button"
+              className="cookie-bar-link"
+              onClick={() => setShowSettings(true)}
+            >
+              Manage
+            </button>
+            <button type="button" className="cookie-bar-btn" onClick={handleRejectAll}>
+              Reject all
+            </button>
+            <button
+              type="button"
+              className="cookie-bar-btn cookie-bar-btn--accept"
+              onClick={handleAcceptAll}
+            >
+              Accept all
             </button>
           </div>
-          <div className="cookie-banner-actions">
-            <button className="cookie-btn cookie-btn-accept" onClick={handleAcceptAll}>Accept all</button>
-            <button className="cookie-btn cookie-btn-reject" onClick={handleRejectAll}>Reject all</button>
-          </div>
-        </div>
-      </BottomSheet>
+        </aside>
+      )}
 
       <CookieSettingsModal
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
-        onSave={() => { setShowSettings(false); setIsVisible(false); }}
+        onSave={() => {
+          setShowSettings(false);
+          setIsVisible(false);
+        }}
       />
     </>
   );

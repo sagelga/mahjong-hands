@@ -1,4 +1,5 @@
 import './ScoringGuide.css';
+import { BookOpen } from 'lucide-react';
 import { SectionHeader } from '../../ui/SectionHeader';
 import { InfoBox } from '../../ui/InfoBox';
 import { MAHJONG_TILES } from '../../../lib/tiles';
@@ -15,7 +16,7 @@ const TileImage = ({ id }: TileImageProps) => {
 export default function SimplifiedRulesSection() {
   return (
     <div className="scoring-section">
-      <SectionHeader icon="📖" title="Simplified House Rules" />
+      <SectionHeader icon={<BookOpen size={20} />} title="Simplified House Rules" />
       <p style={{ margin: 0, marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
         My family has played mahjong for a long time, and they focus on only one thing: winning. So I think this rule is perfect for friends or family members who are getting used to mahjong. Understand the basics of how to win first, then focus on strategy next.
       </p>

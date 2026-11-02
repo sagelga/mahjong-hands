@@ -1,11 +1,12 @@
 import './ScoringGuide.css';
+import { Banknote } from 'lucide-react';
 import { SectionHeader } from '../../ui/SectionHeader';
 import { FanCard } from '../../ui/FanCard';
 
 export default function PaymentGridSection() {
   return (
     <div className="scoring-section">
-      <SectionHeader icon="💰" title="Paying a price for being a loser" />
+      <SectionHeader icon={<Banknote size={20} />} title="Paying a price for being a loser" />
       <p style={{ margin: 0, marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
         When the player calls a win, the other players will have to pay the winner. The discard player must pay more when they make the winner wins the game.
         This is only to discourage players from playing games without caring about the game.

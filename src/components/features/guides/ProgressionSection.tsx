@@ -1,11 +1,12 @@
 import './ScoringGuide.css';
+import { GraduationCap } from 'lucide-react';
 import { SectionHeader } from '../../ui/SectionHeader';
 import { FanCard } from '../../ui/FanCard';
 
 export default function ProgressionSection() {
   return (
     <div className="scoring-section">
-      <SectionHeader icon="🎓" title="After getting the grip" />
+      <SectionHeader icon={<GraduationCap size={20} />} title="After getting the grip" />
       <p style={{ margin: 0, marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
         When you understand how to win, you can start this additional scoring.
       </p>

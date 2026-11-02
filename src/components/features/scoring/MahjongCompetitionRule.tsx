@@ -62,7 +62,7 @@ export default function MahjongCompetitionRule() {
 
   const stats = [
     { value: 81,           label: 'Patterns',     color: '#10b981', borderColor: 'rgba(16,185,129,0.4)' },
-    { value: 88,           label: 'Limit Points', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.4)' },
+    { value: 88,           label: 'Limit Points', color: 'var(--warning-text)', borderColor: 'rgba(245,158,11,0.4)' },
     { value: '8 pts',      label: 'Min to Win',   color: '#3b82f6', borderColor: 'rgba(59,130,246,0.4)' },
     { value: totalPatterns, label: 'Shown (of 81)', color: '#8b5cf6', borderColor: 'rgba(139,92,246,0.4)' },
   ];

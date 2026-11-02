@@ -10,6 +10,7 @@ module.exports = {
     '^.+/lib/tiles$': '<rootDir>/tests/__mocks__/tilesMock.ts',
   },
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$',
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/tests/e2e/'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   setupFiles: ['<rootDir>/tests/setup.ts'],
   setupFilesAfterEnv: ['@testing-library/jest-dom'],

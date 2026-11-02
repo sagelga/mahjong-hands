@@ -20,15 +20,17 @@ export default function TileKeyboard({ onTileClick, activeFilter, onFilterChange
   );
 
   return (
-    <div className="keyboard-container">
-      <SuitFilterBar activeFilter={activeFilter} onFilterChange={onFilterChange} />
-      <TileGrid
-        key={activeFilter}
-        filteredTiles={filteredTiles}
-        activeFilter={activeFilter}
-        currentTiles={currentTiles}
-        onTileClick={onTileClick}
-      />
+    <div className="tile-tray">
+      <div className="tile-tray__surface">
+        <SuitFilterBar activeFilter={activeFilter} onFilterChange={onFilterChange} />
+        <TileGrid
+          key={activeFilter}
+          filteredTiles={filteredTiles}
+          activeFilter={activeFilter}
+          currentTiles={currentTiles}
+          onTileClick={onTileClick}
+        />
+      </div>
       <LearnPromo />
     </div>
   );
