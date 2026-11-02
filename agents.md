@@ -1,0 +1,1 @@
+- [2026-11-02] [design] Refined the hand builder, tile tray, Learn hub, navigation/footer shell, cookie consent, and light/dark tokens; added Playwright e2e and CI — files: src/styles/, src/components/layout/, src/components/features/builder/, src/components/features/guides/, src/components/cookies/, src/components/ui/, tests/e2e/, playwright.config.ts, .github/workflows/ci.yml

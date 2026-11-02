@@ -276,7 +276,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #10b981;
+  color: var(--accent-display);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -290,7 +290,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #ef4444;
+  color: var(--accent-danger);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -312,8 +312,8 @@
 .do-item:hover { background: rgba(16,185,129,0.04); }
 .dont-item:hover { background: rgba(239,68,68,0.04); }
 
-.do-item .mark   { color: #10b981; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
-.dont-item .mark { color: #ef4444; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+.do-item .mark   { color: var(--accent-display); font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+.dont-item .mark { color: var(--accent-danger); font-weight: 800; flex-shrink: 0; margin-top: 1px; }
 
 /* ── Mastery roadmap ─────────────────────────────────────────────────── */
 .mastery-list {
@@ -402,3 +402,6 @@
   .tip-grid { grid-template-columns: 1fr; }
   .wait-gallery { grid-template-columns: 1fr; }
 }
+
+/* Keep long-form copy in a readable measure; cards and grids stay full width. */
+.strategy-section > p { max-width: 72ch; }

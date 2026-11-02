@@ -117,8 +117,14 @@ export default function ScoringCalculator() {
   const [roundWind, _setRoundWind] = useState<Wind>(() => readLocalWind(LS_ROUND_WIND, 'East'));
   const [minFan, _setMinFan]       = useState<number>(() => readLocalInt(LS_MIN_FAN, 3));
 
-  const setRoundWind = (w: Wind) => { _setRoundWind(w); try { localStorage.setItem(LS_ROUND_WIND, w); } catch {} };
-  const setMinFan    = (n: number) => { _setMinFan(n); try { localStorage.setItem(LS_MIN_FAN, String(n)); } catch {} };
+  const setRoundWind = (w: Wind) => {
+    _setRoundWind(w);
+    try { localStorage.setItem(LS_ROUND_WIND, w); } catch { /* storage unavailable */ }
+  };
+  const setMinFan = (n: number) => {
+    _setMinFan(n);
+    try { localStorage.setItem(LS_MIN_FAN, String(n)); } catch { /* storage unavailable */ }
+  };
 
   // Hand-level settings — reset on "New Hand"
   const [handPatternId, setHandPatternId] = useState<HandPatternId | null>(null);
@@ -218,10 +224,20 @@ export default function ScoringCalculator() {
   // ── Handlers ──────────────────────────────────────────────────────────────
 
   const toggleSetBonus = (id: SetBonusId) => {
-    setSetBonus(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    setSetBonus(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
   const toggleWinBonus = (id: WinBonusId) => {
-    setWinBonus(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    setWinBonus(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
   const handleFlower = (level: BonusLevel) => {
     setFlowerLevel(level); if (level !== 'none') setNoBonus(false);

@@ -1,56 +1,101 @@
 /* ── CtaCard ───────────────────────────────────────────────────────────── */
 .cta-card {
-  text-align: center;
-  padding: 2.5rem;
-  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 26px;
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  position: relative;
-  overflow: hidden;
+  border-radius: var(--radius-lg);
   animation: fadeUp 0.5s ease 0.1s both;
 }
 
-.cta-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--gradient-primary);
+.cta-copy {
+  min-width: 0;
 }
 
-.cta-card h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem; }
-.cta-card p  { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem; }
+.cta-card h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
 
-.cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.cta-card p {
+  margin: 3px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
 
 .btn-primary {
-  background: var(--gradient-primary);
-  color: #fff;
-  border: none;
-  padding: 0.65rem 1.4rem;
-  border-radius: var(--radius-full);
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: var(--accent-primary);
+  color: var(--jade-ink);
+  font-size: 0.85rem;
+  font-weight: 600;
   text-decoration: none;
-  display: inline-block;
-  transition: all var(--transition-fast);
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s var(--ease-out);
 }
 
-.btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-primary:hover {
+  background: var(--accent-display);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.985);
+}
 
 .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--border-color-strong);
+  border-radius: 9px;
   background: transparent;
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  padding: 0.65rem 1.4rem;
-  border-radius: var(--radius-full);
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
   text-decoration: none;
-  display: inline-block;
-  transition: all var(--transition-fast);
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s var(--ease-out);
 }
 
-.btn-secondary:hover { border-color: var(--accent-primary); color: var(--accent-primary); transform: translateY(-2px); }
+.btn-secondary:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 720px) {
+  .cta-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .cta-buttons {
+    justify-content: flex-start;
+  }
+}

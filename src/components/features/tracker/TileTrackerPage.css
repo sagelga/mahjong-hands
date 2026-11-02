@@ -17,7 +17,9 @@
 .tracker-page {
   display: flex;
   flex-direction: column;
-  height: calc(100dvh - 56px);   /* fill viewport below navbar */
+  width: 100%;
+  min-width: 0;
+  height: calc(100dvh - var(--nav-height));   /* fill viewport below navbar */
   overflow: hidden;
   background: var(--bg-primary);
 }

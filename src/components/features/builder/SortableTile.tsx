@@ -56,11 +56,10 @@ export default memo(function SortableTile({ id, tile, index, onRemove, isValid, 
           src={tile.image}
           alt={tile.name}
           className="tile-image"
+          draggable={false}
         />
-        {tile.suit === 'Flowers' && (
-          <span className="tile-flower-indicator">🌸</span>
-        )}
         <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation();
             onRemove(index);

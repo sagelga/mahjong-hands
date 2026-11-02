@@ -167,7 +167,7 @@
   animation: wtp-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.wtp-option.correct .wtp-option-name { color: #10b981; }
+.wtp-option.correct .wtp-option-name { color: var(--accent-display); }
 
 .wtp-option.wrong {
   border-color: var(--accent-danger);
@@ -206,7 +206,7 @@
   font-weight: 800;
 }
 
-.wtp-feedback--correct .wtp-feedback-badge { color: #10b981; }
+.wtp-feedback--correct .wtp-feedback-badge { color: var(--accent-display); }
 .wtp-feedback--wrong  .wtp-feedback-badge { color: var(--accent-danger); }
 
 .wtp-feedback-text {

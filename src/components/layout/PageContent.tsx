@@ -7,8 +7,8 @@ interface PageContentProps {
 
 export default function PageContent({ children, className = '' }: PageContentProps) {
   return (
-    <main className={`page-content ${className}`}>
+    <div className={`page-content ${className}`}>
       {children}
-    </main>
+    </div>
   );
 }

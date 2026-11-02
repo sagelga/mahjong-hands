@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import BetaBanner from '../ui/AnnouncementBanner';
 import CookieConsentBanner from '../cookies/CookieConsentBanner';
 import type { NavItem, FooterColumn } from '@/types/ui';
 import { SAGELGA_COLUMN, SAGELGA_SOCIALS_COLUMN, makeProjectMetaColumn } from '@/config/footer';
@@ -43,18 +43,38 @@ const FOOTER_COLUMNS: FooterColumn[] = [
   SAGELGA_SOCIALS_COLUMN,
 ];
 
+const PAGE_TITLES: Record<string, string> = {
+  '/': 'Mahjong Hand Builder - Validate Your Winning Hands',
+  '/practice': 'Tenpai Practice - Mahjong Hand Builder',
+  '/tracker': 'Tile Tracker - Mahjong Hand Builder',
+  '/glossary': 'Mahjong Tile Glossary - Visual Guide to All Tiles',
+  '/learn': 'Learn Mahjong - Step by Step Guide',
+  '/learn/rules': 'Learn Rules - Mahjong Rules Guide',
+  '/learn/setup': 'Learn Game Setup - Mahjong Guide',
+  '/learn/strategy': 'Mahjong Strategy Guide',
+  '/scoring': 'Scoring Guide - Mahjong Fan System',
+  '/scoring/hk-old': 'Hong Kong Old Style Scoring - Mahjong Hand Builder',
+  '/scoring/mcr': 'Mahjong Competition Rules Scoring - Mahjong Hand Builder',
+  '/calculator': 'Score Calculator - Mahjong Hand Builder',
+};
+
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    document.title = PAGE_TITLES[pathname] || 'Mahjong Hands';
+  }, [pathname]);
+
   return (
     <div className="app-container">
-      <BetaBanner />
       <Navbar
+        key={pathname}
         brandName="Mahjong Hands"
         brandHref="/"
-        navbarBg="#065f46"
         links={NAV_LINKS}
       />
       <main className="main-content">
@@ -64,7 +84,7 @@ export default function Layout({ children }: LayoutProps) {
         brandName="sagelga"
         brandHref="https://sagelga.com"
         tagline="Mahjong Hands by sagelga"
-columns={FOOTER_COLUMNS}
+        columns={FOOTER_COLUMNS}
         author="sagelga"
         authorHref="https://sagelga.com"
         copyrightStart={2021}

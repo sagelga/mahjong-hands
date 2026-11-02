@@ -2,55 +2,35 @@
 
 /* ── Layout ──────────────────────────────────────────────────────────── */
 .learn-container {
-  max-width: 900px;
+  max-width: var(--max-width-content);
   width: 100%;
   padding: 2rem 1.5rem 4rem;
   line-height: 1.7;
 }
 
-/* ── Hero ────────────────────────────────────────────────────────────── */
-.learn-hero {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.learn-hero h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 900;
-  color: var(--text-primary);
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.03em;
-}
-
-.learn-hero p {
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-/* ── Button Grid ─────────────────────────────────────────────────────── */
+/* ── Step grid ───────────────────────────────────────────────────────── */
 .learn-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.875rem;
   margin-bottom: 3rem;
 }
 
 .learn-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--bg-tertiary);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  padding: 1.5rem;
-  text-decoration: none;
-  transition: all var(--transition-normal);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 200px;
+  padding: 1.5rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  text-decoration: none;
   overflow: hidden;
-  min-height: 80px;
-  animation: scaleIn 0.4s ease both;
+  transition: border-color var(--transition-normal), transform var(--transition-normal),
+              box-shadow var(--transition-normal);
+  animation: scaleIn 0.4s ease backwards;
 }
 
 .learn-card:nth-child(1) { animation-delay: 0.05s; }
@@ -60,68 +40,123 @@
 
 .learn-card:hover {
   border-color: var(--accent-primary);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(16, 185, 129, 0.15);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
-.learn-content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.learn-card:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
-.learn-number {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--accent-primary);
+.learn-hanzi {
+  position: absolute;
+  top: 0.25rem;
+  right: 1.25rem;
+  font-size: 4rem;
+  font-weight: 600;
   line-height: 1;
-  transition: all var(--transition-normal);
-  flex-shrink: 0;
+  color: var(--accent-primary);
+  opacity: 0.09;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
 }
 
-.learn-title {
-  font-size: 1rem;
+.learn-card:hover .learn-hanzi {
+  opacity: 0.16;
+  transform: translateY(2px) scale(1.04);
+}
+
+.learn-step {
+  position: relative;
+  font-size: 0.6875rem;
   font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  line-height: 1.4;
+}
+
+.learn-card-title {
+  position: relative;
+  margin-top: 0.625rem;
+  font-size: clamp(1.25rem, 2.4vw, 1.375rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
   color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100px;
-  transition: all var(--transition-normal);
-  opacity: 1;
 }
 
-.learn-icon {
-  font-size: 1.5rem;
-  opacity: 1;
-  transition: all var(--transition-normal);
-  flex-shrink: 0;
+.learn-card-description {
+  position: relative;
+  margin-top: 0.5rem;
+  max-width: 36ch;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
 }
 
-/* Hover effects - show title and icon */
-.learn-card:hover .learn-number {
-  opacity: 0.3;
-  transform: scale(0.8);
+.learn-card-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: gap var(--transition-fast), color var(--transition-fast);
 }
 
-.learn-card:hover .learn-title {
-  opacity: 1;
-  transform: translateX(0);
+.learn-card-link svg {
+  color: var(--accent-primary);
+  transition: transform var(--transition-fast);
 }
 
-.learn-card:hover .learn-icon {
-  opacity: 1;
+.learn-card:hover .learn-card-link {
+  gap: 0.6rem;
+}
+
+.learn-card:hover .learn-card-link svg {
+  transform: translateX(2px);
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────── */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
+  .learn-container {
+    padding: 1.5rem 1rem 3rem;
+  }
+
   .learn-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  .learn-card {
+    padding: 1.25rem;
+  }
+
+  .learn-hanzi {
+    right: 1rem;
+    font-size: 3.5rem;
   }
 }
 
-@media (max-width: 480px) {
-  .learn-grid {
-    grid-template-columns: 1fr;
+@media (prefers-reduced-motion: reduce) {
+  .learn-card,
+  .learn-hanzi,
+  .learn-card-link,
+  .learn-card-link svg {
+    transition: none;
+    animation: none;
+  }
+
+  .learn-card:hover {
+    transform: none;
+  }
+
+  .learn-card:hover .learn-hanzi {
+    transform: none;
   }
 }

@@ -13,8 +13,8 @@ export default function FlowerTilesArea({ flowerTiles, onRemoveTile, isValid }: 
 
   return (
     <div className="hand-flowers-area">
-      <div className="flower-area-label">Flowers</div>
-      <div className="flower-tiles-row">
+      <span className="flower-area-label">Flowers</span>
+      <div className="flower-tiles-row" aria-label="Flower tiles">
         {flowerTiles.map(({ tile, index }) => (
           <SortableTile
             key={`tile-${index}-${tile.id}`}

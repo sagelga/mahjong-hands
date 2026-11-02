@@ -2,16 +2,16 @@
 
 /* Flat Panel — replaces glassmorphism */
 .glass-panel {
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-panel);
   transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
 [data-theme='light'] .glass-panel {
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
 }
 
@@ -22,33 +22,68 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-height) + 16px);
+}
+
 body {
-  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter 18pt', Inter, system-ui, -apple-system, sans-serif;
+  font-size: 16px;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-synthesis-weight: none;
   min-height: 100vh;
   transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
-/* Win State — dramatically different from normal state */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font-family: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--accent-primary);
+  color: var(--jade-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-display);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Browser surfaces belong to the design too. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb {
+  background: var(--border-color-strong);
+  border-radius: 8px;
+  border: 3px solid var(--bg-primary);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+
+/* Win State — a quiet room shift; the rack carries the celebration */
 body.is-winning {
-  --bg-primary: #052e16;
-  --bg-secondary: #063a1d;
-  --bg-tertiary: #074a25;
-  --text-primary: #ffffff;
-  --text-secondary: #6ee7b7;
-  --border-color: #059669;
+  --bg-primary: #07120d;
+  --text-secondary: #8ee7c4;
 }
 
 [data-theme='light'] body.is-winning {
-  --bg-primary: #d1fae5;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #ecfdf5;
-  --text-primary: #052e16;
+  --bg-primary: #eef8f2;
   --text-secondary: #065f46;
-  --border-color: #34d399;
 }
 
 /* Helper Utilities */
@@ -90,8 +125,14 @@ body.is-winning {
   to   { transform: scaleY(1); opacity: 1; }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 10px; border: 3px solid var(--bg-primary); }
-::-webkit-scrollbar-thumb:hover { background: var(--border-color); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

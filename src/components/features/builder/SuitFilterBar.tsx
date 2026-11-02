@@ -1,15 +1,19 @@
-import { SUITS } from '../../../lib/tiles';
+import { MAHJONG_TILES, SUITS } from '../../../lib/tiles';
 import type { Suit } from '../../../lib/tiles';
-import { LayoutGrid } from 'lucide-react';
 import './TileKeyboard.css';
 
-const SUIT_LABELS: Record<string, string> = {
-  Characters: '万',
-  Dots: '筒',
-  Bamboo: '条',
-  Honors: '字',
-  Flowers: '花',
+const SUIT_LABELS: Record<Suit, { mark: string; label: string }> = {
+  Characters: { mark: '万', label: 'Characters' },
+  Dots: { mark: '筒', label: 'Dots' },
+  Bamboo: { mark: '条', label: 'Bamboo' },
+  Honors: { mark: '字', label: 'Honors' },
+  Flowers: { mark: '花', label: 'Flowers' },
 };
+
+const FILTERS: Array<{ id: Suit | 'All'; mark: string; label: string }> = [
+  { id: 'All', mark: '全', label: 'All' },
+  ...SUITS.map(suit => ({ id: suit, ...SUIT_LABELS[suit] })),
+];
 
 interface Props {
   activeFilter: Suit | 'All';
@@ -18,21 +22,25 @@ interface Props {
 
 export default function SuitFilterBar({ activeFilter, onFilterChange }: Props) {
   return (
-    <div className="glass-panel filter-bar">
-      {['All', ...SUITS].map(filter => (
-        <button
-          key={filter}
-          onClick={() => onFilterChange(filter as Suit | 'All')}
-          className={`filter-button ${activeFilter === filter ? 'active' : ''}`}
-          aria-pressed={activeFilter === filter}
-        >
-          <span className="filter-icon">{filter === 'All' ? <LayoutGrid size={14} /> : SUIT_LABELS[filter]}</span>
-          {filter === 'Characters' ? 'Characters' :
-           filter === 'Dots' ? 'Dots' :
-           filter === 'Bamboo' ? 'Bamboo' :
-           filter.split(' ')[0]}
-        </button>
-      ))}
+    <div className="filter-bar" role="group" aria-label="Filter tiles by suit">
+      {FILTERS.map(filter => {
+        const isActive = activeFilter === filter.id;
+        return (
+          <button
+            key={filter.id}
+            type="button"
+            onClick={() => onFilterChange(filter.id)}
+            className={`filter-button ${isActive ? 'active' : ''}`}
+            aria-pressed={isActive}
+          >
+            <span className="filter-mark" aria-hidden="true">{filter.mark}</span>
+            <span className="filter-label">{filter.label}</span>
+            {filter.id === 'All' && (
+              <span className="filter-count" aria-hidden="true">{MAHJONG_TILES.length}</span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }

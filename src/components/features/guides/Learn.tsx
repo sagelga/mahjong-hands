@@ -1,4 +1,5 @@
 import './Learn.css';
+import { ArrowRight } from 'lucide-react';
 import { CtaCard } from '../../ui/CtaCard';
 import PageHeader from '../../layout/PageHeader';
 import PageContent from '../../layout/PageContent';
@@ -7,22 +8,26 @@ import { Link } from 'react-router-dom';
 const LEARN_STEPS = [
   {
     title: 'Rules',
-    icon: '規',
+    description: 'The tiles, the sets, and the flow of play — everything you need to get started.',
+    hanzi: '規',
     path: '/learn/rules',
   },
   {
     title: 'Game Setup',
-    icon: '局',
+    description: 'Build the wall, pick seats, and start a round. Includes the East dealer rotation.',
+    hanzi: '局',
     path: '/learn/setup',
   },
   {
     title: 'Strategize Your Hand',
-    icon: '策',
+    description: 'Waits, discards, and when to push. Learn to read the table before you commit.',
+    hanzi: '策',
     path: '/learn/strategy',
   },
   {
     title: 'Rulesets',
-    icon: '分',
+    description: 'House rules, Hong Kong old style, and MCR — compare how each one scores.',
+    hanzi: '分',
     path: '/scoring',
   },
 ];
@@ -31,21 +36,22 @@ export default function Learn() {
   return (
     <PageContent className="learn-container">
 
-      {/* ── Hero ── */}
       <PageHeader
         title="Learn Mahjong"
         subtitle="From beginner to winner – follow this step-by-step guide"
       />
 
-      {/* ── Button Grid ── */}
       <div className="learn-grid">
         {LEARN_STEPS.map((step, index) => (
-          <Link to={step.path} key={index} className="learn-card">
-            <div className="learn-content">
-              <div className="learn-number">{index + 1}</div>
-              <div className="learn-title">{step.title}</div>
-            </div>
-            <div className="learn-icon">{step.icon}</div>
+          <Link to={step.path} key={step.path} className="learn-card">
+            <span className="learn-hanzi" aria-hidden="true">{step.hanzi}</span>
+            <span className="learn-step">Step {index + 1}</span>
+            <h2 className="learn-card-title">{step.title}</h2>
+            <p className="learn-card-description">{step.description}</p>
+            <span className="learn-card-link">
+              Start guide
+              <ArrowRight size={14} aria-hidden="true" />
+            </span>
           </Link>
         ))}
       </div>

@@ -13,12 +13,12 @@
   align-items: center;
   padding: 1rem;
   width: 100%;
-  max-width: var(--max-width-content);
+  max-width: calc(var(--max-width-content) + 64px);
   margin: 0 auto;
 }
 
 @media (min-width: 768px) {
-  .main-content { padding: 2.5rem; }
+  .main-content { padding: 2.5rem 2rem 3rem; }
 }
 
 .section-full-width {
@@ -26,7 +26,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .settings-bar {
@@ -62,7 +62,7 @@
 }
 
 .toggle-btn.active {
-  background: rgba(5, 150, 105, 0.1);
+  background: var(--accent-soft);
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }

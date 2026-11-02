@@ -24,7 +24,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     // Existing saved values are 'light' | 'dark' — map to new Theme type
     const stored = localStorage.getItem(THEME_STORAGE_KEY);
     if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
-    return 'system';
+    // Dark is the product's default; light and system remain available.
+    return 'dark';
   });
 
   const [systemPreference, setSystemPreference] = useState<'light' | 'dark'>(
@@ -59,6 +60,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+// The hook shares the provider's context; fast refresh tolerates this pairing.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = (): ThemeContextType => {
   const ctx = useContext(ThemeContext);
   if (!ctx) throw new Error('useTheme must be used within a ThemeProvider');

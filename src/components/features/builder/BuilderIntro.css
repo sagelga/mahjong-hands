@@ -1,0 +1,87 @@
+.builder-intro {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 1.25rem 0 0.25rem;
+}
+
+.builder-intro-copy {
+  min-width: 0;
+}
+
+.builder-intro h1 {
+  margin: 0;
+  max-width: 15ch;
+  font-size: clamp(2.2rem, 4.2vw, 3.35rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+.builder-intro p {
+  margin: 0.85rem 0 0;
+  max-width: 56ch;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.builder-intro-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-bottom: 2px;
+}
+
+.builder-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.builder-chip strong {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 860px) {
+  .builder-intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-top: 0.75rem;
+  }
+
+  .builder-intro h1 {
+    max-width: 100%;
+  }
+
+  .builder-intro-chips {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .builder-intro h1 {
+    font-size: clamp(2rem, 9vw, 2.6rem);
+  }
+
+  .builder-intro p {
+    font-size: 0.95rem;
+  }
+}

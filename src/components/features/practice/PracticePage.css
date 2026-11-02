@@ -562,7 +562,7 @@
 }
 
 .practice-reveal-tile--exhausted .practice-reveal-remaining {
-  color: #ef4444;
+  color: var(--accent-danger);
 }
 
 .practice-result-grid-label {
